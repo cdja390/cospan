@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <clipPath id="cospan-squircle">
+      <rect x="0" y="0" width="24" height="24" rx="4" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#cospan-squircle)">
+    <!-- Upper & corner field: Electric Iris-Indigo -->
+    <rect x="0" y="0" width="24" height="24" fill="#3B35B5" />
+    <!-- Left morphism A (Swiss Emerald, r=8..16 around (0,24)); tucks cleanly inside vesica past (12, 13.417) to avoid coincident-arc fringing -->
+    <path d="M 0 8 A 16 16 0 0 1 12 13.417 L 12.6 24 H 8 A 8 8 0 0 0 0 16 Z" fill="#00C48C" />
+    <!-- Right morphism B (Electric Cerulean, r=8..16 around (24,24)); tucks cleanly inside vesica past (12, 13.417) -->
+    <path d="M 24 8 A 16 16 0 0 0 12 13.417 L 11.4 24 H 16 A 8 8 0 0 1 24 16 Z" fill="#00B4FF" />
+    <!-- Shared Cospan Pushout Vesica X (Solar Citrine): exact intersection of the two R=16 spans -->
+    <path d="M 12 13.417 A 16 16 0 0 1 16 24 H 8 A 16 16 0 0 1 12 13.417 Z" fill="#FFE03D" />
+  </g>
+</svg>

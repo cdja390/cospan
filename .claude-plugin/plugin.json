@@ -1,0 +1,28 @@
+{
+  "name": "cospan",
+  "version": "0.1.0",
+  "description": "Orchestrate every model in its native harness — unified async delegation across Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness.",
+  "icon": "assets/icon-512.png",
+  "author": {
+    "name": "Keli Wen",
+    "url": "https://github.com/keli-wen"
+  },
+  "repository": "https://github.com/keli-wen/cospan",
+  "license": "MIT",
+  "keywords": [
+    "cospan",
+    "orchestration",
+    "multi-agent",
+    "antigravity",
+    "codex",
+    "claude-code",
+    "deepseek-harness",
+    "delegation"
+  ],
+  "mcpServers": {
+    "cospan": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/cospan-mcp.mjs"]
+    }
+  }
+}

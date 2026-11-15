@@ -1,0 +1,204 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { durationToMs, JOB_EXIT_CODES, main, parseCliArgs, repoRoot, workspaceStateDir } from '../lib/cli.mjs';
+import { installForAgyHost, installForCodexHost } from '../lib/installer.mjs';
+import { apply as applyDshPlugin } from '../dsh/index.mjs';
+
+const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
+const ROOT_DIR = path.resolve(TEST_DIR, '..');
+const MCP_SERVER = path.join(ROOT_DIR, 'mcp', 'cospan-mcp.mjs');
+const FAKE_AGY = path.join(TEST_DIR, 'fakes', 'fake-agy.mjs');
+const FAKE_CODEX = path.join(TEST_DIR, 'fakes', 'fake-codex.mjs');
+const FAKE_CLAUDE = path.join(TEST_DIR, 'fakes', 'fake-claude.mjs');
+const FAKE_DSH = path.join(TEST_DIR, 'fakes', 'fake-dsh.mjs');
+
+test('host installer mounts all detected targets (agy, codex, claude, dsh) and adheres to host schemas', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-install-'));
+  try {
+    const discovered = {
+      agy: { id: 'agy', installed: true, binary: FAKE_AGY, version: '1.5.5-fake', phase: 1, driverReady: true },
+      codex: { id: 'codex', installed: true, binary: FAKE_CODEX, version: '0.167.2-fake', phase: 1, driverReady: true },
+      claude: {
+        id: 'claude',
+        installed: true,
+        binary: FAKE_CLAUDE,
+        version: '2.1.322-fake',
+        phase: 1,
+        driverReady: true,
+      },
+      dsh: { id: 'dsh', installed: true, binary: FAKE_DSH, version: '0.2.2-rc.1-fake', phase: 1, driverReady: true },
+    };
+
+    const agyPluginsRoot = path.join(tmp, 'agy-plugins');
+    const agyRes = installForAgyHost({ discovered, pluginsRoot: agyPluginsRoot });
+    assert.deepEqual(agyRes.skills, ['cospan-agy', 'cospan-codex', 'cospan-claude', 'cospan-dsh', 'cospan-jobs']);
+    assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-agy', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-codex', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-claude', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-dsh', 'SKILL.md')));
+
+    const agyManifest = JSON.parse(fs.readFileSync(path.join(agyRes.pluginDir, 'plugin.json'), 'utf8'));
+    const allowedAgyKeys = new Set([
+      'name',
+      'description',
+      'logo',
+      'suggestedPrompts',
+      'displayName',
+      'version',
+      'author',
+      'homepage',
+      'repository',
+      'disabled',
+    ]);
+    for (const key of Object.keys(agyManifest)) {
+      assert.ok(allowedAgyKeys.has(key), `unexpected top-level key in agy plugin.json: ${key}`);
+    }
+
+    const codexPkgRoot = path.join(tmp, 'codex-pkg');
+    fs.mkdirSync(path.join(codexPkgRoot, 'mcp'), { recursive: true });
+    fs.copyFileSync(MCP_SERVER, path.join(codexPkgRoot, 'mcp', 'cospan-mcp.mjs'));
+    const marketRoot = path.join(tmp, 'codex-market');
+
+    const codexRes = installForCodexHost({
+      discovered,
+      registerWithCodexCli: false,
+      packageRoot: codexPkgRoot,
+      marketplaceRoot: marketRoot,
+    });
+    assert.deepEqual(codexRes.skills, ['$cospan:agy', '$cospan:codex', '$cospan:claude', '$cospan:dsh', 'cospan:jobs']);
+    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'codex', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'claude', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'dsh', 'SKILL.md')));
+    const pkgAgySkill = fs.readFileSync(path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md'), 'utf8');
+    assert.match(pkgAgySkill, /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/);
+
+    const mcpJson = JSON.parse(fs.readFileSync(path.join(codexPkgRoot, '.mcp.json'), 'utf8'));
+    assert.equal(mcpJson.$schema, 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
+    assert.equal(mcpJson.mcpServers.cospan.command, 'node');
+    assert.deepEqual(mcpJson.mcpServers.cospan.args, ['${PLUGIN_ROOT}/mcp/cospan-mcp.mjs']);
+
+    const marketMcpJson = JSON.parse(fs.readFileSync(path.join(marketRoot, 'plugins', 'cospan', '.mcp.json'), 'utf8'));
+    assert.ok(
+      marketMcpJson.mcpServers.cospan.command === 'node' || marketMcpJson.mcpServers.cospan.command.startsWith('./')
+    );
+    assert.ok(fs.existsSync(path.join(marketRoot, 'plugins', 'cospan', 'mcp', 'cospan-mcp.mjs')));
+    assert.ok(fs.existsSync(path.join(marketRoot, 'plugins', 'cospan', 'mcp', 'tools.mjs')));
+    assert.equal(durationToMs('5m'), 300000);
+    assert.equal(JOB_EXIT_CODES.done, 0);
+    assert.equal(typeof parseCliArgs, 'function');
+    assert.equal(typeof repoRoot, 'function');
+    assert.equal(typeof workspaceStateDir, 'function');
+    assert.equal(typeof main, 'function');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('dsh Cordis bundle registers cospan-* skills and native cospan_* tools', async () => {
+  let registeredSkillProvider = null;
+  const registeredDshTools = [];
+  applyDshPlugin({
+    inject(deps, fn) {
+      if (deps[0] === 'skills') {
+        fn({
+          effect: (cb) => cb(),
+          skills: { registerProvider: (factory) => (registeredSkillProvider = factory()) },
+        });
+      } else if (deps[0] === 'tools') {
+        fn({
+          get: () => null,
+          tools: { register: (t) => registeredDshTools.push(t) },
+        });
+      }
+    },
+  });
+  assert.ok(registeredSkillProvider);
+  const dshSkills = await registeredSkillProvider.list();
+  assert.ok(dshSkills.some((s) => s.name === 'cospan-agy' && s.invocation.userInvocable === true));
+  assert.ok(dshSkills.some((s) => s.name === 'cospan-jobs' && s.invocation.userInvocable === false));
+  assert.ok(registeredDshTools.some((t) => t.name === 'cospan_send'));
+  assert.ok(registeredDshTools.some((t) => t.name === 'cospan_wait'));
+});
+
+test('stdio MCP server handles JSONL initialize, tools/list, cospan_send, and cospan_wait', async () => {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-mcp-repo-'));
+  spawnSync('git', ['init', '-q'], { cwd: repo });
+
+  const child = spawn(process.execPath, [MCP_SERVER], {
+    env: {
+      ...process.env,
+      AGY_BIN: FAKE_AGY,
+      CODEX_BIN: FAKE_CODEX,
+      COSPAN_CONFIG_DIR: `${repo}-cfg`,
+    },
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
+
+  const pending = new Map();
+  let buf = '';
+  child.stdout.on('data', (chunk) => {
+    buf += chunk.toString('utf8');
+    const lines = buf.split('\n');
+    buf = lines.pop() || '';
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      const msg = JSON.parse(line);
+      if (pending.has(msg.id)) {
+        pending.get(msg.id)(msg);
+        pending.delete(msg.id);
+      }
+    }
+  });
+
+  let nextId = 1;
+  const rpc = (method, params) =>
+    new Promise((resolve) => {
+      const id = nextId++;
+      pending.set(id, resolve);
+      child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n');
+    });
+
+  try {
+    const init = await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {} });
+    assert.equal(init.result.serverInfo.name, 'cospan');
+
+    const list = await rpc('tools/list', {});
+    assert.ok(list.result.tools.some((t) => t.name === 'cospan_send'));
+    assert.ok(list.result.tools.some((t) => t.name === 'cospan_wait'));
+
+    const sendCall = await rpc('tools/call', {
+      name: 'cospan_send',
+      arguments: {
+        cwd: repo,
+        to: 'agy',
+        readonly: true,
+        prompt: 'Verify MCP delegation path',
+      },
+    });
+    assert.equal(sendCall.result.isError, false, JSON.stringify(sendCall));
+    const sendInfo = JSON.parse(sendCall.result.content[0].text);
+    assert.match(sendInfo.job_id, /^agy-/);
+
+    const waitCall = await rpc('tools/call', {
+      name: 'cospan_wait',
+      arguments: {
+        cwd: repo,
+        id: sendInfo.job_id,
+        timeout: '10s',
+      },
+    });
+    assert.equal(waitCall.result.isError, false);
+    assert.match(waitCall.result.content[0].text, /exit_code=0 status=done/);
+    assert.match(waitCall.result.content[0].text, /Verify MCP delegation path/);
+  } finally {
+    child.kill('SIGTERM');
+    fs.rmSync(repo, { recursive: true, force: true });
+    fs.rmSync(`${repo}-cfg`, { recursive: true, force: true });
+  }
+});

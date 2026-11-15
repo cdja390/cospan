@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cospan",
+  "displayName": "Cospan",
+  "version": "0.1.0",
+  "description": "Orchestrate every model in its native harness — unified async delegation across Antigravity (agy), OpenAI Codex, Claude Code, and DeepSeek Harness (dsh).",
+  "logo": "assets/icon.svg",
+  "author": "Keli Wen",
+  "repository": "https://github.com/keli-wen/cospan",
+  "suggestedPrompts": [
+    "Use cospan-codex in --readonly mode to review our current git diff",
+    "Use cospan-agy with --model carbon --effort high to stress-test this architecture plan",
+    "Continue the latest cospan job with a follow-up question"
+  ]
+}

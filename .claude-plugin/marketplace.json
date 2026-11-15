@@ -1,0 +1,16 @@
+{
+  "name": "cospan",
+  "owner": {
+    "name": "Keli Wen",
+    "url": "https://github.com/keli-wen"
+  },
+  "description": "Orchestrate every model in its native harness — unified async delegation across Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness.",
+  "plugins": [
+    {
+      "name": "cospan",
+      "source": "./",
+      "description": "Point-to-point cross-harness async delegation adapter connecting Antigravity (agy), OpenAI Codex (codex), Claude Code (claude), and DeepSeek Harness (dsh).",
+      "tags": ["cospan", "orchestration", "antigravity", "codex", "claude-code", "deepseek-harness", "delegation"]
+    }
+  ]
+}

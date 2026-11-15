@@ -1,0 +1,492 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 312" width="920" height="312" role="img" aria-label="Animated multi-turn demo: GPT-6-Astra consults Gemini 4 Carbon as a peer Second Brain across 2 turns in session agy-9c1e while staying unblocked locally">
+  <style>
+    .curtain { animation: type-move 14s infinite, curtain-vis 14s infinite; }
+    .cursor-top { animation: blink 0.65s step-end infinite; }
+    .cursor-bot { animation: blink 0.8s step-end infinite; }
+    .spin-dot { animation: pulse-dot 0.9s ease-in-out infinite; }
+    .enter-pill { animation: enter-flash 14s infinite; }
+
+    .c1-run { animation: chip1-run 14s infinite; }
+    .c1-done { animation: chip1-done 14s infinite; }
+    .c2-run { animation: chip2-run 14s infinite; }
+    .c2-done { animation: chip2-done 14s infinite; }
+
+    .local-run { animation: loc-run 14s infinite; }
+    .local-done { animation: loc-done 14s infinite; }
+    .cont-line { animation: appear-cont 14s infinite; }
+    .wakeup-card { animation: vis-wakeup 14s infinite; }
+
+    .pkt-out1a { animation: fly-out1a 14s infinite; }
+    .pkt-out1b { animation: fly-out1b 14s infinite; }
+    .pkt-ret1 { animation: fly-ret1 14s infinite; }
+    .pkt-out2a { animation: fly-out2a 14s infinite; }
+    .pkt-out2b { animation: fly-out2b 14s infinite; }
+    .pkt-ret2 { animation: fly-ret2 14s infinite; }
+
+    .p-idle { animation: peer-idle 14s infinite; }
+    .p-act { animation: peer-act 14s infinite; }
+    .b-idle { animation: peer-idle 14s infinite; }
+    .b-t1 { animation: badge-t1 14s infinite; }
+    .b-t2 { animation: badge-t2 14s infinite; }
+    .b-done { animation: badge-done 14s infinite; }
+
+    .t1-l1 { animation: appear-21 14s infinite; }
+    .t1-l2 { animation: appear-26 14s infinite; }
+    .t1-box { animation: appear-32 14s infinite; }
+    .t2-div { animation: appear-46 14s infinite; }
+    .t2-l1 { animation: appear-49 14s infinite; }
+    .t2-l2 { animation: appear-53 14s infinite; }
+    .t2-l3 { animation: appear-57 14s infinite; }
+
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+    @keyframes type-move {
+      0%, 3.0% { transform: translateX(0px); animation-timing-function: steps(66, end); }
+      14.5%, 95.5% { transform: translateX(429px); animation-timing-function: step-end; }
+      96.0%, 100% { transform: translateX(0px); }
+    }
+    @keyframes curtain-vis {
+      0%, 16.0% { opacity: 1; animation-timing-function: step-end; }
+      16.1%, 96.4% { opacity: 0; animation-timing-function: step-end; }
+      96.5%, 100% { opacity: 1; }
+    }
+    @keyframes enter-flash {
+      0%, 14.4% { opacity: 0; }
+      14.6%, 17.6% { opacity: 1; }
+      18.4%, 100% { opacity: 0; }
+    }
+
+    /* Turn 1 and Turn 2 status chips */
+    @keyframes chip1-run {
+      0%, 16.5% { opacity: 0; }
+      17.1%, 38.8% { opacity: 1; }
+      39.4%, 100% { opacity: 0; }
+    }
+    @keyframes chip1-done {
+      0%, 38.8% { opacity: 0; }
+      39.4%, 95.5% { opacity: 1; }
+      96.5%, 100% { opacity: 0; }
+    }
+    @keyframes chip2-run {
+      0%, 41.6% { opacity: 0; }
+      42.2%, 62.4% { opacity: 1; }
+      63.0%, 100% { opacity: 0; }
+    }
+    @keyframes chip2-done {
+      0%, 62.4% { opacity: 0; }
+      63.0%, 95.5% { opacity: 1; }
+      96.5%, 100% { opacity: 0; }
+    }
+
+    /* Concurrent Astra local SQL caller audit */
+    @keyframes loc-run {
+      0%, 19.5% { opacity: 0; }
+      20.2%, 32.5% { opacity: 1; }
+      33.2%, 100% { opacity: 0; }
+    }
+    @keyframes loc-done {
+      0%, 32.5% { opacity: 0; }
+      33.2%, 95.5% { opacity: 1; }
+      96.5%, 100% { opacity: 0; }
+    }
+
+    /* Multi-turn delta follow-up and final verified wakeup card */
+    @keyframes appear-cont {
+      0%, 40.8% { opacity: 0; }
+      41.5%, 95.5% { opacity: 1; }
+      96.5%, 100% { opacity: 0; }
+    }
+    @keyframes vis-wakeup {
+      0%, 63.0% { opacity: 0; }
+      64.0%, 95.5% { opacity: 1; }
+      96.5%, 100% { opacity: 0; }
+    }
+
+    /* Bidirectional 2-turn packet pulses across Cospan switch */
+    @keyframes fly-out1a {
+      0%, 16.2% { opacity: 0; transform: translate(0px, 0px); }
+      16.7% { opacity: 1; transform: translate(0px, 0px); }
+      18.4% { opacity: 1; transform: translate(24px, 0px); }
+      18.9%, 100% { opacity: 0; transform: translate(24px, 0px); }
+    }
+    @keyframes fly-out1b {
+      0%, 18.4% { opacity: 0; transform: translate(0px, 0px); }
+      18.9% { opacity: 1; transform: translate(0px, 0px); }
+      20.6% { opacity: 1; transform: translate(24px, 0px); }
+      21.1%, 100% { opacity: 0; transform: translate(24px, 0px); }
+    }
+    @keyframes fly-ret1 {
+      0%, 35.2% { opacity: 0; transform: translate(0px, 0px); }
+      35.8% { opacity: 1; transform: translate(0px, 0px); }
+      39.0% { opacity: 1; transform: translate(-62px, 0px); }
+      39.6%, 100% { opacity: 0; transform: translate(-62px, 0px); }
+    }
+    @keyframes fly-out2a {
+      0%, 41.8% { opacity: 0; transform: translate(0px, 0px); }
+      42.3% { opacity: 1; transform: translate(0px, 0px); }
+      44.0% { opacity: 1; transform: translate(24px, 0px); }
+      44.5%, 100% { opacity: 0; transform: translate(24px, 0px); }
+    }
+    @keyframes fly-out2b {
+      0%, 44.0% { opacity: 0; transform: translate(0px, 0px); }
+      44.5% { opacity: 1; transform: translate(0px, 0px); }
+      46.2% { opacity: 1; transform: translate(24px, 0px); }
+      46.7%, 100% { opacity: 0; transform: translate(24px, 0px); }
+    }
+    @keyframes fly-ret2 {
+      0%, 59.0% { opacity: 0; transform: translate(0px, 0px); }
+      59.6% { opacity: 1; transform: translate(0px, 0px); }
+      62.8% { opacity: 1; transform: translate(-62px, 0px); }
+      63.4%, 100% { opacity: 0; transform: translate(-62px, 0px); }
+    }
+
+    /* Peer session state and header status pills */
+    @keyframes peer-idle { 0%, 20.2% { opacity: 1; } 20.8%, 95.5% { opacity: 0; } 96.5%, 100% { opacity: 1; } }
+    @keyframes peer-act { 0%, 20.2% { opacity: 0; } 20.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes badge-t1 { 0%, 20.2% { opacity: 0; } 20.8%, 45.6% { opacity: 1; } 46.2%, 100% { opacity: 0; } }
+    @keyframes badge-t2 { 0%, 45.6% { opacity: 0; } 46.2%, 58.2% { opacity: 1; } 58.8%, 100% { opacity: 0; } }
+    @keyframes badge-done { 0%, 58.2% { opacity: 0; } 58.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+
+    @keyframes appear-21 { 0%, 21.0% { opacity: 0; } 21.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-26 { 0%, 26.0% { opacity: 0; } 26.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-32 { 0%, 32.0% { opacity: 0; } 32.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-46 { 0%, 46.0% { opacity: 0; } 46.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-49 { 0%, 49.0% { opacity: 0; } 49.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-53 { 0%, 53.0% { opacity: 0; } 53.8%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+    @keyframes appear-57 { 0%, 57.2% { opacity: 0; } 58.0%, 95.5% { opacity: 1; } 96.5%, 100% { opacity: 0; } }
+  </style>
+  <defs>
+    <pattern id="px-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect x="7" y="7" width="2" height="2" fill="#E3E6EA" shape-rendering="crispEdges"/>
+    </pattern>
+    <clipPath id="host-clip">
+      <path d="M26,18 H522 V21 H525 V24 H528 V288 H525 V291 H522 V294 H26 V291 H23 V288 H20 V24 H23 V21 H26 Z"/>
+    </clipPath>
+    <clipPath id="peer-clip">
+      <path d="M618,18 H894 V21 H897 V24 H900 V288 H897 V291 H894 V294 H618 V291 H615 V288 H612 V24 H615 V21 H618 Z"/>
+    </clipPath>
+    <clipPath id="prompt-clip">
+      <rect x="44" y="58" width="443" height="22"/>
+    </clipPath>
+  </defs>
+
+  <!-- Pixel drafting sheet background -->
+  <path d="M9,1 H911 V5 H915 V9 H919 V303 H915 V307 H911 V311 H9 V307 H5 V303 H1 V9 H5 V5 H9 Z" fill="#F8F9FA" shape-rendering="crispEdges"/>
+  <path d="M11,3 H909 V7 H913 V11 H917 V301 H913 V305 H909 V309 H11 V305 H7 V301 H3 V11 H7 V7 H11 Z" fill="url(#px-dots)" shape-rendering="crispEdges"/>
+  <path d="M9,1 H911 V5 H915 V9 H919 V303 H915 V307 H911 V311 H9 V307 H5 V303 H1 V9 H5 V5 H9 Z" fill="none" stroke="#D0D7DE" stroke-width="2" shape-rendering="crispEdges"/>
+
+  <!-- ===================================================================== -->
+  <!-- LEFT WINDOW: Host Terminal (Codex · gpt-6-astra)                      -->
+  <!-- ===================================================================== -->
+  <path d="M28,20 H528 V23 H531 V26 H534 V294 H531 V297 H528 V300 H28 V297 H25 V294 H22 V26 H25 V23 H28 Z" fill="#D8DEE4" shape-rendering="crispEdges"/>
+  <path d="M24,16 H524 V19 H527 V22 H530 V290 H527 V293 H524 V296 H24 V293 H21 V290 H18 V22 H21 V19 H24 Z" fill="#202124" shape-rendering="crispEdges"/>
+  <g clip-path="url(#host-clip)">
+    <rect x="18" y="16" width="512" height="280" fill="#10131C"/>
+    <rect x="18" y="16" width="512" height="3" fill="#7356F1" shape-rendering="crispEdges"/>
+    <rect x="18" y="19" width="512" height="33" fill="#181C2C"/>
+    <rect x="18" y="52" width="512" height="1" fill="#2B3048" shape-rendering="crispEdges"/>
+
+    <!-- Pixel traffic lights -->
+    <g shape-rendering="crispEdges">
+      <rect x="32" y="31" width="8" height="8" fill="#FF5F56"/>
+      <rect x="46" y="31" width="8" height="8" fill="#FFBD2E"/>
+      <rect x="60" y="31" width="8" height="8" fill="#27C93F"/>
+    </g>
+
+    <g transform="translate(80, 26) scale(0.8500)"><g shape-rendering="crispEdges"><g fill="#B1A7FF"><rect x="6" y="1" width="4" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="5" y="3" width="10" height="1"/></g><g fill="#8FA2FF"><rect x="4" y="4" width="12" height="1"/><rect x="2" y="5" width="15" height="1"/><rect x="1" y="6" width="16" height="1"/><rect x="1" y="7" width="16" height="1"/></g><g fill="#6E89FF"><rect x="1" y="8" width="5" height="1"/><rect x="8" y="8" width="9" height="1"/><rect x="1" y="9" width="6" height="1"/><rect x="9" y="9" width="9" height="1"/><rect x="2" y="10" width="6" height="1"/><rect x="10" y="10" width="9" height="1"/><rect x="3" y="11" width="4" height="1"/><rect x="9" y="11" width="10" height="1"/></g><g fill="#5064FF"><rect x="3" y="12" width="3" height="1"/><rect x="8" y="12" width="3" height="1"/><rect x="15" y="12" width="4" height="1"/><rect x="3" y="13" width="16" height="1"/><rect x="3" y="14" width="15" height="1"/><rect x="4" y="15" width="12" height="1"/></g><g fill="#3941FF"><rect x="5" y="16" width="10" height="1"/><rect x="9" y="17" width="6" height="1"/><rect x="10" y="18" width="4" height="1"/></g><g fill="#FFFFFF"><rect x="6" y="8" width="2" height="1"/><rect x="7" y="9" width="2" height="1"/><rect x="8" y="10" width="2" height="1"/><rect x="7" y="11" width="2" height="1"/><rect x="6" y="12" width="2" height="1"/><rect x="11" y="12" width="4" height="1"/></g></g></g>
+    <text x="103" y="40" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="700" fill="#F0F6FC">codex</text>
+    <text x="144" y="40" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11.5" fill="#B4A2FF">· gpt-6-astra</text>
+    <text x="516" y="40" text-anchor="end" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11" fill="#8B949E">~/sync-engine (feat/wal)</text>
+
+    <!-- Row 1: User Prompt + Stepped Typing -->
+    <text x="34" y="73" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="12" font-weight="700" fill="#B4A2FF">❯</text>
+    <g clip-path="url(#prompt-clip)">
+      <text x="44" y="73" textLength="429" lengthAdjust="spacing" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.8" fill="#F0F6FC"><tspan fill="#B4A2FF" font-weight="700">$cospan:agy</tspan> Ask carbon to stress-test docs/plan.md &amp; propose route</text>
+      <g class="curtain" opacity="0">
+        <rect x="44" y="58" width="449" height="22" fill="#10131C" shape-rendering="crispEdges"/>
+        <rect class="cursor-top" x="44" y="61" width="7" height="14" fill="#B4A2FF" shape-rendering="crispEdges"/>
+      </g>
+    </g>
+
+    <!-- Enter Keycap Flash -->
+    <g class="enter-pill" opacity="0">
+      <rect x="488" y="60" width="28" height="17" fill="#7356F1" shape-rendering="crispEdges"/>
+      <text x="502" y="72" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.5" font-weight="700" fill="#FFFFFF">⏎</text>
+    </g>
+
+    <!-- Row 2: Session Chips (Turn 1 + Multi-Turn Continuation) -->
+    <g class="c1-run" opacity="0">
+      <rect x="34" y="84" width="244" height="22" fill="#122138" stroke="#1A73E8" stroke-width="1" shape-rendering="crispEdges"/>
+      <text y="99" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.4">
+        <tspan class="spin-dot" x="43" fill="#79C0FF" font-weight="700">◌</tspan>
+        <tspan x="58" fill="#E6EDF3" font-weight="600">agy-9c1e</tspan>
+        <tspan x="118" fill="#8B949E">· carbon</tspan>
+        <tspan x="224" fill="#79C0FF">turn 1</tspan>
+      </text>
+    </g>
+    <g class="c1-done" opacity="1">
+      <rect x="34" y="84" width="244" height="22" fill="#102923" stroke="#2EA043" stroke-width="1" shape-rendering="crispEdges"/>
+      <text y="99" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.4">
+        <tspan x="43" fill="#3FB950" font-weight="700">✓</tspan>
+        <tspan x="58" fill="#F0F6FC" font-weight="600">agy-9c1e</tspan>
+        <tspan x="118" fill="#8B949E">· turn 1</tspan>
+        <tspan x="190" fill="#56D364" font-weight="700">Route B: WAL</tspan>
+      </text>
+    </g>
+
+    <!-- Companion Turn 2 Chip in same session -->
+    <g class="c2-run" opacity="0">
+      <rect x="288" y="84" width="226" height="22" fill="#122138" stroke="#1A73E8" stroke-width="1" shape-rendering="crispEdges"/>
+      <text y="99" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.4">
+        <tspan class="spin-dot" x="297" fill="#79C0FF" font-weight="700">◌</tspan>
+        <tspan x="312" fill="#E6EDF3" font-weight="600">turn 2</tspan>
+        <tspan x="358" fill="#8B949E">resumed</tspan>
+        <tspan x="450" fill="#79C0FF">verify</tspan>
+      </text>
+    </g>
+    <g class="c2-done" opacity="1">
+      <rect x="288" y="84" width="226" height="22" fill="#102923" stroke="#2EA043" stroke-width="1" shape-rendering="crispEdges"/>
+      <text y="99" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.4">
+        <tspan x="297" fill="#3FB950" font-weight="700">✓</tspan>
+        <tspan x="312" fill="#F0F6FC" font-weight="600">turn 2</tspan>
+        <tspan x="358" fill="#8B949E">resumed</tspan>
+        <tspan x="434" fill="#56D364" font-weight="700">0 locks</tspan>
+      </text>
+    </g>
+
+    <!-- Row 3: Concurrent Astra Local Audit (Non-blocking) -->
+    <g class="local-run" opacity="0">
+      <text x="34" y="125" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11" fill="#C9D1D9">
+        <tspan class="spin-dot" fill="#B4A2FF">●</tspan> Meanwhile in Astra: auditing <tspan fill="#B4A2FF">14 SQL callers</tspan>...
+      </text>
+    </g>
+    <g class="local-done" opacity="1">
+      <text x="34" y="125" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11" fill="#8B949E">
+        <tspan fill="#3FB950" font-weight="700">✓</tspan> Audited <tspan fill="#C9D1D9">14 SQL callers locally</tspan> (unblocked)
+      </text>
+    </g>
+
+    <!-- Row 4: Multi-Turn Auto-Continue Delta in Same Session -->
+    <g class="cont-line" opacity="1">
+      <text x="34" y="147" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.6" fill="#C9D1D9">
+        <tspan fill="#79C0FF" font-weight="700">◆</tspan> Auto-continue <tspan fill="#79C0FF" font-weight="600">agy-9c1e</tspan> <tspan fill="#58A6FF">──▶</tspan> <tspan fill="#E2D9FF">"Verify crash recovery on WAL replay"</tspan>
+      </text>
+    </g>
+
+    <!-- Row 5: Async Wakeup & Verified Architecture Card -->
+    <g class="wakeup-card" opacity="1">
+      <rect x="34" y="160" width="480" height="82" fill="#161B28" shape-rendering="crispEdges"/>
+      <rect x="34" y="160" width="3" height="82" fill="#00C48C" shape-rendering="crispEdges"/>
+      <text x="46" y="179" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11.1" font-weight="700" fill="#F0F6FC">
+        <tspan fill="#00C48C">◆</tspan> Async wakeup (turn 2 done) · Verified Route B:
+      </text>
+      <text y="201" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.9">
+        <tspan x="46" fill="#79C0FF" font-weight="700">1.</tspan>
+        <tspan x="66" fill="#E6EDF3">Replace dual-write with append-only shadow WAL</tspan>
+      </text>
+      <text y="223" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.9">
+        <tspan x="46" fill="#79C0FF" font-weight="700">2.</tspan>
+        <tspan x="66" fill="#C9D1D9">Resume from last checkpoint cursor on crash</tspan>
+      </text>
+
+      <!-- Bottom Follow-up Prompt -->
+      <text x="34" y="269" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11.5" fill="#B4A2FF" font-weight="700">❯</text>
+      <rect class="cursor-bot" x="48" y="257" width="7" height="14" fill="#B4A2FF" shape-rendering="crispEdges"/>
+      <text x="61" y="269" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11" fill="#6E7681">Implement Route B in src/sync.ts?</text>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- CENTER BRIDGE: Bidirectional Multi-Turn Cospan Switch                 -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <!-- Left wire: Codex Violet -->
+    <rect x="530" y="155" width="40" height="3" fill="#7356F1"/>
+    <!-- Right wire: Antigravity Blue -->
+    <rect x="570" y="155" width="40" height="3" fill="#1A73E8"/>
+
+    <!-- Port pins -->
+    <rect x="528" y="149" width="5" height="14" fill="#202124"/>
+    <rect x="529" y="151" width="3" height="10" fill="#7356F1"/>
+
+    <rect x="607" y="149" width="5" height="14" fill="#202124"/>
+    <rect x="608" y="151" width="3" height="10" fill="#1A73E8"/>
+  </g>
+
+  <!-- Animated Multi-Turn Packets (drawn beneath Cospan switch) -->
+  <g shape-rendering="crispEdges">
+    <!-- Turn 1 Outbound: Violet -> Blue -->
+    <g class="pkt-out1a" opacity="0">
+      <rect x="533" y="151" width="12" height="10" fill="#7356F1"/>
+      <rect x="535" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="pkt-out1b" opacity="0">
+      <rect x="572" y="151" width="12" height="10" fill="#1A73E8"/>
+      <rect x="574" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+    <!-- Turn 1 Return -->
+    <g class="pkt-ret1" opacity="0">
+      <rect x="595" y="151" width="12" height="10" fill="#00C48C"/>
+      <rect x="597" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+    <!-- Turn 2 Outbound (`continue`): Violet -> Blue -->
+    <g class="pkt-out2a" opacity="0">
+      <rect x="533" y="151" width="12" height="10" fill="#7356F1"/>
+      <rect x="535" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="pkt-out2b" opacity="0">
+      <rect x="572" y="151" width="12" height="10" fill="#1A73E8"/>
+      <rect x="574" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+    <!-- Turn 2 Return -->
+    <g class="pkt-ret2" opacity="0">
+      <rect x="595" y="151" width="12" height="10" fill="#00C48C"/>
+      <rect x="597" y="153" width="8" height="6" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Center Cospan pixel tile (above packets) -->
+    <rect x="557" y="143" width="26" height="26" fill="#202124"/>
+    <rect x="559" y="145" width="22" height="22" fill="#FFFFFF"/>
+  </g>
+  <g transform="translate(559, 145) scale(1.1000)"><g shape-rendering="crispEdges">
+    <g fill="#3B35B5">
+      <rect x="3" y="1" width="14" height="1"/>
+      <rect x="2" y="2" width="16" height="1"/>
+      <rect x="0" y="3" width="20" height="4"/>
+      <rect x="5" y="7" width="10" height="1"/>
+      <rect x="7" y="8" width="6" height="1"/>
+      <rect x="8" y="9" width="4" height="1"/>
+      <rect x="9" y="10" width="2" height="1"/>
+      <rect x="0" y="13" width="2" height="1"/>
+      <rect x="18" y="13" width="2" height="1"/>
+      <rect x="0" y="14" width="4" height="1"/>
+      <rect x="16" y="14" width="4" height="1"/>
+      <rect x="0" y="15" width="5" height="1"/>
+      <rect x="15" y="15" width="5" height="1"/>
+      <rect x="0" y="16" width="6" height="1"/>
+      <rect x="14" y="16" width="6" height="1"/>
+      <rect x="1" y="17" width="5" height="1"/>
+      <rect x="14" y="17" width="5" height="1"/>
+      <rect x="2" y="18" width="5" height="1"/>
+      <rect x="13" y="18" width="5" height="1"/>
+      <rect x="3" y="19" width="4" height="1"/>
+      <rect x="13" y="19" width="4" height="1"/>
+    </g>
+    <g fill="#4C46CC">
+      <rect x="3" y="0" width="14" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="17" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="18" y="2" width="1" height="1"/>
+    </g>
+    <g fill="#00C48C">
+      <rect x="0" y="7" width="5" height="1"/>
+      <rect x="0" y="8" width="7" height="1"/>
+      <rect x="0" y="9" width="8" height="1"/>
+      <rect x="0" y="10" width="9" height="1"/>
+      <rect x="0" y="11" width="10" height="1"/>
+      <rect x="0" y="12" width="9" height="1"/>
+      <rect x="2" y="13" width="6" height="1"/>
+      <rect x="4" y="14" width="4" height="1"/>
+      <rect x="5" y="15" width="3" height="1"/>
+      <rect x="6" y="16" width="1" height="2"/>
+    </g>
+    <g fill="#00B4FF">
+      <rect x="15" y="7" width="5" height="1"/>
+      <rect x="13" y="8" width="7" height="1"/>
+      <rect x="12" y="9" width="8" height="1"/>
+      <rect x="11" y="10" width="9" height="1"/>
+      <rect x="10" y="11" width="10" height="1"/>
+      <rect x="11" y="12" width="9" height="1"/>
+      <rect x="12" y="13" width="6" height="1"/>
+      <rect x="12" y="14" width="4" height="1"/>
+      <rect x="12" y="15" width="3" height="1"/>
+      <rect x="13" y="16" width="1" height="2"/>
+    </g>
+    <g fill="#FFE03D">
+      <rect x="9" y="12" width="2" height="1"/>
+      <rect x="8" y="13" width="4" height="3"/>
+      <rect x="7" y="16" width="6" height="4"/>
+    </g>
+  </g></g>
+
+  <!-- ===================================================================== -->
+  <!-- RIGHT PEER SESSION: agy · gemini-4-carbon (2 Turns in `agy-9c1e`)     -->
+  <!-- ===================================================================== -->
+  <path d="M620,20 H900 V23 H903 V26 H906 V294 H903 V297 H900 V300 H620 V297 H617 V294 H614 V26 H617 V23 H620 Z" fill="#D8DEE4" shape-rendering="crispEdges"/>
+  <path d="M616,16 H896 V19 H899 V22 H902 V290 H899 V293 H896 V296 H616 V293 H613 V290 H610 V22 H613 V19 H616 Z" fill="#202124" shape-rendering="crispEdges"/>
+  <g clip-path="url(#peer-clip)">
+    <rect x="610" y="16" width="292" height="280" fill="#0F141B"/>
+    <rect x="610" y="16" width="292" height="3" fill="#1A73E8" shape-rendering="crispEdges"/>
+    <rect x="610" y="19" width="292" height="33" fill="#171E29"/>
+    <rect x="610" y="52" width="292" height="1" fill="#293241" shape-rendering="crispEdges"/>
+
+    <g transform="translate(622, 27) scale(1.0625)"><g shape-rendering="crispEdges"><g fill="#3D85FC"><rect x="9" y="8" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="10" y="10" width="2" height="1"/><rect x="11" y="11" width="2" height="1"/><rect x="12" y="12" width="2" height="1"/></g><g fill="#64B6F5"><rect x="6" y="8" width="1" height="1"/><rect x="4" y="10" width="2" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="2" y="12" width="2" height="1"/></g><g fill="#85C64E"><rect x="5" y="4" width="1" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="4" y="6" width="2" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/></g><g fill="#F6912E"><rect x="7" y="2" width="2" height="1"/><rect x="7" y="3" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="8" y="5" width="1" height="1"/></g><g fill="#955FA5"><rect x="9" y="6" width="3" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g><g fill="#EF5441"><rect x="9" y="3" width="1" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/></g><g fill="#6C73D8"><rect x="9" y="7" width="2" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/></g><g fill="#D9B031"><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/></g><g fill="#43AEAA"><rect x="6" y="6" width="1" height="1"/><rect x="5" y="7" width="2" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/></g></g></g>
+    <text x="644" y="40" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#F0F6FC">agy</text>
+    <text x="670" y="40" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.4" fill="#79C0FF">· gemini-4-carbon</text>
+
+    <!-- Status Pills: IDLE -> TURN 1 · BRAIN -> TURN 2 · RESUMED -> ✓ VERIFIED -->
+    <g class="b-idle" opacity="0">
+      <rect x="846" y="27" width="46" height="16" fill="#222A38" shape-rendering="crispEdges"/>
+      <text x="869" y="38.5" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="9.2" font-weight="700" fill="#8B949E">IDLE</text>
+    </g>
+    <g class="b-t1" opacity="0">
+      <rect x="800" y="27" width="92" height="16" fill="#143261" shape-rendering="crispEdges"/>
+      <text x="846" y="38.5" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="8.9" font-weight="700" fill="#79C0FF">TURN 1 · BRAIN</text>
+    </g>
+    <g class="b-t2" opacity="0">
+      <rect x="792" y="27" width="100" height="16" fill="#1D3B6E" shape-rendering="crispEdges"/>
+      <text x="842" y="38.5" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="8.7" font-weight="700" fill="#A5D6FF">TURN 2 · RESUMED</text>
+    </g>
+    <g class="b-done" opacity="1">
+      <rect x="820" y="27" width="72" height="16" fill="#123D31" shape-rendering="crispEdges"/>
+      <text x="856" y="38.5" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="9.0" font-weight="700" fill="#56D364">✓ VERIFIED</text>
+    </g>
+
+    <!-- Idle View -->
+    <g class="p-idle" opacity="0">
+      <text x="624" y="90" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="11" fill="#6E7681">$ agy --headless --readonly</text>
+      <text x="624" y="112" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.5" fill="#484F58">second-brain slot standing by...</text>
+    </g>
+
+    <!-- Active 2-Turn Peer Session (`agy-9c1e`) -->
+    <g class="p-act" opacity="1">
+      <text x="624" y="70" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.3" fill="#8B949E">
+        session: <tspan fill="#79C0FF" font-weight="600">agy-9c1e</tspan> <tspan fill="#6E7681">(readonly)</tspan>
+      </text>
+
+      <!-- Turn 1 -->
+      <text class="t1-l1" opacity="1" x="624" y="93" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.5" fill="#C9D1D9">
+        <tspan fill="#79C0FF">▸</tspan> read docs/plan.md &amp; src/sync.ts
+      </text>
+      <text class="t1-l2" opacity="1" x="624" y="114" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.5" fill="#C9D1D9">
+        <tspan fill="#79C0FF">▸</tspan> trace retry lock ordering
+      </text>
+      <g class="t1-box" opacity="1">
+        <rect x="624" y="125" width="264" height="40" fill="#142236" shape-rendering="crispEdges"/>
+        <rect x="624" y="125" width="2" height="40" fill="#1A73E8" shape-rendering="crispEdges"/>
+        <text x="632" y="141" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.3" fill="#FFA657">
+          <tspan font-weight="700">★</tspan> Dual-write deadlocks under retry;
+        </text>
+        <text x="644" y="157" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.3" fill="#79C0FF">
+          propose WAL replay ──▶ sent
+        </text>
+      </g>
+
+      <!-- Turn 2 (resumed in same session agy-9c1e) -->
+      <text class="t2-div" opacity="1" x="624" y="188" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.1" font-weight="700" fill="#58A6FF">
+        ── turn 2 (resumed agy-9c1e) ────
+      </text>
+      <text class="t2-l1" opacity="1" x="624" y="211" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.2" fill="#C9D1D9">
+        <tspan fill="#79C0FF">▸</tspan> verify cursor checkpoint idempotency
+      </text>
+      <text class="t2-l2" opacity="1" x="624" y="232" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.2" fill="#C9D1D9">
+        <tspan fill="#79C0FF">▸</tspan> simulate mid-flush crash replay
+      </text>
+      <text class="t2-l3" opacity="1" x="624" y="256" font-family="ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace" font-size="10.6" font-weight="700" fill="#56D364">
+        ✓ Crash-safe · 0 lock contention
+      </text>
+    </g>
+  </g>
+</svg>

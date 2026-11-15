@@ -1,0 +1,596 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 384" width="920" height="384" role="img" aria-label="Screen Studio style animated computer-use demo: camera zooms into Claude Code dispatching GPT-6.1-Terra via Cospan, pans and zooms as Codex Terra controls the macOS cursor to apply coupon SAVE20 and toggle 375px mobile view, catches a sticky banner blocking Pay CTA, and pulls back as Claude receives the async bug report">
+  <style>
+    /* ===================================================================
+       16s Screen Studio Choreography
+       0% - 2%    : Full desktop -> zoom into Claude Code (left)
+       2% - 19%   : Shot 1 (1.50x on Claude Code): type /cospan:codex, spawn 7d3f, start local tests
+       19% - 25%  : Smooth Screen Studio glide right onto Browser + Terra HUD
+       25% - 46%  : Shot 2 (1.52x on Browser): Terra cursor clicks Promo, types SAVE20, clicks Apply
+       46% - 66%  : Shot 3 (1.65x push on Mobile CTA): Terra clicks 375px, sticky banner overlaps Pay, red capture
+       66% - 73%  : Smooth pull-back to 1.0x full desktop
+       73% - 95%  : Shot 4 (1.0x full desktop): async wakeup card in Claude + green local tests
+       95% - 100% : Clean reset
+       =================================================================== */
+
+    .camera-rig {
+      transform-origin: 0px 0px;
+      animation: cam-move 16s infinite;
+    }
+
+    @keyframes cam-move {
+      0%, 1.2% {
+        transform: translate(0px, 0px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      5.5%, 18.5% {
+        transform: translate(42px, -16px) scale(1.50);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      25.0%, 45.5% {
+        transform: translate(-532px, -14px) scale(1.52);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      50.5%, 65.5% {
+        transform: translate(-622px, -92px) scale(1.65);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      72.5%, 95.5% {
+        transform: translate(0px, 0px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+
+    /* Corner Screen Studio lens indicator */
+    .lens-claude { animation: vis-lens-1 16s infinite; }
+    .lens-terra  { animation: vis-lens-2 16s infinite; }
+    .lens-wide   { animation: vis-lens-3 16s infinite; }
+    @keyframes vis-lens-1 { 0%, 2.5% { opacity: 0; } 3.5%, 20.5% { opacity: 1; } 21.5%, 100% { opacity: 0; } }
+    @keyframes vis-lens-2 { 0%, 20.5% { opacity: 0; } 21.5%, 67.5% { opacity: 1; } 68.5%, 100% { opacity: 0; } }
+    @keyframes vis-lens-3 { 0%, 2.5% { opacity: 1; } 3.5%, 67.5% { opacity: 0; } 68.5%, 100% { opacity: 1; } }
+
+    /* Claude prompt typing (Shot 1) */
+    .curtain { animation: type-prompt 16s infinite, hide-curtain 16s infinite; }
+    .blink-cur { animation: blink 0.65s step-end infinite; }
+    .pulse-dot { animation: pulse 0.9s ease-in-out infinite; }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    @keyframes type-prompt {
+      0%, 4.5% { transform: translateX(0px); animation-timing-function: steps(48, end); }
+      13.5%, 96.0% { transform: translateX(344px); animation-timing-function: step-end; }
+      96.5%, 100% { transform: translateX(0px); }
+    }
+    @keyframes hide-curtain {
+      0%, 14.5% { opacity: 1; animation-timing-function: step-end; }
+      14.6%, 96.4% { opacity: 0; animation-timing-function: step-end; }
+      96.5%, 100% { opacity: 1; }
+    }
+
+    .enter-key { animation: flash-enter 16s infinite; }
+    @keyframes flash-enter {
+      0%, 13.3% { opacity: 0; }
+      13.6%, 16.2% { opacity: 1; }
+      16.8%, 100% { opacity: 0; }
+    }
+
+    .spawn-row { animation: appear-15 16s infinite; }
+    @keyframes appear-15 { 0%, 14.8% { opacity: 0; } 15.4%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    .chip-running { animation: c-run 16s infinite; }
+    .chip-done    { animation: c-done 16s infinite; }
+    @keyframes c-run  { 0%, 15.2% { opacity: 0; } 15.8%, 68.5% { opacity: 1; } 69.2%, 100% { opacity: 0; } }
+    @keyframes c-done { 0%, 68.5% { opacity: 0; } 69.2%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    .local-writing { animation: l-run 16s infinite; }
+    .local-passed  { animation: l-done 16s infinite; }
+    @keyframes l-run  { 0%, 17.0% { opacity: 0; } 17.6%, 45.0% { opacity: 1; } 45.8%, 100% { opacity: 0; } }
+    @keyframes l-done { 0%, 45.0% { opacity: 0; } 45.8%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    .wakeup-card { animation: vis-wake 16s infinite; }
+    @keyframes vis-wake {
+      0%, 70.0% { opacity: 0; transform: translateY(6px); }
+      72.5%, 95.8% { opacity: 1; transform: translateY(0px); }
+      96.8%, 100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    /* Menu bar Codex Terra status pills */
+    .hud-idle { animation: h-idle 16s infinite; }
+    .hud-ctrl { animation: h-ctrl 16s infinite; }
+    .hud-sent { animation: h-sent 16s infinite; }
+    @keyframes h-idle { 0%, 19.5% { opacity: 1; } 20.2%, 95.8% { opacity: 0; } 96.8%, 100% { opacity: 1; } }
+    @keyframes h-ctrl { 0%, 19.5% { opacity: 0; } 20.2%, 67.0% { opacity: 1; } 67.8%, 100% { opacity: 0; } }
+    @keyframes h-sent { 0%, 67.0% { opacity: 0; } 67.8%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    /* Browser state animations driven by Terra */
+    .input-focus { animation: in-focus 16s infinite; }
+    @keyframes in-focus { 0%, 28.8% { opacity: 0; } 29.4%, 40.5% { opacity: 1; } 41.5%, 100% { opacity: 0; } }
+
+    .coupon-curtain { animation: type-coupon 16s infinite, vis-coupon-box 16s infinite; }
+    .coupon-typed   { animation: vis-typed 16s infinite; }
+    @keyframes vis-typed { 0%, 30.0% { opacity: 0; } 30.2%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+    @keyframes type-coupon {
+      0%, 30.2% { transform: translateX(0px); animation-timing-function: steps(6, end); }
+      35.5%, 96.0% { transform: translateX(52px); animation-timing-function: step-end; }
+      96.8%, 100% { transform: translateX(0px); }
+    }
+    @keyframes vis-coupon-box { 0%, 35.8% { opacity: 1; } 36.0%, 96.4% { opacity: 0; } 96.8%, 100% { opacity: 1; } }
+
+    .coupon-applied { animation: app-40 16s infinite; }
+    .price-before   { animation: pr-bef 16s infinite; }
+    .price-after    { animation: app-40 16s infinite; }
+    @keyframes pr-bef { 0%, 39.8% { opacity: 1; } 40.3%, 95.8% { opacity: 0; } 96.8%, 100% { opacity: 1; } }
+    @keyframes app-40 { 0%, 39.8% { opacity: 0; } 40.4%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    /* Mobile 375px toggle and viewport rails */
+    .btn-375-on { animation: app-48 16s infinite; }
+    .mob-rails  { animation: app-48 16s infinite; }
+    @keyframes app-48 { 0%, 48.0% { opacity: 0; } 49.0%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    .sticky-banner { animation: slide-sticky 16s infinite; }
+    @keyframes slide-sticky {
+      0%, 49.5% { opacity: 0; transform: translateY(20px); }
+      51.8%, 95.8% { opacity: 1; transform: translateY(0px); }
+      96.8%, 100% { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* Bug detection box + camera shutter flash */
+    .bug-overlay { animation: app-58 16s infinite; }
+    @keyframes app-58 { 0%, 57.5% { opacity: 0; } 58.5%, 95.8% { opacity: 1; } 96.8%, 100% { opacity: 0; } }
+
+    .shutter-flash { animation: flash-shot 16s infinite; }
+    @keyframes flash-shot {
+      0%, 58.2% { opacity: 0; }
+      58.8% { opacity: 0.65; }
+      61.0%, 100% { opacity: 0; }
+    }
+
+    /* ===================================================================
+       Codex Terra Live Cursor and Screen Studio Click Ripples!
+       Targets on desktop:
+         Start (780, 110)
+         1. Promo input: (624, 150)  -> click @ 29.0%
+         2. Apply btn  : (734, 150)  -> click @ 39.5%
+         3. 375px btn  : (840, 65)   -> click @ 48.0%
+         4. Pay CTA    : (663, 248)  -> click @ 56.8% (blocked!)
+         Park (810, 298)
+       =================================================================== */
+    .terra-cursor {
+      animation: move-cursor 16s infinite;
+    }
+    @keyframes move-cursor {
+      0%, 20.5% {
+        opacity: 0;
+        transform: translate(785px, 112px);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      23.5% {
+        opacity: 1;
+        transform: translate(765px, 118px);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      28.5% {
+        opacity: 1;
+        transform: translate(624px, 150px) scale(1);
+      }
+      29.2% {
+        opacity: 1;
+        transform: translate(624px, 150px) scale(0.86);
+      }
+      30.0%, 35.8% {
+        opacity: 1;
+        transform: translate(624px, 150px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      39.0% {
+        opacity: 1;
+        transform: translate(734px, 150px) scale(1);
+      }
+      39.7% {
+        opacity: 1;
+        transform: translate(734px, 150px) scale(0.86);
+      }
+      40.6%, 43.0% {
+        opacity: 1;
+        transform: translate(734px, 150px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      47.5% {
+        opacity: 1;
+        transform: translate(840px, 65px) scale(1);
+      }
+      48.2% {
+        opacity: 1;
+        transform: translate(840px, 65px) scale(0.86);
+      }
+      49.2%, 51.5% {
+        opacity: 1;
+        transform: translate(840px, 65px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      56.2% {
+        opacity: 1;
+        transform: translate(663px, 258px) scale(1);
+      }
+      56.9% {
+        opacity: 1;
+        transform: translate(663px, 258px) scale(0.85);
+      }
+      57.8%, 63.5% {
+        opacity: 1;
+        transform: translate(663px, 258px) scale(1);
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      67.5% {
+        opacity: 0;
+        transform: translate(795px, 290px);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(785px, 112px);
+      }
+    }
+
+    /* Click ripple circles */
+    .rip-1 { transform-origin: 624px 150px; animation: ripple-1 16s infinite; }
+    .rip-2 { transform-origin: 734px 150px; animation: ripple-2 16s infinite; }
+    .rip-3 { transform-origin: 840px 65px;  animation: ripple-3 16s infinite; }
+    .rip-4 { transform-origin: 663px 258px; animation: ripple-4 16s infinite; }
+
+    @keyframes ripple-1 {
+      0%, 28.9% { opacity: 0; transform: scale(0.25); }
+      29.3% { opacity: 0.95; transform: scale(0.45); }
+      32.5%, 100% { opacity: 0; transform: scale(2.1); }
+    }
+    @keyframes ripple-2 {
+      0%, 39.4% { opacity: 0; transform: scale(0.25); }
+      39.8% { opacity: 0.95; transform: scale(0.45); }
+      43.0%, 100% { opacity: 0; transform: scale(2.1); }
+    }
+    @keyframes ripple-3 {
+      0%, 47.9% { opacity: 0; transform: scale(0.25); }
+      48.3% { opacity: 0.95; transform: scale(0.45); }
+      51.5%, 100% { opacity: 0; transform: scale(2.1); }
+    }
+    @keyframes ripple-4 {
+      0%, 56.6% { opacity: 0; transform: scale(0.25); }
+      57.0% { opacity: 1; transform: scale(0.45); }
+      60.5%, 100% { opacity: 0; transform: scale(2.4); }
+    }
+
+    /* Async Cospan return pulse across windows at 67.5% - 70.5% */
+    .cospan-beam { animation: beam-ret 16s infinite; }
+    @keyframes beam-ret {
+      0%, 67.0% { opacity: 0; transform: translateX(0px); }
+      67.6% { opacity: 1; transform: translateX(0px); }
+      70.6% { opacity: 1; transform: translateX(-86px); }
+      71.4%, 100% { opacity: 0; transform: translateX(-86px); }
+    }
+  </style>
+
+  <defs>
+    <!-- Screen Studio outer stage gradient -->
+    <linearGradient id="studio-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0E111D"/>
+      <stop offset="52%" stop-color="#1D1635"/>
+      <stop offset="100%" stop-color="#101E2E"/>
+    </linearGradient>
+    <radialGradient id="glow-left" cx="0.22" cy="0.5" r="0.45">
+      <stop offset="0%" stop-color="#D97757" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#D97757" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-right" cx="0.78" cy="0.5" r="0.48">
+      <stop offset="0%" stop-color="#7356F1" stop-opacity="0.24"/>
+      <stop offset="100%" stop-color="#7356F1" stop-opacity="0"/>
+    </radialGradient>
+    <!-- macOS Desktop Wallpaper -->
+    <linearGradient id="mac-wall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A1F36"/>
+      <stop offset="50%" stop-color="#261F42"/>
+      <stop offset="100%" stop-color="#19283D"/>
+    </linearGradient>
+    <clipPath id="stage-clip">
+      <rect x="1" y="1" width="918" height="382" rx="14"/>
+    </clipPath>
+    <clipPath id="desktop-clip">
+      <rect x="28" y="18" width="864" height="344" rx="12"/>
+    </clipPath>
+    <clipPath id="claude-prompt-clip">
+      <rect x="64" y="84" width="352" height="20"/>
+    </clipPath>
+    <clipPath id="coupon-clip">
+      <rect x="570" y="138" width="60" height="18"/>
+    </clipPath>
+    <clipPath id="browser-body-clip">
+      <rect x="449" y="80" width="428" height="267"/>
+    </clipPath>
+  </defs>
+
+  <!-- =================================================================== -->
+  <!-- OUTER SCREEN STUDIO STAGE (920 x 384)                               -->
+  <!-- =================================================================== -->
+  <g clip-path="url(#stage-clip)">
+    <rect x="0" y="0" width="920" height="384" fill="url(#studio-bg)"/>
+    <rect x="0" y="0" width="920" height="384" fill="url(#glow-left)"/>
+    <rect x="0" y="0" width="920" height="384" fill="url(#glow-right)"/>
+
+    <!-- ================================================================= -->
+    <!-- CAMERA RIG: Smoothly zooms & pans across the macOS Desktop        -->
+    <!-- ================================================================= -->
+    <g class="camera-rig">
+      <!-- Soft Studio Drop Shadow under macOS Display -->
+      <rect x="32" y="24" width="864" height="346" rx="14" fill="#05070D" fill-opacity="0.55"/>
+
+      <g clip-path="url(#desktop-clip)">
+        <!-- macOS Wallpaper -->
+        <rect x="28" y="18" width="864" height="344" fill="url(#mac-wall)"/>
+
+        <!-- macOS Top Menu Bar -->
+        <rect x="28" y="18" width="864" height="23" fill="#0D101C" fill-opacity="0.86"/>
+        <line x1="28" y1="41" x2="892" y2="41" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="1"/>
+        <text x="44" y="33.5" font-family="system-ui, -apple-system, sans-serif" font-size="10.5" font-weight="700" fill="#F0F6FC">&#63743;  Claude Code</text>
+        <text x="136" y="33.5" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="#94A3B8">Chrome   Window</text>
+
+        <!-- Codex Terra Screen-Control Menu Bar Pill -->
+        <g class="hud-idle" opacity="0">
+          <rect x="652" y="21.5" width="162" height="16" rx="8" fill="#1E2438"/>
+          <text x="733" y="32.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.8" fill="#94A3B8">codex · terra standby</text>
+        </g>
+        <g class="hud-ctrl" opacity="0">
+          <rect x="586" y="21" width="234" height="17" rx="8.5" fill="#4E35D9" stroke="#A78BFA" stroke-width="0.8"/>
+          <circle class="pulse-dot" cx="599" cy="29.5" r="3.2" fill="#E9D5FF"/>
+          <text x="609" y="32.8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.9" font-weight="700" fill="#FFFFFF">Codex · gpt-6.1-terra controlling GUI</text>
+        </g>
+        <g class="hud-sent" opacity="1">
+          <rect x="634" y="21" width="182" height="17" rx="8.5" fill="#0F513D" stroke="#34D399" stroke-width="0.8"/>
+          <text x="725" y="32.8" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.9" font-weight="700" fill="#A7F3D0">✓ Terra GUI report delivered</text>
+        </g>
+
+        <text x="880" y="33.5" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" fill="#CBD5E1">00:48</text>
+
+        <!-- ============================================================= -->
+        <!-- LEFT WINDOW: Claude Code Terminal (x=42..434, y=50..348)      -->
+        <!-- ============================================================= -->
+        <rect x="44" y="53" width="392" height="298" rx="9" fill="#06080F" fill-opacity="0.45"/>
+        <rect x="42" y="50" width="392" height="298" rx="8" fill="#121318" stroke="#303646" stroke-width="1"/>
+        <path d="M42,58 a8,8 0 0,1 8,-8 h376 a8,8 0 0,1 8,8 v20 h-392 z" fill="#201A18"/>
+        <line x1="42" y1="78" x2="434" y2="78" stroke="#382D29" stroke-width="1"/>
+        <circle cx="56" cy="64" r="4" fill="#FF5F56"/>
+        <circle cx="68" cy="64" r="4" fill="#FFBD2E"/>
+        <circle cx="80" cy="64" r="4" fill="#27C93F"/>
+        <text x="94" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" fill="#F0F6FC">claude</text>
+        <text x="133" y="68" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.2" fill="#FFA657">· sonnet</text>
+        <text x="422" y="68" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" fill="#8B949E">~/storefront</text>
+
+        <!-- Row 1: Prompt -->
+        <text x="53" y="98" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.8" font-weight="700" fill="#FFA657">❯</text>
+        <g clip-path="url(#claude-prompt-clip)">
+          <text x="65" y="98" textLength="340" lengthAdjust="spacing" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.1" fill="#F0F6FC"><tspan fill="#FFA657" font-weight="700">/cospan:codex</tspan> Have terra test checkout coupon flow</text>
+          <g class="curtain" opacity="0">
+            <rect x="65" y="85" width="352" height="18" fill="#121318"/>
+            <rect class="blink-cur" x="65" y="87" width="6" height="13" fill="#D97757"/>
+          </g>
+        </g>
+        <g class="enter-key" opacity="0">
+          <rect x="406" y="86" width="20" height="15" rx="3" fill="#D97757"/>
+          <text x="416" y="97" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="700" fill="#FFFFFF">⏎</text>
+        </g>
+
+        <!-- Row 2: Detached Spawn -->
+        <g class="spawn-row" opacity="1">
+          <text x="53" y="120" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.0" fill="#C9D1D9">
+            <tspan fill="#FFA657" font-weight="700">◆</tspan> Spawned <tspan fill="#B4A2FF" font-weight="600">computer-use</tspan> peer <tspan fill="#8B949E">(non-blocking)</tspan>
+          </text>
+        </g>
+
+        <!-- Row 3: Async Status Chip -->
+        <g class="chip-running" opacity="0">
+          <rect x="53" y="129" width="266" height="21" rx="4" fill="#1B1833" stroke="#7356F1" stroke-width="1"/>
+          <text y="143" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.8">
+            <tspan class="pulse-dot" x="62" fill="#B4A2FF" font-weight="700">◌</tspan>
+            <tspan x="76" fill="#E2D9FF" font-weight="600">7d3f</tspan>
+            <tspan x="108" fill="#8B949E">· codex · terra</tspan>
+            <tspan x="262" fill="#B4A2FF">driving GUI</tspan>
+          </text>
+        </g>
+        <g class="chip-done" opacity="1">
+          <rect x="53" y="129" width="266" height="21" rx="4" fill="#102923" stroke="#2EA043" stroke-width="1"/>
+          <text y="143" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.8">
+            <tspan x="62" fill="#3FB950" font-weight="700">✓</tspan>
+            <tspan x="76" fill="#F0F6FC" font-weight="600">7d3f</tspan>
+            <tspan x="108" fill="#8B949E">· codex · terra</tspan>
+            <tspan x="256" fill="#56D364" font-weight="700">1 UI bug</tspan>
+          </text>
+        </g>
+
+        <!-- Row 4: Concurrent Local Unit Test Work -->
+        <g class="local-writing" opacity="0">
+          <text x="53" y="170" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.0" fill="#C9D1D9">
+            <tspan class="pulse-dot" fill="#FFA657">●</tspan> Local: writing <tspan fill="#FFA657">checkout.test.ts</tspan> while Terra drives...
+          </text>
+        </g>
+        <g class="local-passed" opacity="1">
+          <text x="53" y="170" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.0" fill="#8B949E">
+            <tspan fill="#3FB950" font-weight="700">✓</tspan> Local: <tspan fill="#C9D1D9">6 unit tests passed</tspan> while Terra drove GUI
+          </text>
+        </g>
+
+        <!-- Row 5: Async Wakeup Bug Report Card -->
+        <g class="wakeup-card" opacity="1">
+          <rect x="53" y="184" width="368" height="96" rx="5" fill="#181C26" stroke="#263042" stroke-width="1"/>
+          <rect x="53" y="184" width="3.5" height="96" rx="1.5" fill="#00C48C"/>
+          <text x="65" y="203" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.2" font-weight="700" fill="#F0F6FC">
+            <tspan fill="#00C48C">◆</tspan> Async wakeup · Terra computer-use report:
+          </text>
+          <text x="65" y="224" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.7">
+            <tspan fill="#FF7B72" font-weight="700">P1</tspan>
+            <tspan x="85" fill="#FFA657">CheckoutBar.tsx:89</tspan>
+          </text>
+          <text x="65" y="242" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.7" fill="#E6EDF3">
+            Sticky promo banner blocks Pay CTA @ 375px
+          </text>
+          <text x="65" y="264" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.3" fill="#8B949E">
+            <tspan fill="#B4A2FF" font-weight="600">Trace</tspan> · 3 screenshots &amp; DOM saved on demand
+          </text>
+
+          <text x="53" y="324" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.4" font-weight="700" fill="#FFA657">❯</text>
+          <rect class="blink-cur" x="66" y="313" width="6" height="13" fill="#D97757"/>
+          <text x="77" y="324" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.8" fill="#6E7681">Fix padding-bottom &amp; re-verify 7d3f?</text>
+        </g>
+
+        <!-- ============================================================= -->
+        <!-- RIGHT WINDOW: Local Browser Controlled by Codex Terra         -->
+        <!-- (x=448..878, y=50..348)                                       -->
+        <!-- ============================================================= -->
+        <rect x="450" y="53" width="430" height="298" rx="9" fill="#06080F" fill-opacity="0.45"/>
+        <rect x="448" y="50" width="430" height="298" rx="8" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+        <!-- Browser Top Bar -->
+        <path d="M448,58 a8,8 0 0,1 8,-8 h414 a8,8 0 0,1 8,8 v22 h-430 z" fill="#E2E8F0"/>
+        <line x1="448" y1="80" x2="878" y2="80" stroke="#CBD5E1" stroke-width="1"/>
+        <circle cx="462" cy="65" r="4" fill="#FF5F56"/>
+        <circle cx="474" cy="65" r="4" fill="#FFBD2E"/>
+        <circle cx="486" cy="65" r="4" fill="#27C93F"/>
+
+        <!-- Address Bar -->
+        <rect x="500" y="55" width="246" height="20" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+        <text x="510" y="68.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.6" fill="#334155">localhost:3000/checkout</text>
+
+        <!-- Responsive Viewport Toggle Buttons -->
+        <rect x="754" y="55" width="52" height="20" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+        <text x="780" y="68.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.8" fill="#64748B">1280px</text>
+
+        <!-- 375px Mobile Button (Terra clicks here at 48%!) -->
+        <rect x="810" y="55" width="58" height="20" rx="4" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1"/>
+        <text x="839" y="68.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.0" font-weight="600" fill="#334155">375px</text>
+        <g class="btn-375-on" opacity="1">
+          <rect x="810" y="55" width="58" height="20" rx="4" fill="#5B3DF5"/>
+          <text x="839" y="68.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.0" font-weight="700" fill="#FFFFFF">375px</text>
+        </g>
+
+        <!-- Browser Page Body -->
+        <g clip-path="url(#browser-body-clip)">
+          <!-- Mobile 375px Dark Side Gutters & Device Frame (active after 48%) -->
+          <g class="mob-rails" opacity="1">
+            <rect x="448" y="80" width="96" height="268" fill="#CBD5E1" fill-opacity="0.65"/>
+            <rect x="782" y="80" width="96" height="268" fill="#CBD5E1" fill-opacity="0.65"/>
+            <rect x="544" y="85" width="238" height="256" rx="12" fill="none" stroke="#475569" stroke-width="2"/>
+            <rect x="640" y="89" width="46" height="4" rx="2" fill="#94A3B8"/>
+          </g>
+
+          <!-- Checkout Card (x=552..774, y=96..328) -->
+          <rect x="552" y="96" width="222" height="232" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2"/>
+          <text x="566" y="116" font-family="system-ui, -apple-system, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Checkout</text>
+          <text x="760" y="116" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.2" fill="#475569">Subtotal $60</text>
+          <line x1="566" y1="125" x2="760" y2="125" stroke="#F1F5F9" stroke-width="1"/>
+
+          <!-- Promo Code Input + Apply Button -->
+          <rect x="566" y="135" width="132" height="28" rx="5" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2"/>
+          <rect class="input-focus" opacity="0" x="565" y="134" width="134" height="30" rx="5.5" fill="none" stroke="#5B3DF5" stroke-width="2"/>
+          <text x="574" y="152.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" fill="#94A3B8">Promo code</text>
+
+          <!-- Typed SAVE20 overlays placeholder when Terra types -->
+          <g class="coupon-typed" opacity="1">
+            <rect x="570" y="138" width="122" height="22" fill="#F8FAFC"/>
+            <g clip-path="url(#coupon-clip)">
+              <text x="574" y="153" textLength="48" lengthAdjust="spacing" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="700" fill="#0F172A">SAVE20</text>
+              <g class="coupon-curtain" opacity="0">
+                <rect x="574" y="139" width="58" height="19" fill="#F8FAFC"/>
+                <rect x="574" y="141" width="2" height="14" fill="#5B3DF5"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- Apply Button -->
+          <rect x="704" y="135" width="56" height="28" rx="5" fill="#0F172A"/>
+          <text x="732" y="152.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700" fill="#FFFFFF">Apply</text>
+
+          <!-- Applied Coupon Discount Pill (appears @ 40%) -->
+          <g class="coupon-applied" opacity="1">
+            <rect x="566" y="172" width="194" height="24" rx="5" fill="#ECFDF5" stroke="#6EE7B7" stroke-width="1"/>
+            <text x="575" y="187.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="700" fill="#047857">✓ SAVE20 applied</text>
+            <text x="751" y="187.5" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="700" fill="#047857">-$12.00</text>
+          </g>
+
+          <!-- Total Line (clean breathing room above badge & Pay CTA!) -->
+          <text x="566" y="211" font-family="system-ui, -apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#334155">Total due</text>
+          <text class="price-before" opacity="0" x="760" y="211" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700" fill="#0F172A">$60.00</text>
+          <text class="price-after" opacity="1" x="760" y="211" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700" fill="#0F172A">$48.00</text>
+
+          <!-- Primary Pay CTA Button (y=238..272) -->
+          <rect x="566" y="238" width="194" height="34" rx="6" fill="#2563EB"/>
+          <text class="price-before" opacity="0" x="663" y="259" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11.5" font-weight="700" fill="#FFFFFF">Pay $60.00</text>
+          <text class="price-after" opacity="1" x="663" y="259" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11.5" font-weight="700" fill="#FFFFFF">Pay $48.00</text>
+
+          <!-- Buggy Sticky Promo Banner @ 375px (slides right over Pay CTA!) -->
+          <g class="sticky-banner" opacity="1">
+            <rect x="550" y="251" width="226" height="36" rx="6" fill="#3B1D7A" fill-opacity="0.94" stroke="#8B5CF6" stroke-width="1.2"/>
+            <text x="663" y="267" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9.6" font-weight="700" fill="#F3E8FF">Promo SAVE20 active — free shipping!</text>
+            <text x="663" y="280" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.2" fill="#DDD6FE">position: sticky · z-index: 50</text>
+          </g>
+
+          <!-- Red Inspector Bounding Box & Badge (zero collision with Total due!) -->
+          <g class="bug-overlay" opacity="1">
+            <rect x="548" y="234" width="230" height="58" rx="4" fill="#EF4444" fill-opacity="0.10" stroke="#EF4444" stroke-width="2" stroke-dasharray="5 3"/>
+            <rect x="590" y="218" width="146" height="16" rx="4" fill="#DC2626"/>
+            <text x="663" y="229" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#FFFFFF">⚠ CTA BLOCKED @ 375px</text>
+          </g>
+
+          <!-- Screenshot Shutter Flash -->
+          <rect class="shutter-flash" opacity="0" x="448" y="80" width="430" height="268" fill="#FFFFFF"/>
+        </g>
+
+        <!-- Screen Studio Click Ripples -->
+        <circle class="rip-1" opacity="0" cx="624" cy="150" r="14" fill="none" stroke="#7356F1" stroke-width="2.5"/>
+        <circle class="rip-2" opacity="0" cx="734" cy="150" r="14" fill="none" stroke="#7356F1" stroke-width="2.5"/>
+        <circle class="rip-3" opacity="0" cx="840" cy="65"  r="14" fill="none" stroke="#7356F1" stroke-width="2.5"/>
+        <circle class="rip-4" opacity="0" cx="663" cy="258" r="15" fill="none" stroke="#EF4444" stroke-width="2.8"/>
+
+        <!-- ============================================================= -->
+        <!-- CODEX TERRA LIVE CURSOR (Arrow + Floating `codex · terra` Tag) -->
+        <!-- ============================================================= -->
+        <g class="terra-cursor" opacity="0">
+          <!-- Soft shadow -->
+          <path d="M1,2 L1,20 L5.8,15.6 L9.5,23 L12.5,21.5 L8.8,14.2 L15,14.2 Z" fill="#090D16" fill-opacity="0.45"/>
+          <!-- Crisp macOS/Screen Studio pointer with Codex violet fill -->
+          <path d="M0,0 L0,18.5 L4.8,14.2 L8.5,21.5 L11.4,20.1 L7.7,12.8 L14,12.8 Z" fill="#5B3DF5" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round"/>
+          <!-- Floating agent pill attached to cursor -->
+          <rect x="14" y="15" width="70" height="17" rx="8.5" fill="#5B3DF5" stroke="#FFFFFF" stroke-width="1.2"/>
+          <text x="49" y="26.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.8" font-weight="700" fill="#FFFFFF">codex·terra</text>
+        </g>
+
+        <!-- Async Wakeup Packet Flying Back from Browser to Claude -->
+        <g class="cospan-beam" opacity="0">
+          <rect x="470" y="192" width="54" height="18" rx="9" fill="#00C48C" stroke="#FFFFFF" stroke-width="1.2"/>
+          <text x="497" y="204" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5" font-weight="700" fill="#06281E">cospan</text>
+        </g>
+
+        <!-- Crisp 1px inner highlight on macOS display -->
+        <rect x="28.5" y="18.5" width="863" height="343" rx="11.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1"/>
+      </g>
+    </g>
+
+    <!-- ================================================================= -->
+    <!-- PINNED BOTTOM-RIGHT SCREEN STUDIO CAMERA LENS PILL                -->
+    <!-- ================================================================= -->
+    <g class="lens-claude" opacity="0">
+      <rect x="768" y="354" width="138" height="20" rx="10" fill="#0F1322" fill-opacity="0.86" stroke="#D97757" stroke-opacity="0.6" stroke-width="1"/>
+      <circle cx="781" cy="364" r="3.2" fill="#D97757"/>
+      <text x="790" y="367.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#F8FAFC">1.5x · Claude Host</text>
+    </g>
+    <g class="lens-terra" opacity="0">
+      <rect x="756" y="354" width="150" height="20" rx="10" fill="#0F1322" fill-opacity="0.86" stroke="#8B5CF6" stroke-opacity="0.75" stroke-width="1"/>
+      <circle class="pulse-dot" cx="769" cy="364" r="3.2" fill="#A78BFA"/>
+      <text x="778" y="367.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#F8FAFC">1.6x · Terra Control</text>
+    </g>
+    <g class="lens-wide" opacity="1">
+      <rect x="768" y="354" width="138" height="20" rx="10" fill="#0F1322" fill-opacity="0.82" stroke="#34D399" stroke-opacity="0.55" stroke-width="1"/>
+      <circle cx="781" cy="364" r="3.2" fill="#34D399"/>
+      <text x="790" y="367.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#E2E8F0">1.0x · Async Merge</text>
+    </g>
+  </g>
+
+  <!-- Outer Stage Frame Border -->
+  <rect x="1" y="1" width="918" height="382" rx="14" fill="none" stroke="#2D3548" stroke-width="2"/>
+</svg>

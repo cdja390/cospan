@@ -1,0 +1,17 @@
+{
+  "name": "cospan-dsh",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DeepSeek Harness Cordis plugin bundle for Cospan cross-harness async orchestration.",
+  "type": "module",
+  "main": "./index.mjs",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./index.mjs",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "manifestVersion": 1
+  }
+}

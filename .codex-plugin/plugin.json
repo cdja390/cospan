@@ -1,0 +1,33 @@
+{
+  "name": "cospan",
+  "version": "0.1.0",
+  "description": "Persona-free point-to-point headless delegation primitive for Codex ($cospan:agy, $cospan:codex, $cospan:claude, $cospan:dsh + cospan MCP).",
+  "keywords": [
+    "cospan",
+    "agy",
+    "antigravity",
+    "codex",
+    "claude",
+    "dsh",
+    "multi-harness",
+    "delegation"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Cospan",
+    "shortDescription": "Delegate tasks point-to-point to headless harnesses across Antigravity, Codex, Claude Code, and DeepSeek Harness.",
+    "developerName": "Keli Wen",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills",
+      "MCP"
+    ],
+    "composerIcon": "./assets/icon.svg",
+    "logo": "./assets/icon-128.png",
+    "defaultPrompt": [
+      "Use $cospan:agy in readonly mode to analyze this module",
+      "Use $cospan:codex with explicit model/effort for a detached review"
+    ]
+  }
+}
