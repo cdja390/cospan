@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { callTool, TOOLS } from '../mcp/tools.mjs';
+import { callTool, TOOLS } from '../src/mcp/tools.mjs';
 
 const DSH_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(DSH_DIR, '..');

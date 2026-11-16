@@ -16,8 +16,7 @@
   "files": [
     "assets/",
     "bin/",
-    "lib/",
-    "mcp/",
+    "src/",
     "skills/",
     "dsh/",
     ".antigravity-plugin/",

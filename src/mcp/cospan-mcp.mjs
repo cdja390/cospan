@@ -22,7 +22,7 @@ function resolveCospanBin() {
     if (runtimeJson?.cospanBin && fs.existsSync(runtimeJson.cospanBin))
       return runtimeJson.cospanBin;
   } catch {}
-  return path.resolve(SELF_DIR, '..', 'bin', 'cospan.mjs');
+  return path.resolve(SELF_DIR, '..', '..', 'bin', 'cospan.mjs');
 }
 
 const COSPAN_BIN = resolveCospanBin();

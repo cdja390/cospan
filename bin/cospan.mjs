@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import { main } from '../lib/cli.mjs';
+import { main } from '../src/cli.mjs';
 
 await main();

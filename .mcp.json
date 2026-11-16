@@ -5,7 +5,7 @@
       "type": "stdio",
       "command": "node",
       "args": [
-        "${PLUGIN_ROOT}/mcp/cospan-mcp.mjs"
+        "${PLUGIN_ROOT}/src/mcp/cospan-mcp.mjs"
       ]
     }
   }

@@ -12,13 +12,13 @@ import {
   parseCliArgs,
   repoRoot,
   workspaceStateDir,
-} from '../lib/cli.mjs';
-import { installForAgyHost, installForCodexHost } from '../lib/installer.mjs';
+} from '../src/cli.mjs';
+import { installForAgyHost, installForCodexHost } from '../src/installer.mjs';
 import { apply as applyDshPlugin } from '../dsh/index.mjs';
 
 const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(TEST_DIR, '..');
-const MCP_SERVER = path.join(ROOT_DIR, 'mcp', 'cospan-mcp.mjs');
+const MCP_SERVER = path.join(ROOT_DIR, 'src', 'mcp', 'cospan-mcp.mjs');
 const FAKE_AGY = path.join(TEST_DIR, 'fakes', 'fake-agy.mjs');
 const FAKE_CODEX = path.join(TEST_DIR, 'fakes', 'fake-codex.mjs');
 const FAKE_CLAUDE = path.join(TEST_DIR, 'fakes', 'fake-claude.mjs');
@@ -96,8 +96,8 @@ test('host installer mounts all detected targets and adheres to host schemas', a
     }
 
     const codexPkgRoot = path.join(tmp, 'codex-pkg');
-    fs.mkdirSync(path.join(codexPkgRoot, 'mcp'), { recursive: true });
-    fs.copyFileSync(MCP_SERVER, path.join(codexPkgRoot, 'mcp', 'cospan-mcp.mjs'));
+    fs.mkdirSync(path.join(codexPkgRoot, 'src', 'mcp'), { recursive: true });
+    fs.copyFileSync(MCP_SERVER, path.join(codexPkgRoot, 'src', 'mcp', 'cospan-mcp.mjs'));
     const marketRoot = path.join(tmp, 'codex-market');
 
     const codexRes = installForCodexHost({
@@ -126,7 +126,7 @@ test('host installer mounts all detected targets and adheres to host schemas', a
     const mcpJson = JSON.parse(fs.readFileSync(path.join(codexPkgRoot, '.mcp.json'), 'utf8'));
     assert.equal(mcpJson.$schema, 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
     assert.equal(mcpJson.mcpServers.cospan.command, 'node');
-    assert.deepEqual(mcpJson.mcpServers.cospan.args, ['${PLUGIN_ROOT}/mcp/cospan-mcp.mjs']);
+    assert.deepEqual(mcpJson.mcpServers.cospan.args, ['${PLUGIN_ROOT}/src/mcp/cospan-mcp.mjs']);
 
     const marketMcpJson = JSON.parse(
       fs.readFileSync(path.join(marketRoot, 'plugins', 'cospan', '.mcp.json'), 'utf8')

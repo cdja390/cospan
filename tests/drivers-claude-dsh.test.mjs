@@ -4,10 +4,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkTargetCliContract } from '../lib/contract-check.mjs';
-import { claudeDriver, resolveClaudeModelAndEffort } from '../lib/drivers/claude.mjs';
-import { dshDriver, resolveDshModelAndEffort } from '../lib/drivers/dsh.mjs';
-import { listActiveTargetIds } from '../lib/drivers/index.mjs';
+import { checkTargetCliContract } from '../src/contract-check.mjs';
+import { claudeDriver, resolveClaudeModelAndEffort } from '../src/drivers/claude.mjs';
+import { dshDriver, resolveDshModelAndEffort } from '../src/drivers/dsh.mjs';
+import { listActiveTargetIds } from '../src/drivers/index.mjs';
 
 const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
 const FAKE_AGY = path.join(TEST_DIR, 'fakes', 'fake-agy.mjs');
