@@ -18,13 +18,20 @@ const rest = isResume ? argv.slice(2) : argv.slice(1);
 if (rest.includes('--help') || rest.includes('-h')) {
   const flags = isResume
     ? '--json --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --config --model'
-    : '--json --ephemeral --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --sandbox --config --model';
+    : '--json --ephemeral --skip-git-repo-check ' +
+      '--dangerously-bypass-approvals-and-sandbox --sandbox --config --model';
   process.stdout.write(`${flags}\n`);
   process.exit(0);
 }
 
 // Strictly enforce real Codex CLI flag asymmetry: `codex exec resume` rejects `-C` and `-s`!
-if (isResume && (rest.includes('-C') || rest.includes('--cd') || rest.includes('-s') || rest.includes('--sandbox'))) {
+if (
+  isResume &&
+  (rest.includes('-C') ||
+    rest.includes('--cd') ||
+    rest.includes('-s') ||
+    rest.includes('--sandbox'))
+) {
   process.stderr.write('error: unexpected argument -C/-s found in `codex exec resume`\n');
   process.exit(2);
 }
@@ -76,7 +83,10 @@ const delayMs = Number(process.env.FAKE_CODEX_DELAY_MS || 0);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 if (process.env.FAKE_CODEX_TOUCH_FILE) {
-  fs.writeFileSync(path.join(workspace, process.env.FAKE_CODEX_TOUCH_FILE), 'touched by fake-codex\n');
+  fs.writeFileSync(
+    path.join(workspace, process.env.FAKE_CODEX_TOUCH_FILE),
+    'touched by fake-codex\n'
+  );
 }
 
 process.stdout.write(JSON.stringify({ type: 'thread.started', thread_id: threadId }) + '\n');
@@ -113,7 +123,9 @@ if (process.env.FAKE_CODEX_FAIL === '1') {
   process.exit(1);
 }
 
-const text = `Status: DONE\ncodex_model=${model} bypass=${bypass} sandbox=${sandbox} resumed=${isResume} thread=${threadId} configs=${configs.join(';')}\nprompt_echo=${prompt}`;
+const text =
+  `Status: DONE\ncodex_model=${model} bypass=${bypass} sandbox=${sandbox} ` +
+  `resumed=${isResume} thread=${threadId} configs=${configs.join(';')}\nprompt_echo=${prompt}`;
 
 process.stdout.write(
   JSON.stringify({

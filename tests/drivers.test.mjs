@@ -4,32 +4,54 @@ import { agyDriver, resolveAgyModel } from '../lib/drivers/agy.mjs';
 import { codexDriver, resolveCodexModelAndEffort } from '../lib/drivers/codex.mjs';
 import { BUILTIN_CONFIG } from '../lib/targets.mjs';
 
-test('agy model resolution: gemini-3.8-flash-low default, built-in mappings, and config overrides', () => {
+test('agy model resolution: gemini-3.8-flash-low default, mappings, and overrides', () => {
   const emptyCfg = { defaults: {}, mappings: {} };
   assert.equal(resolveAgyModel({ kind: 'send', config: emptyCfg }), 'gemini-3.8-flash-low');
   assert.equal(resolveAgyModel({ kind: 'ask', config: emptyCfg }), 'gemini-3.8-flash-low');
-  assert.equal(resolveAgyModel({ kind: 'send', effort: 'high', config: emptyCfg }), 'gemini-3.8-flash-high');
-  assert.equal(resolveAgyModel({ kind: 'send', model: 'gemini-3.8-flash', config: emptyCfg }), 'gemini-3.8-flash-low');
+  assert.equal(
+    resolveAgyModel({ kind: 'send', effort: 'high', config: emptyCfg }),
+    'gemini-3.8-flash-high'
+  );
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'gemini-3.8-flash', config: emptyCfg }),
+    'gemini-3.8-flash-low'
+  );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'flash', effort: 'medium', config: emptyCfg }),
     'gemini-3.8-flash-medium'
   );
-  assert.equal(resolveAgyModel({ kind: 'send', model: 'carbon', config: emptyCfg }), 'gemini-4-carbon-high');
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'carbon', config: emptyCfg }),
+    'gemini-4-carbon-high'
+  );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'argon', effort: 'low', config: emptyCfg }),
     'gemini-4-argon-low'
   );
-  assert.equal(resolveAgyModel({ kind: 'send', model: 'hydrogen', config: BUILTIN_CONFIG }), 'gemini-4-hydrogen-high');
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'hydrogen', config: BUILTIN_CONFIG }),
+    'gemini-4-hydrogen-high'
+  );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'hydrogen', effort: 'xhigh', config: BUILTIN_CONFIG }),
     'gemini-4-hydrogen-xhigh'
   );
   assert.equal(
-    resolveAgyModel({ kind: 'send', model: 'gemini-4-hydrogen', effort: 'xhigh', config: emptyCfg }),
+    resolveAgyModel({
+      kind: 'send',
+      model: 'gemini-4-hydrogen',
+      effort: 'xhigh',
+      config: emptyCfg,
+    }),
     'gemini-4-hydrogen-xhigh'
   );
   assert.equal(
-    resolveAgyModel({ kind: 'send', model: 'gemini-4-hydrogen-xhigh', effort: 'medium', config: emptyCfg }),
+    resolveAgyModel({
+      kind: 'send',
+      model: 'gemini-4-hydrogen-xhigh',
+      effort: 'medium',
+      config: emptyCfg,
+    }),
     'gemini-4-hydrogen-medium'
   );
   assert.equal(
@@ -46,14 +68,23 @@ test('agy model resolution: gemini-3.8-flash-low default, built-in mappings, and
     mappings: { agy: { fast: 'gemini-3.7-flash' } },
   };
   assert.equal(resolveAgyModel({ kind: 'send', config: customCfg }), 'gemini-4-carbon-medium');
-  assert.equal(resolveAgyModel({ kind: 'send', model: 'fast', config: customCfg }), 'gemini-3.7-flash-medium');
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'fast', config: customCfg }),
+    'gemini-3.7-flash-medium'
+  );
 
   const hydrogenDefaultCfg = {
     defaults: { agy: { model: 'gemini-4-hydrogen-xhigh' } },
     mappings: {},
   };
-  assert.equal(resolveAgyModel({ kind: 'send', config: hydrogenDefaultCfg }), 'gemini-4-hydrogen-xhigh');
-  assert.equal(resolveAgyModel({ kind: 'send', effort: 'low', config: hydrogenDefaultCfg }), 'gemini-4-hydrogen-low');
+  assert.equal(
+    resolveAgyModel({ kind: 'send', config: hydrogenDefaultCfg }),
+    'gemini-4-hydrogen-xhigh'
+  );
+  assert.equal(
+    resolveAgyModel({ kind: 'send', effort: 'low', config: hydrogenDefaultCfg }),
+    'gemini-4-hydrogen-low'
+  );
 });
 
 test('agy invocation flags: unrestricted default vs restricted sandbox', () => {
@@ -106,7 +137,7 @@ test('agy invocation flags: unrestricted default vs restricted sandbox', () => {
   assert.ok(restricted.args.includes('--sandbox'));
 });
 
-test('codex model resolution, unrestricted default, and restricted exec vs resume flag asymmetry', () => {
+test('codex model resolution, unrestricted default, and restricted flag asymmetry', () => {
   const emptyCfg = { defaults: {}, mappings: {} };
   assert.deepEqual(resolveCodexModelAndEffort({ kind: 'send', config: emptyCfg }), {
     model: 'gpt-6.1-sol',
@@ -116,14 +147,25 @@ test('codex model resolution, unrestricted default, and restricted exec vs resum
     model: 'gpt-6.1-sol',
     effort: 'low',
   });
-  assert.deepEqual(resolveCodexModelAndEffort({ kind: 'send', model: 'terra', effort: 'xhigh', config: emptyCfg }), {
-    model: 'gpt-6.1-terra',
-    effort: 'xhigh',
-  });
-  assert.deepEqual(resolveCodexModelAndEffort({ kind: 'send', model: 'spark', effort: 'minimal', config: emptyCfg }), {
-    model: 'gpt-5.3-codex-spark',
-    effort: 'minimal',
-  });
+  assert.deepEqual(
+    resolveCodexModelAndEffort({ kind: 'send', model: 'terra', effort: 'xhigh', config: emptyCfg }),
+    {
+      model: 'gpt-6.1-terra',
+      effort: 'xhigh',
+    }
+  );
+  assert.deepEqual(
+    resolveCodexModelAndEffort({
+      kind: 'send',
+      model: 'spark',
+      effort: 'minimal',
+      config: emptyCfg,
+    }),
+    {
+      model: 'gpt-5.3-codex-spark',
+      effort: 'minimal',
+    }
+  );
   assert.deepEqual(
     resolveCodexModelAndEffort({
       kind: 'send',
@@ -132,7 +174,7 @@ test('codex model resolution, unrestricted default, and restricted exec vs resum
     { model: null, effort: null }
   );
 
-  // Default (`permissions: "unrestricted"`) uses `--dangerously-bypass-approvals-and-sandbox` for both writable & readonly
+  // Default (`permissions: "unrestricted"`) bypasses approvals/sandbox for writable & readonly
   const initialRw = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'apply patch',
@@ -155,7 +197,8 @@ test('codex model resolution, unrestricted default, and restricted exec vs resum
   assert.ok(initialRoUnrestricted.args.includes('--dangerously-bypass-approvals-and-sandbox'));
   assert.equal(initialRoUnrestricted.stdinText, 'inspect repo across caches');
 
-  // Opt-in `permissions: "restricted"` enables Seatbelt `-s` on initial exec and `-c sandbox_mode=...` on resume
+  // Opt-in `permissions: "restricted"` enables Seatbelt `-s` on exec and `-c sandbox_mode=...`
+  // on resume
   const restrictedRw = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'apply patch safely',
@@ -234,7 +277,12 @@ test('codex stream session projects ThreadEvents and keeps last agent_message', 
   });
   session.acceptEvent({
     type: 'turn.completed',
-    usage: { input_tokens: 50, cached_input_tokens: 10, output_tokens: 20, reasoning_output_tokens: 5 },
+    usage: {
+      input_tokens: 50,
+      cached_input_tokens: 10,
+      output_tokens: 20,
+      reasoning_output_tokens: 5,
+    },
   });
 
   const snap = session.snapshot();

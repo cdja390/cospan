@@ -28,7 +28,11 @@ export default [
       'max-depth': ['error', 4],
       complexity: ['error', 15],
       'import-x/no-cycle': ['error', { ignoreExternal: true }],
-      'import-x/extensions': ['error', 'ignorePackages', { mjs: 'always', js: 'never', cjs: 'never' }],
+      'import-x/extensions': [
+        'error',
+        'ignorePackages',
+        { mjs: 'always', js: 'never', cjs: 'never' },
+      ],
       'n/file-extension-in-import': ['error', 'always'],
       'n/prefer-node-protocol': 'error',
       'no-empty': ['error', { allowEmptyCatch: true }],
@@ -42,4 +46,18 @@ export default [
     },
   },
   prettierConfig,
+  {
+    files: ['**/*.mjs'],
+    rules: {
+      'max-len': [
+        'error',
+        {
+          code: 100,
+          tabWidth: 2,
+          ignoreUrls: true,
+          ignoreRegExpLiterals: true,
+        },
+      ],
+    },
+  },
 ];

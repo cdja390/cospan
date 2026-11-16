@@ -8,20 +8,29 @@ export const TOOLS = [
   {
     name: 'cospan_send',
     description:
-      'Launch an asynchronous background delegation job to an external headless harness (`agy`, `codex`, `claude`, or `dsh`). Returns immediately with `job_id`; call `cospan_wait` next to collect its output.',
+      'Launch an asynchronous background delegation job to an external headless harness ' +
+      '(`agy`, `codex`, `claude`, or `dsh`). Returns immediately with `job_id`; ' +
+      'call `cospan_wait` next to collect its output.',
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         to: { type: 'string', enum: TARGET_ENUM, description: 'Target harness ID.' },
         prompt: { type: 'string', description: 'Task instructions to send to the target harness.' },
         readonly: {
           type: 'boolean',
-          description: 'Set true for read-only inspection/review/research; false (default) allows workspace edits.',
+          description:
+            'Set true for read-only inspection/review/research; ' +
+            'false (default) allows workspace edits.',
         },
         restricted: {
           type: 'boolean',
-          description: 'Set true to opt into OS sandboxing; false/omitted uses cospan config default ("unrestricted").',
+          description:
+            'Set true to opt into OS sandboxing; ' +
+            'false/omitted uses cospan config default ("unrestricted").',
         },
         raw: {
           type: 'boolean',
@@ -41,12 +50,20 @@ export const TOOLS = [
   {
     name: 'cospan_wait',
     description:
-      'Block quietly until a detached `cospan` job finishes (or `timeout` elapses), then return its terminal status and deliverable output. Exit code 2 (`status: "running"`) means still running—call `cospan_wait` again.',
+      'Block quietly until a detached `cospan` job finishes (or `timeout` elapses), ' +
+      'then return its terminal status and deliverable output. ' +
+      'Exit code 2 (`status: "running"`) means still running—call `cospan_wait` again.',
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
-        id: { type: 'string', description: 'Job ID returned by `cospan_send` or `cospan_continue`.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
+        id: {
+          type: 'string',
+          description: 'Job ID returned by `cospan_send` or `cospan_continue`.',
+        },
         timeout: {
           type: 'string',
           description: 'How long this wait call may block before returning status (default "20m").',
@@ -58,11 +75,15 @@ export const TOOLS = [
   {
     name: 'cospan_observe',
     description:
-      'Return an immediate bounded (<= 8 KiB) JSON progress snapshot of a job without consuming or printing the full result body.',
+      'Return an immediate bounded (<= 8 KiB) JSON progress snapshot of a job ' +
+      'without consuming or printing the full result body.',
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         id: { type: 'string', description: 'Job ID to observe.' },
       },
       required: ['cwd', 'id'],
@@ -71,17 +92,27 @@ export const TOOLS = [
   {
     name: 'cospan_continue',
     description:
-      'Continue a previous job in its native target conversation/thread (`--conversation` in agy, `exec resume` in codex, `--resume` in claude, `--session-id` in dsh). Pass either `id` or `last: true`. Returns a new linked `job_id`; collect it with `cospan_wait`.',
+      'Continue a previous job in its native target conversation/thread (`--conversation` in ' +
+      'agy, `exec resume` in codex, `--resume` in claude, `--session-id` in dsh). Pass either ' +
+      '`id` or `last: true`. Returns a new linked `job_id`; collect it with `cospan_wait`.',
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         id: { type: 'string', description: 'Previous job ID whose session should be resumed.' },
         last: {
           type: 'boolean',
-          description: 'If true, resume the latest finished job in `cwd` (optionally filtered by `to`).',
+          description:
+            'If true, resume the latest finished job in `cwd` (optionally filtered by `to`).',
         },
-        to: { type: 'string', enum: TARGET_ENUM, description: 'Optional target filter when `last: true`.' },
+        to: {
+          type: 'string',
+          enum: TARGET_ENUM,
+          description: 'Optional target filter when `last: true`.',
+        },
         prompt: { type: 'string', description: 'Delta follow-up prompt for the resumed session.' },
         restricted: {
           type: 'boolean',
@@ -100,7 +131,10 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         id: { type: 'string', description: 'Completed job ID.' },
       },
       required: ['cwd', 'id'],
@@ -112,7 +146,10 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         id: { type: 'string', description: 'Running job ID to cancel.' },
       },
       required: ['cwd', 'id'],
@@ -124,7 +161,10 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         id: { type: 'string', description: 'Optional job ID.' },
       },
       required: ['cwd'],
@@ -132,14 +172,22 @@ export const TOOLS = [
   },
   {
     name: 'cospan_ask',
-    description: 'Run a fast, synchronous, read-only foreground Q&A check against `agy`, `codex`, `claude`, or `dsh`.',
+    description:
+      'Run a fast, synchronous, read-only foreground Q&A check against ' +
+      '`agy`, `codex`, `claude`, or `dsh`.',
     inputSchema: {
       type: 'object',
       properties: {
-        cwd: { type: 'string', description: 'Absolute path to the workspace/repository directory.' },
+        cwd: {
+          type: 'string',
+          description: 'Absolute path to the workspace/repository directory.',
+        },
         to: { type: 'string', enum: TARGET_ENUM, description: 'Target harness ID.' },
         prompt: { type: 'string', description: 'Short question to ask.' },
-        restricted: { type: 'boolean', description: 'Optional override to opt into OS sandboxing.' },
+        restricted: {
+          type: 'boolean',
+          description: 'Optional override to opt into OS sandboxing.',
+        },
         model: { type: 'string', description: 'Optional model override.' },
         effort: { type: 'string', enum: EFFORT_ENUM, description: 'Optional effort override.' },
         timeout: { type: 'string', description: 'Optional timeout (default "2m").' },
@@ -208,7 +256,10 @@ const TOOL_HANDLERS = {
     if (args.readonly) cliArgs.push('--readonly');
     if (args.raw) cliArgs.push('--raw');
     appendCommonExecFlags(cliArgs, args);
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd, stdinText: String(args.prompt ?? '') });
+    const res = await runCliAsync(cospanBin, cliArgs, {
+      cwd,
+      stdinText: String(args.prompt ?? ''),
+    });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 
@@ -220,7 +271,8 @@ const TOOL_HANDLERS = {
     const status = EXIT_STATUS_LABELS[res.exitCode] || 'error';
     const header = `[cospan_wait exit_code=${res.exitCode} status=${status}]`;
     const body = (res.stdout || res.stderr).trim();
-    // Exit code 2 ("still running") and 5 ("attention") are structured lifecycle outcomes, not transport crashes.
+    // Exit code 2 ("still running") and 5 ("attention") are structured lifecycle outcomes,
+    // not transport crashes.
     return {
       isError: res.exitCode === 1 || res.exitCode === 3,
       content: [{ type: 'text', text: `${header}\n${body}`.trim() }],
@@ -243,7 +295,10 @@ const TOOL_HANDLERS = {
     }
     cliArgs.push('--stdin', '--json');
     appendCommonExecFlags(cliArgs, args);
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd, stdinText: String(args.prompt ?? '') });
+    const res = await runCliAsync(cospanBin, cliArgs, {
+      cwd,
+      stdinText: String(args.prompt ?? ''),
+    });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 
@@ -267,13 +322,18 @@ const TOOL_HANDLERS = {
   async cospan_ask(cospanBin, args, cwd) {
     const cliArgs = ['ask', '--to', String(args.to || ''), '--stdin'];
     appendCommonExecFlags(cliArgs, args);
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd, stdinText: String(args.prompt ?? '') });
+    const res = await runCliAsync(cospanBin, cliArgs, {
+      cwd,
+      stdinText: String(args.prompt ?? ''),
+    });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 };
 
 export async function callTool(cospanBin, name, args = {}) {
-  const handler = Object.prototype.hasOwnProperty.call(TOOL_HANDLERS, name) ? TOOL_HANDLERS[name] : null;
+  const handler = Object.prototype.hasOwnProperty.call(TOOL_HANDLERS, name)
+    ? TOOL_HANDLERS[name]
+    : null;
   if (!handler) {
     throw Object.assign(new Error(`Unknown tool: ${name}`), { code: -32601 });
   }

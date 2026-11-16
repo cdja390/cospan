@@ -29,12 +29,20 @@ test('claude model/effort resolution and 4-quadrant permission/readonly flags', 
     model: 'sonnet',
     effort: 'low',
   });
-  assert.deepEqual(resolveClaudeModelAndEffort({ kind: 'send', model: 'opus', effort: 'max', config: emptyCfg }), {
-    model: 'opus',
-    effort: 'max',
-  });
   assert.deepEqual(
-    resolveClaudeModelAndEffort({ kind: 'send', model: 'inherit', effort: 'inherit', config: emptyCfg }),
+    resolveClaudeModelAndEffort({ kind: 'send', model: 'opus', effort: 'max', config: emptyCfg }),
+    {
+      model: 'opus',
+      effort: 'max',
+    }
+  );
+  assert.deepEqual(
+    resolveClaudeModelAndEffort({
+      kind: 'send',
+      model: 'inherit',
+      effort: 'inherit',
+      config: emptyCfg,
+    }),
     {
       model: null,
       effort: null,
@@ -68,7 +76,10 @@ test('claude model/effort resolution and 4-quadrant permission/readonly flags', 
     conversationId: 'sess-123',
   });
   assert.ok(roUnres.args.includes('--dangerously-skip-permissions'));
-  assert.equal(roUnres.args[roUnres.args.indexOf('--disallowed-tools') + 1], 'Edit,Write,NotebookEdit');
+  assert.equal(
+    roUnres.args[roUnres.args.indexOf('--disallowed-tools') + 1],
+    'Edit,Write,NotebookEdit'
+  );
   assert.equal(roUnres.args[roUnres.args.indexOf('--resume') + 1], 'sess-123');
 
   // 3. restricted + writable
@@ -145,7 +156,7 @@ test('claude stream session projects tool_use, touched_files, tool_result, and r
   assert.equal(fin.native.subtype, 'success');
 });
 
-test('dsh model/effort resolution, out-of-tree --patch overlay ordering, and stream projection', () => {
+test('dsh model/effort resolution, out-of-tree --patch overlay, and stream projection', () => {
   const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-dsh-unit-'));
   const prevHome = process.env.COSPAN_HOME;
   process.env.COSPAN_HOME = tmpHome;
@@ -155,14 +166,20 @@ test('dsh model/effort resolution, out-of-tree --patch overlay ordering, and str
       model: null,
       effort: null,
     });
-    assert.deepEqual(resolveDshModelAndEffort({ kind: 'send', model: 'pro', effort: 'xhigh', config: emptyCfg }), {
-      model: 'deepseek-v4-pro',
-      effort: 'max',
-    });
-    assert.deepEqual(resolveDshModelAndEffort({ kind: 'send', model: 'v4.1-flash', config: emptyCfg }), {
-      model: 'deepseek-flash',
-      effort: null,
-    });
+    assert.deepEqual(
+      resolveDshModelAndEffort({ kind: 'send', model: 'pro', effort: 'xhigh', config: emptyCfg }),
+      {
+        model: 'deepseek-v4-pro',
+        effort: 'max',
+      }
+    );
+    assert.deepEqual(
+      resolveDshModelAndEffort({ kind: 'send', model: 'v4.1-flash', config: emptyCfg }),
+      {
+        model: 'deepseek-flash',
+        effort: null,
+      }
+    );
 
     // Default inherit omits --patch completely so user profile model is preserved
     const invInherit = dshDriver.buildInvocation({
@@ -175,7 +192,10 @@ test('dsh model/effort resolution, out-of-tree --patch overlay ordering, and str
     });
     assert.ok(!invInherit.args.includes('--patch'));
     assert.deepEqual(invInherit.args.slice(0, 3), ['--profile', 'headless', '--json']);
-    assert.equal(invInherit.args[invInherit.args.indexOf('--permission-mode') + 1], 'danger-full-access');
+    assert.equal(
+      invInherit.args[invInherit.args.indexOf('--permission-mode') + 1],
+      'danger-full-access'
+    );
     assert.equal(invInherit.args.at(-1), '-');
 
     // Explicit model/effort generates out-of-tree patch BEFORE --json

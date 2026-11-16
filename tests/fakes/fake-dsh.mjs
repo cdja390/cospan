@@ -92,7 +92,11 @@ if (st.profile !== 'headless') {
   process.exit(2);
 }
 
-let modelCfg = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'default' };
+let modelCfg = {
+  provider: 'deepseek-official',
+  model: 'deepseek-flash',
+  reasoningEffort: 'default',
+};
 try {
   for (const p of st.patchFiles) modelCfg = validatePatchOverlay(p);
 } catch (err) {
@@ -102,7 +106,10 @@ try {
 
 if (process.env.FAKE_DSH_UNAUTH === '1') {
   process.stdout.write(
-    JSON.stringify({ type: 'error', message: 'No API key or logged-in DeepSeek account configured.' }) + '\n'
+    JSON.stringify({
+      type: 'error',
+      message: 'No API key or logged-in DeepSeek account configured.',
+    }) + '\n'
   );
   process.exit(1);
 }
@@ -113,7 +120,10 @@ const delayMs = Number(process.env.FAKE_DSH_DELAY_MS || 0);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 if (process.env.FAKE_DSH_TOUCH_FILE) {
-  fs.writeFileSync(path.join(process.cwd(), process.env.FAKE_DSH_TOUCH_FILE), 'touched by fake-dsh\n');
+  fs.writeFileSync(
+    path.join(process.cwd(), process.env.FAKE_DSH_TOUCH_FILE),
+    'touched by fake-dsh\n'
+  );
 }
 
 process.stderr.write('dsh: reasoning: inspecting repository...\n');
@@ -138,14 +148,17 @@ process.stdout.write(
 if (delayMs > 0) await sleep(delayMs);
 
 if (process.env.FAKE_DSH_FAIL === '1') {
-  process.stdout.write(JSON.stringify({ type: 'error', message: 'Simulated dsh execution failure' }) + '\n');
+  process.stdout.write(
+    JSON.stringify({ type: 'error', message: 'Simulated dsh execution failure' }) + '\n'
+  );
   process.exit(1);
 }
 
 const summary =
   `Status: DONE\ndsh_provider=${modelCfg.provider} dsh_model=${modelCfg.model} ` +
   `effort=${modelCfg.reasoningEffort || 'default'} patched=${st.patchFiles.length > 0} ` +
-  `perm=${st.permMode} approval=${st.approval} resumed=${Boolean(st.sessionId)} session=${sessionId}\nprompt_echo=${prompt}`;
+  `perm=${st.permMode} approval=${st.approval} ` +
+  `resumed=${Boolean(st.sessionId)} session=${sessionId}\nprompt_echo=${prompt}`;
 
 process.stdout.write(JSON.stringify({ type: 'text', delta: summary }) + '\n');
 process.stdout.write(

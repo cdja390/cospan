@@ -16,8 +16,11 @@ const SELF_DIR = path.dirname(fileURLToPath(import.meta.url));
 function resolveCospanBin() {
   if (process.env.COSPAN_BIN) return process.env.COSPAN_BIN;
   try {
-    const runtimeJson = JSON.parse(fs.readFileSync(path.join(SELF_DIR, 'cospan-runtime.json'), 'utf8'));
-    if (runtimeJson?.cospanBin && fs.existsSync(runtimeJson.cospanBin)) return runtimeJson.cospanBin;
+    const runtimeJson = JSON.parse(
+      fs.readFileSync(path.join(SELF_DIR, 'cospan-runtime.json'), 'utf8')
+    );
+    if (runtimeJson?.cospanBin && fs.existsSync(runtimeJson.cospanBin))
+      return runtimeJson.cospanBin;
   } catch {}
   return path.resolve(SELF_DIR, '..', 'bin', 'cospan.mjs');
 }
@@ -44,7 +47,9 @@ const RPC_METHODS = {
       capabilities: { tools: {} },
       serverInfo: { name: 'cospan', version: '0.1.0' },
       instructions:
-        'Use cospan_send + cospan_wait (always passing your workspace `cwd`) to delegate tasks to external headless harnesses (`agy`, `codex`, `claude`, `dsh`) and collect results cleanly without polling.',
+        'Use cospan_send + cospan_wait (always passing your workspace `cwd`) to delegate tasks ' +
+        'to external headless harnesses (`agy`, `codex`, `claude`, `dsh`) and collect results ' +
+        'cleanly without polling.',
     };
   },
   ping() {
@@ -63,9 +68,15 @@ async function handleRpc(request) {
   if (!Object.prototype.hasOwnProperty.call(request, 'id')) return;
 
   const { id, method, params } = request;
-  const handler = Object.prototype.hasOwnProperty.call(RPC_METHODS, method) ? RPC_METHODS[method] : null;
+  const handler = Object.prototype.hasOwnProperty.call(RPC_METHODS, method)
+    ? RPC_METHODS[method]
+    : null;
   if (!handler) {
-    sendMessage({ jsonrpc: '2.0', id, error: { code: -32601, message: `Method not found: ${method}` } });
+    sendMessage({
+      jsonrpc: '2.0',
+      id,
+      error: { code: -32601, message: `Method not found: ${method}` },
+    });
     return;
   }
 
@@ -120,7 +131,9 @@ function consumeJsonlFrame() {
 function drainBuffer() {
   while (buffer.length > 0) {
     const headerCheck = buffer.subarray(0, Math.min(buffer.length, 64)).toString('utf8');
-    const progressed = /^Content-Length:/i.test(headerCheck) ? consumeContentLengthFrame() : consumeJsonlFrame();
+    const progressed = /^Content-Length:/i.test(headerCheck)
+      ? consumeContentLengthFrame()
+      : consumeJsonlFrame();
     if (!progressed) return;
   }
 }

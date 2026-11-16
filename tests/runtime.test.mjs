@@ -44,21 +44,27 @@ function runCospan(args, { cwd, env = {}, input } = {}) {
   };
 }
 
-test('ask foreground works for both agy and codex (unrestricted default + --restricted opt-in)', () => {
+test('ask foreground works for agy and codex (unrestricted default + --restricted)', () => {
   const repo = makeTempGitRepo();
   try {
     const agyRes = runCospan(['ask', '--to', 'agy', '--prompt', 'hello agy'], { cwd: repo });
     assert.equal(agyRes.code, 0, agyRes.stderr);
-    assert.match(agyRes.stdout, /AGY_ASK_OK model=gemini-3\.8-flash-low mode=plan skip_perms=true sandbox=false/);
+    assert.match(
+      agyRes.stdout,
+      /AGY_ASK_OK model=gemini-3\.8-flash-low mode=plan skip_perms=true sandbox=false/
+    );
 
     const codexRes = runCospan(['ask', '--to', 'codex', '--prompt', 'hello codex'], { cwd: repo });
     assert.equal(codexRes.code, 0, codexRes.stderr);
     assert.match(codexRes.stdout, /codex_model=gpt-6\.1-sol/);
     assert.match(codexRes.stdout, /bypass=true/);
 
-    const restrictedCodex = runCospan(['ask', '--to', 'codex', '--restricted', '--prompt', 'hello restricted'], {
-      cwd: repo,
-    });
+    const restrictedCodex = runCospan(
+      ['ask', '--to', 'codex', '--restricted', '--prompt', 'hello restricted'],
+      {
+        cwd: repo,
+      }
+    );
     assert.equal(restrictedCodex.code, 0, restrictedCodex.stderr);
     assert.match(restrictedCodex.stdout, /bypass=false sandbox=read-only/);
   } finally {
@@ -71,7 +77,15 @@ test('send -> observe -> wait -> continue lifecycle on codex keeps git status cl
   const repo = makeTempGitRepo();
   try {
     const sendRes = runCospan(
-      ['send', '--to', 'codex', '--readonly', '--json', '--prompt', 'Inspect --flag literal safely'],
+      [
+        'send',
+        '--to',
+        'codex',
+        '--readonly',
+        '--json',
+        '--prompt',
+        'Inspect --flag literal safely',
+      ],
       { cwd: repo, env: { FAKE_CODEX_DELAY_MS: '400' } }
     );
     assert.equal(sendRes.code, 0, sendRes.stderr);
@@ -101,10 +115,14 @@ test('send -> observe -> wait -> continue lifecycle on codex keeps git status cl
     assert.equal(obsJson.result_available, true);
     assert.ok(!obs.stdout.includes('Inspect --flag literal safely'));
 
-    // Continue with `--last` reuses `codex-thread-999` via `codex exec resume` (which enforces no -C/-s!)
-    const cont = runCospan(['continue', '--last', '--to', 'codex', '--json', '--prompt', 'Follow-up check'], {
-      cwd: repo,
-    });
+    // Continue with `--last` reuses `codex-thread-999` via `codex exec resume`
+    // (which enforces no -C/-s!)
+    const cont = runCospan(
+      ['continue', '--last', '--to', 'codex', '--json', '--prompt', 'Follow-up check'],
+      {
+        cwd: repo,
+      }
+    );
     assert.equal(cont.code, 0, cont.stderr);
     const { job_id: job2, conversation_id: convId } = JSON.parse(cont.stdout);
     assert.equal(convId, 'codex-thread-999');
@@ -144,10 +162,13 @@ test('writable dirty context + workspace delta vs --readonly guard warning vs --
     assert.match(rwOut.stdout, /generated\.txt/);
 
     // Readonly violation emits explicit guard warning
-    const sendRo = runCospan(['send', '--to', 'agy', '--readonly', '--json', '--prompt', 'Inspect only'], {
-      cwd: repo,
-      env: { FAKE_AGY_TOUCH_FILE: 'rogue.txt' },
-    });
+    const sendRo = runCospan(
+      ['send', '--to', 'agy', '--readonly', '--json', '--prompt', 'Inspect only'],
+      {
+        cwd: repo,
+        env: { FAKE_AGY_TOUCH_FILE: 'rogue.txt' },
+      }
+    );
     const { job_id: roId } = JSON.parse(sendRo.stdout);
     const roOut = runCospan(['wait', roId, '--timeout', '10s'], { cwd: repo });
     assert.equal(roOut.code, 0);
@@ -155,9 +176,12 @@ test('writable dirty context + workspace delta vs --readonly guard warning vs --
     assert.match(roOut.stdout, /rogue\.txt/);
 
     // --raw skips protocol envelope completely
-    const sendRaw = runCospan(['send', '--to', 'agy', '--raw', '--json', '--prompt', 'EXACT_RAW_PAYLOAD'], {
-      cwd: repo,
-    });
+    const sendRaw = runCospan(
+      ['send', '--to', 'agy', '--raw', '--json', '--prompt', 'EXACT_RAW_PAYLOAD'],
+      {
+        cwd: repo,
+      }
+    );
     const { job_id: rawId } = JSON.parse(sendRaw.stdout);
     const rawOut = runCospan(['wait', rawId, '--timeout', '10s'], { cwd: repo });
     assert.equal(rawOut.code, 0);
@@ -184,10 +208,13 @@ test('cancel and resumable timeout (attention exit code 5)', () => {
     assert.equal(canceledWait.code, 4);
 
     // 2. Timeout after session started -> status=attention, exit code 5
-    const slow = runCospan(['send', '--to', 'agy', '--timeout', '300ms', '--json', '--prompt', 'Slow task'], {
-      cwd: repo,
-      env: { FAKE_AGY_HANG: '1' },
-    });
+    const slow = runCospan(
+      ['send', '--to', 'agy', '--timeout', '300ms', '--json', '--prompt', 'Slow task'],
+      {
+        cwd: repo,
+        env: { FAKE_AGY_HANG: '1' },
+      }
+    );
     const { job_id: slowId } = JSON.parse(slow.stdout);
     const attnWait = runCospan(['wait', slowId, '--timeout', '5s'], { cwd: repo });
     assert.equal(attnWait.code, 5, attnWait.stdout);
@@ -199,7 +226,7 @@ test('cancel and resumable timeout (attention exit code 5)', () => {
   }
 });
 
-test('layered config (global -> trajectory -> workspace) and trajectory events.jsonl retention', () => {
+test('layered config (global -> trajectory -> workspace) and events.jsonl retention', () => {
   const repo = makeTempGitRepo();
   try {
     // 1. Default config with zero files on disk: agy uses gemini-3.8-flash-low + unrestricted
@@ -223,20 +250,30 @@ test('layered config (global -> trajectory -> workspace) and trajectory events.j
       })
     );
 
-    const sendTraj = runCospan(['send', '--to', 'agy', '--json', '--prompt', 'Check trajectory config'], { cwd: repo });
+    const sendTraj = runCospan(
+      ['send', '--to', 'agy', '--json', '--prompt', 'Check trajectory config'],
+      { cwd: repo }
+    );
     assert.equal(sendTraj.code, 0, sendTraj.stderr);
     const sendTrajInfo = JSON.parse(sendTraj.stdout);
     assert.equal(sendTrajInfo.model, 'gemini-4-carbon-medium');
     assert.equal(sendTrajInfo.permissions, 'unrestricted');
     const waitTraj = runCospan(['wait', sendTrajInfo.job_id, '--timeout', '10s'], { cwd: repo });
     assert.equal(waitTraj.code, 0, waitTraj.stderr);
-    assert.match(waitTraj.stdout, /agy_model=gemini-4-carbon-medium.*skip_perms=true sandbox=false/);
+    assert.match(
+      waitTraj.stdout,
+      /agy_model=gemini-4-carbon-medium.*skip_perms=true sandbox=false/
+    );
 
     // Verify raw trajectory JSONL (`<job_id>.events.jsonl`) is retained in `trajectory_dir/jobs/`!
-    const retainedEvents = path.join(parsed0.trajectory_dir, 'jobs', `${sendTrajInfo.job_id}.events.jsonl`);
+    const retainedEvents = path.join(
+      parsed0.trajectory_dir,
+      'jobs',
+      `${sendTrajInfo.job_id}.events.jsonl`
+    );
     assert.equal(fs.existsSync(retainedEvents), true);
 
-    // 3. Workspace `.cospan/config.json` overrides trajectory config (and can opt into `restricted`)
+    // 3. Workspace `.cospan/config.json` overrides trajectory config (and can opt into restricted)
     fs.mkdirSync(path.join(repo, '.cospan'), { recursive: true });
     fs.writeFileSync(
       path.join(repo, '.cospan', 'config.json'),
@@ -246,7 +283,10 @@ test('layered config (global -> trajectory -> workspace) and trajectory events.j
       })
     );
 
-    const sendWs = runCospan(['send', '--to', 'agy', '--json', '--prompt', 'Check workspace config'], { cwd: repo });
+    const sendWs = runCospan(
+      ['send', '--to', 'agy', '--json', '--prompt', 'Check workspace config'],
+      { cwd: repo }
+    );
     assert.equal(sendWs.code, 0, sendWs.stderr);
     const sendWsInfo = JSON.parse(sendWs.stdout);
     assert.equal(sendWsInfo.model, 'gemini-3.8-flash-high');
@@ -256,9 +296,12 @@ test('layered config (global -> trajectory -> workspace) and trajectory events.j
     assert.match(waitWs.stdout, /agy_model=gemini-3\.8-flash-high.*skip_perms=false sandbox=true/);
 
     // 4. Explicit `--unrestricted` CLI flag overrides workspace `"permissions": "restricted"`
-    const sendOverride = runCospan(['send', '--to', 'agy', '--unrestricted', '--json', '--prompt', 'CLI override'], {
-      cwd: repo,
-    });
+    const sendOverride = runCospan(
+      ['send', '--to', 'agy', '--unrestricted', '--json', '--prompt', 'CLI override'],
+      {
+        cwd: repo,
+      }
+    );
     assert.equal(JSON.parse(sendOverride.stdout).permissions, 'unrestricted');
     runCospan(['wait', JSON.parse(sendOverride.stdout).job_id, '--timeout', '10s'], { cwd: repo });
   } finally {

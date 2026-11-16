@@ -9,7 +9,8 @@ if (argv.includes('--version')) {
 }
 if (argv.includes('--help')) {
   process.stdout.write(
-    '--print --model --output-format --print-timeout --add-dir --conversation --mode --dangerously-skip-permissions --sandbox\n'
+    '--print --model --output-format --print-timeout --add-dir ' +
+      '--conversation --mode --dangerously-skip-permissions --sandbox\n'
   );
   process.exit(0);
 }
@@ -48,14 +49,18 @@ if (format === 'json') {
   if (delayMs > 0) await sleep(delayMs);
   if (process.env.FAKE_AGY_FAIL === '1') {
     process.stderr.write('AGY_ERROR: {"status":"INTERNAL","error_code":500,"retryable":false}\n');
-    process.stdout.write(JSON.stringify({ status: 'ERROR', error: 'Simulated agy failure' }) + '\n');
+    process.stdout.write(
+      JSON.stringify({ status: 'ERROR', error: 'Simulated agy failure' }) + '\n'
+    );
     process.exit(1);
   }
   process.stdout.write(
     JSON.stringify({
       status: 'OK',
       conversation_id: convId,
-      response: `AGY_ASK_OK model=${model} mode=${mode} skip_perms=${skipPerms} sandbox=${sandbox} prompt_len=${prompt.length}`,
+      response:
+        `AGY_ASK_OK model=${model} mode=${mode} skip_perms=${skipPerms} ` +
+        `sandbox=${sandbox} prompt_len=${prompt.length}`,
       stats: { input_tokens: 12, output_tokens: 8 },
     }) + '\n'
   );
@@ -63,7 +68,9 @@ if (format === 'json') {
 }
 
 // stream-json
-process.stdout.write(JSON.stringify({ event: 'init', init: { conversation_id: convId, model } }) + '\n');
+process.stdout.write(
+  JSON.stringify({ event: 'init', init: { conversation_id: convId, model } }) + '\n'
+);
 
 if (process.env.FAKE_AGY_HANG === '1') {
   await sleep(60000);
@@ -86,7 +93,9 @@ process.stdout.write(
 if (delayMs > 0) await sleep(delayMs);
 
 if (process.env.FAKE_AGY_FAIL === '1') {
-  process.stderr.write('AGY_ERROR: {"status":"RESOURCE_EXHAUSTED","error_code":429,"retryable":true}\n');
+  process.stderr.write(
+    'AGY_ERROR: {"status":"RESOURCE_EXHAUSTED","error_code":429,"retryable":true}\n'
+  );
   process.stdout.write(
     JSON.stringify({
       event: 'result',
@@ -96,7 +105,9 @@ if (process.env.FAKE_AGY_FAIL === '1') {
   process.exit(1);
 }
 
-const summary = `Status: DONE\nagy_model=${model} mode=${mode} skip_perms=${skipPerms} sandbox=${sandbox} resumed=${!!conversation} conv=${convId}\nprompt_echo=${prompt}`;
+const summary =
+  `Status: DONE\nagy_model=${model} mode=${mode} skip_perms=${skipPerms} ` +
+  `sandbox=${sandbox} resumed=${!!conversation} conv=${convId}\nprompt_echo=${prompt}`;
 
 process.stdout.write(
   JSON.stringify({

@@ -58,11 +58,15 @@ function validateClaudeFlags(st) {
     process.exit(2);
   }
   if (st.format === 'stream-json' && !st.verbose) {
-    process.stderr.write('Error: When using --print, --output-format=stream-json requires --verbose\n');
+    process.stderr.write(
+      'Error: When using --print, --output-format=stream-json requires --verbose\n'
+    );
     process.exit(1);
   }
   if (st.restricted && st.skipPerms) {
-    process.stderr.write('Error: --restricted refuses bypassPermissions (--dangerously-skip-permissions)\n');
+    process.stderr.write(
+      'Error: --restricted refuses bypassPermissions (--dangerously-skip-permissions)\n'
+    );
     process.exit(1);
   }
 }
@@ -91,12 +95,16 @@ const delayMs = Number(process.env.FAKE_CLAUDE_DELAY_MS || 0);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 if (process.env.FAKE_CLAUDE_TOUCH_FILE) {
-  fs.writeFileSync(path.join(st.workspace, process.env.FAKE_CLAUDE_TOUCH_FILE), 'touched by fake-claude\n');
+  fs.writeFileSync(
+    path.join(st.workspace, process.env.FAKE_CLAUDE_TOUCH_FILE),
+    'touched by fake-claude\n'
+  );
 }
 
 const summary =
   `Status: DONE\nclaude_model=${st.model} effort=${st.effort} perm_mode=${st.permMode} ` +
-  `skip_perms=${st.skipPerms} restricted=${st.restricted} disallowed=${st.disallowedTools || 'none'} ` +
+  `skip_perms=${st.skipPerms} restricted=${st.restricted} ` +
+  `disallowed=${st.disallowedTools || 'none'} ` +
   `resumed=${Boolean(st.resumeId)} session=${sessionId}\nprompt_echo=${prompt}`;
 
 if (st.format === 'json') {
@@ -135,7 +143,9 @@ process.stdout.write(
     type: 'assistant',
     session_id: sessionId,
     message: {
-      content: [{ type: 'tool_use', id: 'toolu_1', name: 'Read', input: { file_path: 'README.md' } }],
+      content: [
+        { type: 'tool_use', id: 'toolu_1', name: 'Read', input: { file_path: 'README.md' } },
+      ],
     },
   }) + '\n'
 );
@@ -144,7 +154,9 @@ process.stdout.write(
     type: 'user',
     session_id: sessionId,
     message: {
-      content: [{ type: 'tool_result', tool_use_id: 'toolu_1', content: '# temp repo', is_error: false }],
+      content: [
+        { type: 'tool_result', tool_use_id: 'toolu_1', content: '# temp repo', is_error: false },
+      ],
     },
   }) + '\n'
 );

@@ -51,16 +51,21 @@ function runCospan(args, { cwd, env = {}, input } = {}) {
 test('claude foreground ask + detached send -> wait -> continue lifecycle', () => {
   const repo = makeTempGitRepo();
   try {
-    const askUnres = runCospan(['ask', '--to', 'claude', '--prompt', 'hello claude'], { cwd: repo });
+    const askUnres = runCospan(['ask', '--to', 'claude', '--prompt', 'hello claude'], {
+      cwd: repo,
+    });
     assert.equal(askUnres.code, 0, askUnres.stderr);
     assert.match(
       askUnres.stdout,
       /claude_model=sonnet effort=low.*skip_perms=true.*disallowed=Edit,Write,NotebookEdit/
     );
 
-    const askRes = runCospan(['ask', '--to', 'claude', '--restricted', '--prompt', 'hello restricted claude'], {
-      cwd: repo,
-    });
+    const askRes = runCospan(
+      ['ask', '--to', 'claude', '--restricted', '--prompt', 'hello restricted claude'],
+      {
+        cwd: repo,
+      }
+    );
     assert.equal(askRes.code, 0, askRes.stderr);
     assert.match(askRes.stdout, /perm_mode=plan skip_perms=false restricted=true/);
 
@@ -88,9 +93,12 @@ test('claude foreground ask + detached send -> wait -> continue lifecycle', () =
     assert.equal(wait1.code, 0, wait1.stderr);
     assert.match(wait1.stdout, /claude_model=opus effort=max.*session=claude-sess-777/);
 
-    const cont = runCospan(['continue', '--last', '--to', 'claude', '--json', '--prompt', 'Check second file'], {
-      cwd: repo,
-    });
+    const cont = runCospan(
+      ['continue', '--last', '--to', 'claude', '--json', '--prompt', 'Check second file'],
+      {
+        cwd: repo,
+      }
+    );
     assert.equal(cont.code, 0, cont.stderr);
     const { job_id: job2, conversation_id: convId } = JSON.parse(cont.stdout);
     assert.equal(convId, 'claude-sess-777');
@@ -105,13 +113,16 @@ test('claude foreground ask + detached send -> wait -> continue lifecycle', () =
   }
 });
 
-test('dsh foreground ask + detached send -> wait -> continue lifecycle with zero workspace pollution', () => {
+test('dsh foreground ask + detached send -> wait -> continue lifecycle stays clean', () => {
   const repo = makeTempGitRepo();
   try {
     // Default inherit does not patch user's dsh profile
     const askInherit = runCospan(['ask', '--to', 'dsh', '--prompt', 'hello dsh'], { cwd: repo });
     assert.equal(askInherit.code, 0, askInherit.stderr);
-    assert.match(askInherit.stdout, /dsh_model=deepseek-flash.*patched=false perm=danger-full-access approval=never/);
+    assert.match(
+      askInherit.stdout,
+      /dsh_model=deepseek-flash.*patched=false perm=danger-full-access approval=never/
+    );
 
     // Explicit model + effort + restricted applies --patch and workspace-write
     const send1 = runCospan(
@@ -136,9 +147,15 @@ test('dsh foreground ask + detached send -> wait -> continue lifecycle with zero
 
     const wait1 = runCospan(['wait', job1, '--timeout', '10s'], { cwd: repo });
     assert.equal(wait1.code, 0, wait1.stderr);
-    assert.match(wait1.stdout, /dsh_model=deepseek-v4-pro effort=high patched=true perm=workspace-write/);
+    assert.match(
+      wait1.stdout,
+      /dsh_model=deepseek-v4-pro effort=high patched=true perm=workspace-write/
+    );
 
-    const cont = runCospan(['continue', '--last', '--to', 'dsh', '--json', '--prompt', 'Follow-up dsh'], { cwd: repo });
+    const cont = runCospan(
+      ['continue', '--last', '--to', 'dsh', '--json', '--prompt', 'Follow-up dsh'],
+      { cwd: repo }
+    );
     assert.equal(cont.code, 0, cont.stderr);
     const { job_id: job2, conversation_id: convId } = JSON.parse(cont.stdout);
     assert.equal(convId, 'dsh-session-888');
@@ -156,7 +173,7 @@ test('dsh foreground ask + detached send -> wait -> continue lifecycle with zero
   }
 });
 
-test('unauthenticated claude/dsh errors surface clearly and doctor --check verifies all 4 targets', () => {
+test('unauthenticated claude/dsh errors surface and doctor --check verifies all targets', () => {
   const repo = makeTempGitRepo();
   try {
     const unauthAsk = runCospan(['ask', '--to', 'claude', '--prompt', 'test'], {

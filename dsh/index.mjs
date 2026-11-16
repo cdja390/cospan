@@ -22,7 +22,9 @@ function parseSkillMarkdown(raw, fallbackName) {
   const userInvocable = !/^user-invocable:\s*false\s*$/mu.test(frontmatter);
   return {
     name: fallbackName,
-    description: descMatch ? descMatch[1].trim().replace(/^["']|["']$/gu, '') : `Cospan skill (${fallbackName})`,
+    description: descMatch
+      ? descMatch[1].trim().replace(/^["']|["']$/gu, '')
+      : `Cospan skill (${fallbackName})`,
     userInvocable,
     body,
   };
@@ -101,7 +103,10 @@ function registerCospanTool(toolCtx, toolDef) {
     async execute(args, exec) {
       const cwd = args?.cwd || resolveSessionCwd(toolCtx, exec?.agent);
       if (!cwd) {
-        return { ok: false, output: 'Error: Could not resolve workspace cwd from active DSH session.' };
+        return {
+          ok: false,
+          output: 'Error: Could not resolve workspace cwd from active DSH session.',
+        };
       }
       const res = await callTool(COSPAN_BIN, toolDef.name, { ...args, cwd });
       const text = res.content?.map((c) => c.text).join('\n') || '';
@@ -131,7 +136,10 @@ export function apply(ctx) {
         };
       },
     };
-    skillCtx.effect(() => skillCtx.skills.registerProvider(() => provider), 'cospan: skills provider');
+    skillCtx.effect(
+      () => skillCtx.skills.registerProvider(() => provider),
+      'cospan: skills provider'
+    );
   });
 
   ctx.inject(['tools'], (toolCtx) => {
