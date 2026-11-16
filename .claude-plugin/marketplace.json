@@ -13,6 +13,13 @@
       "tags": [
         "cospan",
         "orchestration",
+        "multi-agent",
+        "coding-agent",
+        "subagents",
+        "code-review",
+        "mcp",
+        "mcp-server",
+        "agent-skills",
         "antigravity",
         "codex",
         "claude-code",

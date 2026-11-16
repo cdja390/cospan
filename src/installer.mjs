@@ -144,16 +144,10 @@ function writeCodexBundleAtRoot({
     description:
       'Persona-free point-to-point headless delegation primitive for Codex ' +
       '($cospan:agy, $cospan:codex, $cospan:claude, $cospan:dsh + cospan MCP).',
-    keywords: [
-      'cospan',
-      'agy',
-      'antigravity',
-      'codex',
-      'claude',
-      'dsh',
-      'multi-harness',
-      'delegation',
-    ],
+    keywords: (
+      'cospan orchestration multi-agent coding-agent subagents code-review mcp ' +
+      'agent-skills agy antigravity codex claude-code deepseek-harness dsh multi-harness delegation'
+    ).split(' '),
     skills: './skills/',
     mcpServers: './.mcp.json',
     interface: {
