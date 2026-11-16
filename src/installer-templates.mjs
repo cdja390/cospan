@@ -22,25 +22,26 @@ const TARGET_DOCS = {
     defaultAsk: '`gpt-6.1-sol` (`--effort low`)',
     modelsNote:
       'Default model is `gpt-6.1-sol` (overrideable in `~/.cospan/config.json` or ' +
-      '`<workspace>/.cospan/config.json`). Built-in aliases: `sol` (`gpt-6.1-sol`), ' +
-      '`terra` (`gpt-6.1-terra`), `astra` (`gpt-6-astra`), `luna` (`gpt-6-luna`), ' +
-      '`spark` (`gpt-5.3-codex-spark`). Supported `--effort`: `low`, `medium`, `high`, `xhigh`.',
+      '`<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / ' +
+      '`--model`; map user shortcuts to current IDs (do NOT fall back to `gpt-6.0-*`): ' +
+      '`sol` -> `gpt-6.1-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6-astra`, ' +
+      '`luna` -> `gpt-6-luna`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`.',
     strengths:
       'Delegate code review, second-opinion debugging, repository research, ' +
       'or scoped implementation tasks to OpenAI Codex CLI.',
   },
   agy: {
     title: 'Google Antigravity (`agy`)',
-    defaultSend: '`gemini-3.8-flash-low`',
-    defaultAsk: '`gemini-3.8-flash-low`',
+    defaultSend: '`gemini-3.8-flash-medium`',
+    defaultAsk: '`gemini-3.8-flash-medium`',
     modelsNote:
-      'Default `send` and `ask` model is `gemini-3.8-flash-low` (overrideable in ' +
-      '`~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Built-in family/alias ' +
-      'mappings: `gemini-3.8-flash` / `flash` (`gemini-3.8-flash-low`), `gemini-4-carbon` / ' +
-      '`carbon` (`gemini-4-carbon-high`), `gemini-4-argon` / `argon` (`gemini-4-argon-high`), ' +
-      '`gemini-4-hydrogen` / `hydrogen` (`gemini-4-hydrogen-high`), `opus` ' +
-      '(`claude-opus-5-5-high`), `sonnet` (`claude-sonnet-5-5-high`), combinable with ' +
-      '`--effort low|medium|high` (and `xhigh` for `gemini-4-hydrogen`).',
+      'Default `send` and `ask` model is `gemini-3.8-flash-medium` (overrideable in ' +
+      '`~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Always pass exact target ' +
+      'model IDs to `model` / `--model`; map user shortcuts to `-medium` by default (swap the ' +
+      'suffix for `-low` / `-high`, or `-xhigh` on `gemini-4-hydrogen`, when requested): ' +
+      '`flash` -> `gemini-3.8-flash-medium`, `carbon` -> `gemini-4-carbon-medium`, ' +
+      '`argon` -> `gemini-4-argon-medium`, `hydrogen` -> `gemini-4-hydrogen-medium`, ' +
+      '`opus` -> `claude-opus-5-5-medium`, `sonnet` -> `claude-sonnet-5-5-medium`.',
     strengths:
       'Delegate repository-wide research, multimodal/large-context analysis, code review, ' +
       'or implementation tasks to Google Antigravity CLI.',
@@ -52,7 +53,9 @@ const TARGET_DOCS = {
     modelsNote:
       'Default model is evergreen `sonnet` (overrideable in `~/.cospan/config.json` or ' +
       '`<workspace>/.cospan/config.json`; pass `inherit` to use Claude Code settings default). ' +
-      'Built-in aliases: `sonnet`, `opus`, `haiku`, `fable`, or any explicit Claude model ID. ' +
+      'Map user shortcuts to Claude CLI model aliases or exact IDs: ' +
+      '`opus` / `opus5.5` -> `opus` (Opus 5.5), `sonnet` / `sonnet5.5` -> `sonnet` (Sonnet 5.5), ' +
+      '`haiku` -> `haiku`, `fable` -> `fable`. ' +
       'Supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`.',
     strengths:
       'Delegate code review, architectural analysis, repository debugging, ' +
@@ -64,10 +67,10 @@ const TARGET_DOCS = {
     defaultAsk: 'profile default (`inherit`)',
     modelsNote:
       'Defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness ' +
-      'provider/model without overriding `~/.dsh`. Pass `--model v4.1-flash` or `--model flash` ' +
-      '(`deepseek-flash`), `--model pro` (`deepseek-v4-pro`), `--model chat` (`deepseek-chat`), ' +
-      '`--model reasoner` (`deepseek-reasoner`), or `<provider>/<model>` plus ' +
-      '`--effort low|high|max` to apply an ephemeral `--patch` overlay.',
+      'provider/model without overriding `~/.dsh`. DeepSeek official built-in catalog provides ' +
+      'two models—map user shortcuts explicitly: `flash` / `v4.1-flash` -> `deepseek-flash`, ' +
+      '`pro` / `v4-pro` -> `deepseek-v4-pro` (or pass `<provider>/<model>` plus ' +
+      '`--effort low|high|max` to apply an ephemeral `--patch` overlay).',
     strengths:
       'Delegate repository research, verification, second-opinion debugging, ' +
       'or implementation tasks to DeepSeek Harness CLI.',

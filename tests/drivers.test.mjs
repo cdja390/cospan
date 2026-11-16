@@ -4,25 +4,25 @@ import { agyDriver, resolveAgyModel } from '../src/drivers/agy.mjs';
 import { codexDriver, resolveCodexModelAndEffort } from '../src/drivers/codex.mjs';
 import { BUILTIN_CONFIG } from '../src/targets.mjs';
 
-test('agy model resolution: gemini-3.8-flash-low default, mappings, and overrides', () => {
+test('agy model resolution: gemini-3.8-flash-medium default, mappings, and overrides', () => {
   const emptyCfg = { defaults: {}, mappings: {} };
-  assert.equal(resolveAgyModel({ kind: 'send', config: emptyCfg }), 'gemini-3.8-flash-low');
-  assert.equal(resolveAgyModel({ kind: 'ask', config: emptyCfg }), 'gemini-3.8-flash-low');
+  assert.equal(resolveAgyModel({ kind: 'send', config: emptyCfg }), 'gemini-3.8-flash-medium');
+  assert.equal(resolveAgyModel({ kind: 'ask', config: emptyCfg }), 'gemini-3.8-flash-medium');
   assert.equal(
     resolveAgyModel({ kind: 'send', effort: 'high', config: emptyCfg }),
     'gemini-3.8-flash-high'
   );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'gemini-3.8-flash', config: emptyCfg }),
-    'gemini-3.8-flash-low'
-  );
-  assert.equal(
-    resolveAgyModel({ kind: 'send', model: 'flash', effort: 'medium', config: emptyCfg }),
     'gemini-3.8-flash-medium'
   );
   assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'flash', effort: 'low', config: emptyCfg }),
+    'gemini-3.8-flash-low'
+  );
+  assert.equal(
     resolveAgyModel({ kind: 'send', model: 'carbon', config: emptyCfg }),
-    'gemini-4-carbon-high'
+    'gemini-4-carbon-medium'
   );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'argon', effort: 'low', config: emptyCfg }),
@@ -30,7 +30,15 @@ test('agy model resolution: gemini-3.8-flash-low default, mappings, and override
   );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'hydrogen', config: BUILTIN_CONFIG }),
-    'gemini-4-hydrogen-high'
+    'gemini-4-hydrogen-medium'
+  );
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'opus', config: BUILTIN_CONFIG }),
+    'claude-opus-5-5-medium'
+  );
+  assert.equal(
+    resolveAgyModel({ kind: 'send', model: 'sonnet', config: BUILTIN_CONFIG }),
+    'claude-sonnet-5-5-medium'
   );
   assert.equal(
     resolveAgyModel({ kind: 'send', model: 'hydrogen', effort: 'xhigh', config: BUILTIN_CONFIG }),

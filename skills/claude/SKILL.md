@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Default model is evergreen `sonnet` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`; pass `inherit` to use Claude Code settings default). Built-in aliases: `sonnet`, `opus`, `haiku`, `fable`, or any explicit Claude model ID. Supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`.
+   - Default model is evergreen `sonnet` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`; pass `inherit` to use Claude Code settings default). Map user shortcuts to Claude CLI model aliases or exact IDs: `opus` / `opus5.5` -> `opus` (Opus 5.5), `sonnet` / `sonnet5.5` -> `sonnet` (Sonnet 5.5), `haiku` -> `haiku`, `fable` -> `fable`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

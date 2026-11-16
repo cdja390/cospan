@@ -98,12 +98,12 @@ _（也可直接在 DeepSeek Harness 桌面端侧边栏 **Plugins** 中输入 `g
 
 ## 支持生态
 
-| Agent 客户端                 | 模型生态                 | 内置模型简写                                                           |
-| ---------------------------- | ------------------------ | ---------------------------------------------------------------------- |
-| **Antigravity** (`agy`)      | Google · Gemini & Claude | `flash`, `carbon`, `argon`, `hydrogen`, `opus`, `sonnet`               |
-| **Codex** (`codex`)          | OpenAI · GPT             | `sol`, `terra`, `astra`, `luna`, `spark`                               |
-| **Claude Code** (`claude`)   | Anthropic · Claude       | `sonnet`, `opus`, `haiku`, `fable`                                     |
-| **DeepSeek Harness** (`dsh`) | DeepSeek 及自定义提供商  | `v4.1-flash`, `flash`, `pro`, `chat`, `reasoner`, `<provider>/<model>` |
+| Agent 客户端                 | 模型生态                 | 内置模型简写                                                   |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------- |
+| **Antigravity** (`agy`)      | Google · Gemini & Claude | `flash`, `carbon`, `argon`, `hydrogen`, `opus`, `sonnet`       |
+| **Codex** (`codex`)          | OpenAI · GPT             | `sol`, `terra`, `astra`, `luna`                                |
+| **Claude Code** (`claude`)   | Anthropic · Claude       | `sonnet`, `opus`, `haiku`, `fable`                             |
+| **DeepSeek Harness** (`dsh`) | DeepSeek 及自定义提供商  | `v4.1-flash` / `flash`, `v4-pro` / `pro`, `<provider>/<model>` |
 
 _更多 Harness 正在持续接入中——Cospan 的驱动层架构支持平滑扩展更多编程 Agent CLI。_
 

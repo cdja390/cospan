@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness provider/model without overriding `~/.dsh`. Pass `--model v4.1-flash` or `--model flash` (`deepseek-flash`), `--model pro` (`deepseek-v4-pro`), `--model chat` (`deepseek-chat`), `--model reasoner` (`deepseek-reasoner`), or `<provider>/<model>` plus `--effort low|high|max` to apply an ephemeral `--patch` overlay.
+   - Defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness provider/model without overriding `~/.dsh`. DeepSeek official built-in catalog provides two models—map user shortcuts explicitly: `flash` / `v4.1-flash` -> `deepseek-flash`, `pro` / `v4-pro` -> `deepseek-v4-pro` (or pass `<provider>/<model>` plus `--effort low|high|max` to apply an ephemeral `--patch` overlay).
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

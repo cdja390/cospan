@@ -51,7 +51,7 @@ test('ask foreground works for agy and codex (unrestricted default + --restricte
     assert.equal(agyRes.code, 0, agyRes.stderr);
     assert.match(
       agyRes.stdout,
-      /AGY_ASK_OK model=gemini-3\.8-flash-low mode=plan skip_perms=true sandbox=false/
+      /AGY_ASK_OK model=gemini-3\.8-flash-medium mode=plan skip_perms=true sandbox=false/
     );
 
     const codexRes = runCospan(['ask', '--to', 'codex', '--prompt', 'hello codex'], { cwd: repo });
@@ -229,13 +229,13 @@ test('cancel and resumable timeout (attention exit code 5)', () => {
 test('layered config (global -> trajectory -> workspace) and events.jsonl retention', () => {
   const repo = makeTempGitRepo();
   try {
-    // 1. Default config with zero files on disk: agy uses gemini-3.8-flash-low + unrestricted
+    // 1. Default config with zero files on disk: agy uses gemini-3.8-flash-medium + unrestricted
     const cfg0 = runCospan(['config', '--json'], { cwd: repo });
     assert.equal(cfg0.code, 0, cfg0.stderr);
     const parsed0 = JSON.parse(cfg0.stdout);
     assert.deepEqual(parsed0.loaded_files, []);
     assert.equal(parsed0.effective_config.permissions, 'unrestricted');
-    assert.equal(parsed0.effective_config.defaults.agy.model, 'gemini-3.8-flash-low');
+    assert.equal(parsed0.effective_config.defaults.agy.model, 'gemini-3.8-flash-medium');
     assert.ok(parsed0.trajectory_dir.includes(path.join('trajectories', path.basename(repo))));
 
     // 2. Initialize trajectory-level config and override agy default model

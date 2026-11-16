@@ -37,6 +37,13 @@ test('claude model/effort resolution and 4-quadrant permission/readonly flags', 
     }
   );
   assert.deepEqual(
+    resolveClaudeModelAndEffort({ kind: 'send', model: 'opus5.5', config: emptyCfg }),
+    {
+      model: 'opus',
+      effort: 'high',
+    }
+  );
+  assert.deepEqual(
     resolveClaudeModelAndEffort({
       kind: 'send',
       model: 'inherit',
@@ -180,6 +187,10 @@ test('dsh model/effort resolution, out-of-tree --patch overlay, and stream proje
         effort: null,
       }
     );
+    assert.deepEqual(resolveDshModelAndEffort({ kind: 'send', model: 'chat', config: emptyCfg }), {
+      model: 'chat',
+      effort: null,
+    });
 
     // Default inherit omits --patch completely so user profile model is preserved
     const invInherit = dshDriver.buildInvocation({

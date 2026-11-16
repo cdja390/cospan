@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Default model is `gpt-6.1-sol` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Built-in aliases: `sol` (`gpt-6.1-sol`), `terra` (`gpt-6.1-terra`), `astra` (`gpt-6-astra`), `luna` (`gpt-6-luna`), `spark` (`gpt-5.3-codex-spark`). Supported `--effort`: `low`, `medium`, `high`, `xhigh`.
+   - Default model is `gpt-6.1-sol` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / `--model`; map user shortcuts to current IDs (do NOT fall back to `gpt-6.0-*`): `sol` -> `gpt-6.1-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6-astra`, `luna` -> `gpt-6-luna`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

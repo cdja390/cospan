@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Default `send` and `ask` model is `gemini-3.8-flash-low` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Built-in family/alias mappings: `gemini-3.8-flash` / `flash` (`gemini-3.8-flash-low`), `gemini-4-carbon` / `carbon` (`gemini-4-carbon-high`), `gemini-4-argon` / `argon` (`gemini-4-argon-high`), `gemini-4-hydrogen` / `hydrogen` (`gemini-4-hydrogen-high`), `opus` (`claude-opus-5-5-high`), `sonnet` (`claude-sonnet-5-5-high`), combinable with `--effort low|medium|high` (and `xhigh` for `gemini-4-hydrogen`).
+   - Default `send` and `ask` model is `gemini-3.8-flash-medium` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / `--model`; map user shortcuts to `-medium` by default (swap the suffix for `-low` / `-high`, or `-xhigh` on `gemini-4-hydrogen`, when requested): `flash` -> `gemini-3.8-flash-medium`, `carbon` -> `gemini-4-carbon-medium`, `argon` -> `gemini-4-argon-medium`, `hydrogen` -> `gemini-4-hydrogen-medium`, `opus` -> `claude-opus-5-5-medium`, `sonnet` -> `claude-sonnet-5-5-medium`.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

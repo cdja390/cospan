@@ -52,12 +52,12 @@ function formatFamilyWithEffort(family, effort, fallback) {
 }
 
 function pickDefaultAgyBase(defaults, kind) {
-  if (kind === 'ask') return defaults.askModel || defaults.model || 'gemini-3.8-flash-low';
-  return defaults.model || defaults.sendModel || 'gemini-3.8-flash-low';
+  if (kind === 'ask') return defaults.askModel || defaults.model || 'gemini-3.8-flash-medium';
+  return defaults.model || defaults.sendModel || 'gemini-3.8-flash-medium';
 }
 
 function resolveDefaultAgyModel(mappedDefault, effort, defaults) {
-  const fallbackEffort = defaults.effort || 'low';
+  const fallbackEffort = defaults.effort || 'medium';
   if (EFFORT_FAMILIES.has(mappedDefault)) {
     return formatFamilyWithEffort(mappedDefault, effort, fallbackEffort);
   }
@@ -72,7 +72,7 @@ function resolveDefaultAgyModel(mappedDefault, effort, defaults) {
 
 function resolveExplicitAgyModel(aliased, effort, defaults) {
   if (EFFORT_FAMILIES.has(aliased)) {
-    return formatFamilyWithEffort(aliased, effort, defaults.effort || 'low');
+    return formatFamilyWithEffort(aliased, effort, defaults.effort || 'medium');
   }
   const suffixMatch = /^(.*)-(low|medium|high|xhigh)$/.exec(aliased);
   if (suffixMatch && effort && EFFORT_FAMILIES.has(suffixMatch[1])) {

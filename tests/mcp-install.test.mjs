@@ -24,6 +24,21 @@ const FAKE_CODEX = path.join(TEST_DIR, 'fakes', 'fake-codex.mjs');
 const FAKE_CLAUDE = path.join(TEST_DIR, 'fakes', 'fake-claude.mjs');
 const FAKE_DSH = path.join(TEST_DIR, 'fakes', 'fake-dsh.mjs');
 
+function assertRenderedCodexSkills(codexPkgRoot) {
+  for (const id of ['agy', 'codex', 'claude', 'dsh']) {
+    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', id, 'SKILL.md')));
+  }
+  const readSkill = (id) =>
+    fs.readFileSync(path.join(codexPkgRoot, 'skills', id, 'SKILL.md'), 'utf8');
+  assert.match(readSkill('agy'), /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/);
+  assert.match(readSkill('agy'), /gemini-3\.8-flash-medium/);
+  assert.match(readSkill('codex'), /gpt-6\.1-sol/);
+  assert.doesNotMatch(readSkill('codex'), /gpt-5\.3-codex-spark/);
+  assert.match(readSkill('claude'), /Opus 5\.5/);
+  assert.match(readSkill('dsh'), /deepseek-v4-pro/);
+  assert.doesNotMatch(readSkill('dsh'), /deepseek-chat|deepseek-reasoner/);
+}
+
 test('host installer mounts all detected targets and adheres to host schemas', async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-install-'));
   try {
@@ -113,15 +128,7 @@ test('host installer mounts all detected targets and adheres to host schemas', a
       '$cospan:dsh',
       'cospan:jobs',
     ]);
-    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md')));
-    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'codex', 'SKILL.md')));
-    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'claude', 'SKILL.md')));
-    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', 'dsh', 'SKILL.md')));
-    const pkgAgySkill = fs.readFileSync(
-      path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md'),
-      'utf8'
-    );
-    assert.match(pkgAgySkill, /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/);
+    assertRenderedCodexSkills(codexPkgRoot);
 
     const mcpJson = JSON.parse(fs.readFileSync(path.join(codexPkgRoot, '.mcp.json'), 'utf8'));
     assert.equal(mcpJson.$schema, 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
