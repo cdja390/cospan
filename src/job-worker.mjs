@@ -76,6 +76,17 @@ function buildInitialJobRecord({
   };
 }
 
+function resolveCallerAttribution(callerHost, callerSessionId) {
+  return {
+    caller_host: callerHost || process.env.COSPAN_CALLER_HOST || null,
+    caller_session_id:
+      callerSessionId ||
+      process.env.COSPAN_CALLER_SESSION_ID ||
+      process.env.ANTIGRAVITY_CONVERSATION_ID ||
+      null,
+  };
+}
+
 export function launchDetachedJob({
   target,
   prompt,
@@ -89,6 +100,8 @@ export function launchDetachedJob({
   conversationId = null,
   continuedFrom = null,
   restartedFrom = null,
+  callerHost = null,
+  callerSessionId = null,
   cwd = process.cwd(),
 }) {
   const driver = getDriver(target);
@@ -112,6 +125,7 @@ export function launchDetachedJob({
     effort: resolvedCfg.effort,
     timeout,
     cwd,
+    ...resolveCallerAttribution(callerHost, callerSessionId),
   };
   const spec = {
     id,

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { workspaceTrajectoryDir } from './config.mjs';
 import { sh } from './envelope.mjs';
+import { registerRepoTrajectory } from './repo-family.mjs';
 import { readTextRetry, replaceFile, withStateLock } from './state-lock.mjs';
 import { atomicJSON } from './stream-worker.mjs';
 import { die, MAX_RETAINED_JOBS } from './cli-args.mjs';
@@ -109,6 +110,9 @@ export function updateState(mutator, root = repoRoot()) {
     const tmp = `${file}.tmp-${process.pid}`;
     fs.writeFileSync(tmp, JSON.stringify(state, null, 2) + '\n');
     replaceFile(tmp, file);
+    try {
+      registerRepoTrajectory(root);
+    } catch {}
     return result;
   });
 }

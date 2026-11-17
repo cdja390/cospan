@@ -14,6 +14,7 @@ import {
   workspaceStateDir,
 } from '../src/cli.mjs';
 import { installForAgyHost, installForCodexHost } from '../src/installer.mjs';
+import { listWorkspaceBoard } from '../src/sidebar-state.mjs';
 import { apply as applyDshPlugin } from '../dsh/index.mjs';
 
 const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -192,7 +193,9 @@ test('stdio MCP server handles initialize, tools/list, cospan_send, and cospan_w
       ...process.env,
       AGY_BIN: FAKE_AGY,
       CODEX_BIN: FAKE_CODEX,
+      COSPAN_HOME: `${repo}-cfg`,
       COSPAN_CONFIG_DIR: `${repo}-cfg`,
+      COSPAN_CALLER_HOST: '',
     },
     stdio: ['pipe', 'pipe', 'pipe'],
   });
@@ -222,7 +225,11 @@ test('stdio MCP server handles initialize, tools/list, cospan_send, and cospan_w
     });
 
   try {
-    const init = await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {} });
+    const init = await rpc('initialize', {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'codex-mcp-client', version: '1.0.0' },
+    });
     assert.equal(init.result.serverInfo.name, 'cospan');
 
     const list = await rpc('tools/list', {});
@@ -253,6 +260,16 @@ test('stdio MCP server handles initialize, tools/list, cospan_send, and cospan_w
     assert.equal(waitCall.result.isError, false);
     assert.match(waitCall.result.content[0].text, /exit_code=0 status=done/);
     assert.match(waitCall.result.content[0].text, /Verify MCP delegation path/);
+
+    const prevHome = process.env.COSPAN_HOME;
+    process.env.COSPAN_HOME = `${repo}-cfg`;
+    try {
+      const board = listWorkspaceBoard(repo);
+      assert.equal(board.jobs[0].caller_host, 'codex-mcp-client');
+    } finally {
+      if (prevHome === undefined) delete process.env.COSPAN_HOME;
+      else process.env.COSPAN_HOME = prevHome;
+    }
   } finally {
     child.kill('SIGTERM');
     fs.rmSync(repo, { recursive: true, force: true });

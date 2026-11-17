@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 const SELF_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const PACKAGE_ROOT = path.resolve(SELF_DIR, '..');
 export const COSPAN_BIN_PATH = path.join(PACKAGE_ROOT, 'bin', 'cospan.mjs');
+export const SIDECAR_SERVER_PATH = path.join(PACKAGE_ROOT, 'src', 'sidecar', 'server.mjs');
 
 function shellQuote(p) {
   return `"${String(p).replaceAll('"', '\\"')}"`;
@@ -188,6 +189,37 @@ export function renderAgyHostJobsSkill({ cospanBin }) {
     `- \`${cmd} config\` — inspect effective config & model mappings (\`~/.cospan/config.json\` ` +
     `+ \`<workspace>/.cospan/config.json\`).\n`
   );
+}
+
+export function renderAgySidecarManifest({ sidecarServerPath = SIDECAR_SERVER_PATH } = {}) {
+  return {
+    command: process.execPath,
+    args: [sidecarServerPath],
+    restart_policy: 'always',
+    display_name: 'Cospan',
+    description:
+      'Live workspace delegation board for Cospan tasks across Antigravity, Codex, ' +
+      'Claude Code, and DeepSeek Harness.',
+    has_web_ui: true,
+    agent_permissions: {
+      allows_user_interactions: false,
+    },
+    ui_config: {
+      display_name: 'Cospan',
+      views: [
+        {
+          path: '/',
+          entrypoint: 'SIDECAR_UI_ENTRYPOINT_AUX_PANE',
+          title: 'Cospan',
+        },
+        {
+          path: '/',
+          entrypoint: 'SIDECAR_UI_ENTRYPOINT_SIDEBAR',
+          title: 'Cospan',
+        },
+      ],
+    },
+  };
 }
 
 function renderCodexMcpDetails(targetId, doc) {

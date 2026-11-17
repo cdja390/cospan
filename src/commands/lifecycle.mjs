@@ -98,35 +98,48 @@ export function cmdStatus(opts) {
   }
 }
 
-function assertMatchingWorkerIdentity(targetJob) {
+function checkMatchingWorkerIdentity(targetJob) {
   const identity = targetJob.worker_identity;
-  if (!identity) return;
+  if (!identity) return { ok: true };
   const current = processIdentity(targetJob.pid);
   if (identity.pid !== targetJob.pid || (current && identity.born !== current.born)) {
-    die('worker identity no longer matches this job; refusing to signal a reused PID');
+    return {
+      ok: false,
+      error: 'worker identity no longer matches this job; refusing to signal a reused PID',
+    };
   }
+  return { ok: true };
 }
 
-function requestJobCancellation(id, root) {
-  let changed = false;
-  let status = null;
-  const job = updateState((state) => {
+export function requestSafeJobCancellation(id, root) {
+  return updateState((state) => {
     const targetJob = state.jobs?.find((j) => j.id === id);
-    if (!targetJob) die(`no job "${id}" in this repository`);
-    status = liveJobStatus(targetJob);
-    if (status === 'running') {
-      if (!targetJob.spec_file) die('job has no spec_file cancellation channel');
-      assertMatchingWorkerIdentity(targetJob);
-      targetJob.cancel_requested_at ||= new Date().toISOString();
-      fs.writeFileSync(targetJob.spec_file + '.cancel', targetJob.cancel_requested_at);
-      changed = true;
+    if (!targetJob) {
+      return {
+        ok: false,
+        notFound: true,
+        status: null,
+        error: `no job "${id}" in this repository`,
+      };
     }
-    return targetJob;
+    const status = liveJobStatus(targetJob);
+    if (status !== 'running') {
+      return { ok: true, changed: false, job: targetJob, status };
+    }
+    if (!targetJob.spec_file) {
+      return { ok: false, status, error: 'job has no spec_file cancellation channel' };
+    }
+    const idCheck = checkMatchingWorkerIdentity(targetJob);
+    if (!idCheck.ok) {
+      return { ok: false, status, error: idCheck.error };
+    }
+    targetJob.cancel_requested_at ||= new Date().toISOString();
+    fs.writeFileSync(targetJob.spec_file + '.cancel', targetJob.cancel_requested_at);
+    return { ok: true, changed: true, job: targetJob, status };
   }, root);
-  return { job, changed, status };
 }
 
-function terminateVerifiedWorker(job) {
+export function terminateVerifiedWorker(job) {
   if (!job.worker_identity || process.platform === 'win32') return;
   const current = processIdentity(job.pid);
   if (
@@ -144,20 +157,21 @@ export async function cmdCancel(opts) {
   const id = opts._[0] || opts.id;
   if (!id) die('`cancel` requires a job id (see `cospan status`)');
   const root = repoRoot();
-  const { job, changed, status: initialStatus } = requestJobCancellation(id, root);
+  const res = requestSafeJobCancellation(id, root);
+  if (!res.ok) die(res.error);
 
-  if (!changed) {
-    process.stdout.write(`Job ${id} is not running (status: ${initialStatus}).\n`);
+  if (!res.changed) {
+    process.stdout.write(`Job ${id} is not running (status: ${res.status}).\n`);
     return;
   }
 
-  terminateVerifiedWorker(job);
+  terminateVerifiedWorker(res.job);
 
   const deadline = Date.now() + 10000;
   while (Date.now() < deadline) {
     const status = liveJobStatus(findJob(id, root));
     if (status === 'canceled') {
-      process.stdout.write(`Canceled job ${id} (pid ${job.pid}).\n`);
+      process.stdout.write(`Canceled job ${id} (pid ${res.job.pid}).\n`);
       return;
     }
     if (status !== 'running') {

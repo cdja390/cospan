@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { callTool, TOOLS } from '../src/mcp/tools.mjs';
+import { cancelBoardJob, listWorkspaceBoard, readBoardJobDetail } from '../src/sidebar-state.mjs';
 
 const DSH_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(DSH_DIR, '..');
@@ -73,6 +74,11 @@ function resolveSessionCwd(ctx, agent) {
   return null;
 }
 
+function resolveSessionId(agent) {
+  const direct = agent?.session?.id || agent?.session?.header?.id || null;
+  return typeof direct === 'string' && direct.trim() ? direct.trim() : null;
+}
+
 function buildDshToolParameters(inputSchema) {
   const required = (inputSchema.required || []).filter((key) => key !== 'cwd');
   return {
@@ -108,9 +114,91 @@ function registerCospanTool(toolCtx, toolDef) {
           output: 'Error: Could not resolve workspace cwd from active DSH session.',
         };
       }
-      const res = await callTool(COSPAN_BIN, toolDef.name, { ...args, cwd });
+      const sessionId = resolveSessionId(exec?.agent);
+      const env = {
+        COSPAN_CALLER_HOST: 'dsh',
+        ...(sessionId ? { COSPAN_CALLER_SESSION_ID: sessionId } : {}),
+      };
+      const res = await callTool(COSPAN_BIN, toolDef.name, { ...args, cwd }, { env });
       const text = res.content?.map((c) => c.text).join('\n') || '';
       return { ok: !res.isError, output: text };
+    },
+  });
+}
+
+function parseCtlInput(rawInput) {
+  const trimmed = String(rawInput || '').trim();
+  if (!trimmed) return { ok: true, payload: { action: 'list' } };
+  if (trimmed.startsWith('{')) {
+    try {
+      return { ok: true, payload: JSON.parse(trimmed) };
+    } catch (err) {
+      return { ok: false, error: `Invalid JSON payload for /cospan-ctl: ${err.message}` };
+    }
+  }
+  const [action = 'list', ...rest] = trimmed.split(/\s+/u);
+  return { ok: true, payload: { action, id: rest.join(' ') } };
+}
+
+function extractCtlJobId(payload) {
+  return String(payload?.id || payload?.jobId || '').trim();
+}
+
+function ctlJsonResponse(kind, body) {
+  return { kind, text: JSON.stringify(body) };
+}
+
+async function dispatchCtlAction(cwd, sessionId, payload) {
+  const action = String(payload?.action || 'list').trim();
+  if (action === 'list') {
+    return ctlJsonResponse('success', {
+      ok: true,
+      ...listWorkspaceBoard(cwd, { callerSessionId: sessionId }),
+    });
+  }
+  if (action === 'detail') {
+    const id = extractCtlJobId(payload);
+    if (!id) return ctlJsonResponse('error', { ok: false, error: 'Detail requires a job id.' });
+    const detail = readBoardJobDetail(cwd, id);
+    return ctlJsonResponse(detail.ok ? 'success' : 'error', detail);
+  }
+  if (action === 'cancel') {
+    const id = extractCtlJobId(payload);
+    if (!id) return ctlJsonResponse('error', { ok: false, error: 'Cancel requires a job id.' });
+    const res = await cancelBoardJob(cwd, id);
+    return ctlJsonResponse(res.ok ? 'success' : 'error', res);
+  }
+  return ctlJsonResponse('error', { ok: false, error: `Unknown /cospan-ctl action "${action}"` });
+}
+
+function registerCospanCtlCommand(cmdCtx) {
+  cmdCtx.commands.register({
+    name: 'cospan-ctl',
+    description: 'Query or cancel Cospan workspace delegation jobs for the sidebar UI',
+    input: {
+      hint: '{"action":"list"}',
+    },
+    recordInput: false,
+    async handler({ agent, rawInput }) {
+      const cwd = resolveSessionCwd(cmdCtx, agent);
+      if (!cwd) {
+        return {
+          kind: 'error',
+          text: JSON.stringify({
+            ok: false,
+            error: 'Could not resolve workspace cwd from active DSH session.',
+          }),
+        };
+      }
+      const parsed = parseCtlInput(rawInput);
+      if (!parsed.ok) {
+        return {
+          kind: 'error',
+          text: JSON.stringify({ ok: false, error: parsed.error }),
+        };
+      }
+      const sessionId = resolveSessionId(agent);
+      return dispatchCtlAction(cwd, sessionId, parsed.payload);
     },
   });
 }
@@ -147,4 +235,10 @@ export function apply(ctx) {
       registerCospanTool(toolCtx, toolDef);
     }
   });
+
+  ctx.inject(['commands'], (cmdCtx) => {
+    registerCospanCtlCommand(cmdCtx);
+  });
 }
+
+export default { name, apply };

@@ -205,12 +205,12 @@ const EXIT_STATUS_LABELS = {
   5: 'attention',
 };
 
-function runCliAsync(cospanBin, cliArgs, { cwd, stdinText = null }) {
+function runCliAsync(cospanBin, cliArgs, { cwd, stdinText = null, env = null }) {
   return new Promise((resolve) => {
     const workdir = cwd && fs.existsSync(cwd) ? cwd : process.cwd();
     const child = spawn(process.execPath, [cospanBin, ...cliArgs], {
       cwd: workdir,
-      env: process.env,
+      env: env ? { ...process.env, ...env } : process.env,
       windowsHide: true,
       stdio: [stdinText !== null ? 'pipe' : 'ignore', 'pipe', 'pipe'],
     });
@@ -251,7 +251,7 @@ function formatTextOutcome(res, isError) {
 }
 
 const TOOL_HANDLERS = {
-  async cospan_send(cospanBin, args, cwd) {
+  async cospan_send(cospanBin, args, cwd, env) {
     const cliArgs = ['send', '--to', String(args.to || ''), '--stdin', '--json'];
     if (args.readonly) cliArgs.push('--readonly');
     if (args.raw) cliArgs.push('--raw');
@@ -259,15 +259,16 @@ const TOOL_HANDLERS = {
     const res = await runCliAsync(cospanBin, cliArgs, {
       cwd,
       stdinText: String(args.prompt ?? ''),
+      env,
     });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 
-  async cospan_wait(cospanBin, args, cwd) {
+  async cospan_wait(cospanBin, args, cwd, env) {
     const cliArgs = ['wait'];
     if (args.id) cliArgs.push(String(args.id));
     cliArgs.push('--timeout', String(args.timeout || '20m'));
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd });
+    const res = await runCliAsync(cospanBin, cliArgs, { cwd, env });
     const status = EXIT_STATUS_LABELS[res.exitCode] || 'error';
     const header = `[cospan_wait exit_code=${res.exitCode} status=${status}]`;
     const body = (res.stdout || res.stderr).trim();
@@ -279,13 +280,13 @@ const TOOL_HANDLERS = {
     };
   },
 
-  async cospan_observe(cospanBin, args, cwd) {
+  async cospan_observe(cospanBin, args, cwd, env) {
     const cliArgs = args.id ? ['observe', String(args.id)] : ['observe'];
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd });
+    const res = await runCliAsync(cospanBin, cliArgs, { cwd, env });
     return formatTextOutcome(res, res.exitCode === 1);
   },
 
-  async cospan_continue(cospanBin, args, cwd) {
+  async cospan_continue(cospanBin, args, cwd, env) {
     const cliArgs = ['continue'];
     if (args.last) {
       cliArgs.push('--last');
@@ -298,44 +299,46 @@ const TOOL_HANDLERS = {
     const res = await runCliAsync(cospanBin, cliArgs, {
       cwd,
       stdinText: String(args.prompt ?? ''),
+      env,
     });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 
-  async cospan_result(cospanBin, args, cwd) {
+  async cospan_result(cospanBin, args, cwd, env) {
     const cliArgs = args.id ? ['result', String(args.id)] : ['result'];
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd });
+    const res = await runCliAsync(cospanBin, cliArgs, { cwd, env });
     return formatTextOutcome(res, res.exitCode !== 0 && res.exitCode !== 5);
   },
 
-  async cospan_cancel(cospanBin, args, cwd) {
-    const res = await runCliAsync(cospanBin, ['cancel', String(args.id || '')], { cwd });
+  async cospan_cancel(cospanBin, args, cwd, env) {
+    const res = await runCliAsync(cospanBin, ['cancel', String(args.id || '')], { cwd, env });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 
-  async cospan_status(cospanBin, args, cwd) {
+  async cospan_status(cospanBin, args, cwd, env) {
     const cliArgs = args.id ? ['status', String(args.id)] : ['status'];
-    const res = await runCliAsync(cospanBin, cliArgs, { cwd });
+    const res = await runCliAsync(cospanBin, cliArgs, { cwd, env });
     return formatTextOutcome(res, res.exitCode === 1);
   },
 
-  async cospan_ask(cospanBin, args, cwd) {
+  async cospan_ask(cospanBin, args, cwd, env) {
     const cliArgs = ['ask', '--to', String(args.to || ''), '--stdin'];
     appendCommonExecFlags(cliArgs, args);
     const res = await runCliAsync(cospanBin, cliArgs, {
       cwd,
       stdinText: String(args.prompt ?? ''),
+      env,
     });
     return formatTextOutcome(res, res.exitCode !== 0);
   },
 };
 
-export async function callTool(cospanBin, name, args = {}) {
+export async function callTool(cospanBin, name, args = {}, options = {}) {
   const handler = Object.prototype.hasOwnProperty.call(TOOL_HANDLERS, name)
     ? TOOL_HANDLERS[name]
     : null;
   if (!handler) {
     throw Object.assign(new Error(`Unknown tool: ${name}`), { code: -32601 });
   }
-  return handler(cospanBin, args, args.cwd || process.cwd());
+  return handler(cospanBin, args, args.cwd || process.cwd(), options.env || null);
 }

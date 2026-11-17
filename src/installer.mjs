@@ -14,9 +14,11 @@ import {
   PACKAGE_ROOT,
   renderAgyHostJobsSkill,
   renderAgyHostTargetSkill,
+  renderAgySidecarManifest,
   renderCodexHostJobsSkill,
   renderCodexHostTargetSkill,
 } from './installer-templates.mjs';
+import { syncDshClient } from './ui/sync-dsh-client.mjs';
 
 export { COSPAN_BIN_PATH, PACKAGE_ROOT } from './installer-templates.mjs';
 
@@ -56,6 +58,11 @@ export function installForAgyHost({
     renderAgyHostJobsSkill({ cospanBin })
   );
 
+  const sidecarsRoot = path.join(pluginDir, 'sidecars');
+  fs.rmSync(sidecarsRoot, { recursive: true, force: true });
+  const sidecarPath = path.join(sidecarsRoot, 'cospan_board', 'sidecar.json');
+  writeCleanDirFile(sidecarPath, JSON.stringify(renderAgySidecarManifest(), null, 2) + '\n');
+
   const srcIconSvg = path.join(PACKAGE_ROOT, 'assets', 'icon.svg');
   const hasIconSvg = fs.existsSync(srcIconSvg);
   if (hasIconSvg) {
@@ -90,6 +97,7 @@ export function installForAgyHost({
   return {
     host: 'agy',
     pluginDir,
+    sidecar: sidecarPath,
     skills: [...mountedTargets.map((t) => `cospan-${t}`), 'cospan-jobs'],
   };
 }
@@ -322,6 +330,9 @@ export function installForCodexHost({
 }
 
 export function runInstall({ host = 'all', force = false, registerWithCodexCli = true } = {}) {
+  try {
+    syncDshClient();
+  } catch {}
   const configFile = ensureDefaultGlobalConfig();
   const discovered = discoverAllTargets();
   const pinned = {};

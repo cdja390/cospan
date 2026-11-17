@@ -28,6 +28,7 @@ function resolveCospanBin() {
 const COSPAN_BIN = resolveCospanBin();
 
 let framingMode = 'jsonl';
+let clientCallerHost = null;
 
 function sendMessage(msg) {
   const payload = JSON.stringify(msg);
@@ -41,6 +42,10 @@ function sendMessage(msg) {
 
 const RPC_METHODS = {
   initialize(params) {
+    const clientName = params?.clientInfo?.name;
+    if (typeof clientName === 'string' && clientName.trim()) {
+      clientCallerHost = clientName.trim();
+    }
     const negotiated = params?.protocolVersion === '2025-03-26' ? '2025-03-26' : '2024-11-05';
     return {
       protocolVersion: negotiated,
@@ -59,7 +64,11 @@ const RPC_METHODS = {
     return { tools: TOOLS };
   },
   'tools/call'(params) {
-    return callTool(COSPAN_BIN, params?.name, params?.arguments || {});
+    const env =
+      !process.env.COSPAN_CALLER_HOST && clientCallerHost
+        ? { COSPAN_CALLER_HOST: clientCallerHost }
+        : null;
+    return callTool(COSPAN_BIN, params?.name, params?.arguments || {}, { env });
   },
 };
 
