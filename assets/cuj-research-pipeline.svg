@@ -1,0 +1,554 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 346" width="920" height="346" role="img" aria-label="Animated star-and-mesh agent topology: Carbon acts as host via Cospan, consulting Astra for design review, fanning out bulk experiments to a Hydrogen ×N mesh, auditing with Sol, and sending final fixes to Hydrogen">
+  <style>
+    /* ===================================================================== */
+    /* 14s Pure-CSS Star-and-Mesh Host Orchestration Animation               */
+    /* ===================================================================== */
+    .n-carbon { animation: pulse-c 14s infinite; }
+    .n-astra  { animation: pulse-a 14s infinite; }
+    .n-mesh   { animation: pulse-m 14s infinite; }
+    .n-sol    { animation: pulse-s 14s infinite; }
+    .n-pass   { animation: pulse-ok 14s infinite; }
+    .ok-pill  { animation: show-ok 14s infinite; }
+
+    /* Hop 1: Carbon -> Cospan -> Astra */
+    .p-c2a { animation: hop-c2a 14s infinite; }
+    /* Hop 2: Astra -> Cospan -> Carbon */
+    .p-a2c { animation: hop-a2c 14s infinite; }
+    /* Hop 3: Carbon -> Cospan -> Hydrogen xN fan-out */
+    .p-c2h-a { animation: hop-c2ha 14s infinite; }
+    .p-c2h-b { animation: hop-c2hb 14s infinite; }
+    .p-c2h-c { animation: hop-c2hc 14s infinite; }
+    /* Hop 3r: Hydrogen -> Cospan -> Carbon */
+    .p-h2c { animation: hop-h2c 14s infinite; }
+    /* Hop 4: Carbon -> Cospan -> Sol -> Carbon */
+    .p-c2s { animation: hop-c2s 14s infinite; }
+    .p-s2c { animation: hop-s2c 14s infinite; }
+    /* Hop 5: Carbon -> Cospan -> Hydrogen (final pass) */
+    .p-c2f { animation: hop-c2f 14s infinite; }
+
+    @keyframes pulse-c  { 0%, 2% { opacity: 0.4; } 4%, 95% { opacity: 1; } 98%, 100% { opacity: 0.4; } }
+    @keyframes pulse-a  { 0%, 10% { opacity: 0; } 12%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
+    @keyframes pulse-m  { 0%, 34% { opacity: 0; } 37%, 52% { opacity: 1; } 55%, 100% { opacity: 0; } }
+    @keyframes pulse-s  { 0%, 60% { opacity: 0; } 63%, 73% { opacity: 1; } 76%, 100% { opacity: 0; } }
+    @keyframes pulse-ok { 0%, 82% { opacity: 0; } 85%, 96% { opacity: 1; } 99%, 100% { opacity: 0; } }
+    @keyframes show-ok  { 0%, 83% { opacity: 0.35; } 86%, 96% { opacity: 1; } 99%, 100% { opacity: 0.35; } }
+
+    /* Carbon(366,100) -> Cospan(366,156) -> (248,156) -> (248,73) -> Astra(198,73) */
+    @keyframes hop-c2a {
+      0%, 2% { opacity: 0; transform: translate(0px, 0px); }
+      3.5% { opacity: 1; transform: translate(0px, 56px); }
+      6.5% { opacity: 1; transform: translate(-118px, 56px); }
+      9.5% { opacity: 1; transform: translate(-118px, -27px); }
+      12.0% { opacity: 1; transform: translate(-168px, -27px); }
+      13.5%, 100% { opacity: 0; transform: translate(-168px, -27px); }
+    }
+
+    /* Astra(198,73) -> (248,73) -> (248,156) -> Cospan(366,156) -> Carbon(366,100) */
+    @keyframes hop-a2c {
+      0%, 18% { opacity: 0; transform: translate(0px, 0px); }
+      19.5% { opacity: 1; transform: translate(50px, 0px); }
+      22.5% { opacity: 1; transform: translate(50px, 83px); }
+      25.5% { opacity: 1; transform: translate(168px, 83px); }
+      28.0% { opacity: 1; transform: translate(168px, 27px); }
+      29.5%, 100% { opacity: 0; transform: translate(168px, 27px); }
+    }
+
+    /* Carbon(366,100) -> Cospan(366,166) -> (468,166) -> Fan-out to H1(520,102), Hydrogen(610,155), H2(520,210) */
+    @keyframes hop-c2ha {
+      0%, 29% { opacity: 0; transform: translate(0px, 0px); }
+      31.5% { opacity: 1; transform: translate(0px, 66px); }
+      34.0% { opacity: 1; transform: translate(102px, 66px); }
+      36.5% { opacity: 1; transform: translate(102px, 2px); }
+      39.5% { opacity: 1; transform: translate(154px, 2px); }
+      41%, 100% { opacity: 0; transform: translate(154px, 2px); }
+    }
+    @keyframes hop-c2hb {
+      0%, 29% { opacity: 0; transform: translate(0px, 0px); }
+      31.5% { opacity: 1; transform: translate(0px, 66px); }
+      34.5% { opacity: 1; transform: translate(102px, 66px); }
+      37.0% { opacity: 1; transform: translate(102px, 55px); }
+      39.5% { opacity: 1; transform: translate(244px, 55px); }
+      41%, 100% { opacity: 0; transform: translate(244px, 55px); }
+    }
+    @keyframes hop-c2hc {
+      0%, 29% { opacity: 0; transform: translate(0px, 0px); }
+      31.5% { opacity: 1; transform: translate(0px, 66px); }
+      34.0% { opacity: 1; transform: translate(102px, 66px); }
+      36.5% { opacity: 1; transform: translate(102px, 110px); }
+      39.5% { opacity: 1; transform: translate(154px, 110px); }
+      41%, 100% { opacity: 0; transform: translate(154px, 110px); }
+    }
+
+    /* Hydrogen(610,155) -> (468,155) -> (468,166) -> Cospan(366,166) -> Carbon(366,100) */
+    @keyframes hop-h2c {
+      0%, 49% { opacity: 0; transform: translate(0px, 0px); }
+      51% { opacity: 1; transform: translate(0px, 0px); }
+      53.5% { opacity: 1; transform: translate(-142px, 0px); }
+      55.0% { opacity: 1; transform: translate(-142px, 11px); }
+      57.0% { opacity: 1; transform: translate(-244px, 11px); }
+      58.8% { opacity: 1; transform: translate(-244px, -55px); }
+      60%, 100% { opacity: 0; transform: translate(-244px, -55px); }
+    }
+
+    /* Carbon(366,100) -> Cospan(366,176) -> (248,176) -> (248,225) -> Sol(198,225) */
+    @keyframes hop-c2s {
+      0%, 58% { opacity: 0; transform: translate(0px, 0px); }
+      60.5% { opacity: 1; transform: translate(0px, 76px); }
+      63.0% { opacity: 1; transform: translate(-118px, 76px); }
+      65.0% { opacity: 1; transform: translate(-118px, 125px); }
+      67.5% { opacity: 1; transform: translate(-168px, 125px); }
+      69%, 100% { opacity: 0; transform: translate(-168px, 125px); }
+    }
+
+    /* Sol(198,225) -> (248,225) -> (248,176) -> Cospan(366,176) -> Carbon(366,100) */
+    @keyframes hop-s2c {
+      0%, 71% { opacity: 0; transform: translate(0px, 0px); }
+      72.5% { opacity: 1; transform: translate(50px, 0px); }
+      74.5% { opacity: 1; transform: translate(50px, -49px); }
+      77.0% { opacity: 1; transform: translate(168px, -49px); }
+      79.5% { opacity: 1; transform: translate(168px, -125px); }
+      81%, 100% { opacity: 0; transform: translate(168px, -125px); }
+    }
+
+    /* Carbon(366,100) -> Cospan(366,166) -> (468,166) -> (468,155) -> Hydrogen(610,155) */
+    @keyframes hop-c2f {
+      0%, 79.5% { opacity: 0; transform: translate(0px, 0px); }
+      81.5% { opacity: 1; transform: translate(0px, 66px); }
+      83.5% { opacity: 1; transform: translate(102px, 66px); }
+      84.5% { opacity: 1; transform: translate(102px, 55px); }
+      86.5% { opacity: 1; transform: translate(244px, 55px); }
+      88%, 100% { opacity: 0; transform: translate(244px, 55px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .n-carbon, .n-astra, .n-mesh, .n-sol, .n-pass,
+      .p-c2a, .p-a2c, .p-c2h-a, .p-c2h-b, .p-c2h-c, .p-h2c, .p-c2s, .p-s2c, .p-c2f {
+        animation: none;
+        opacity: 0;
+      }
+      .ok-pill { animation: none; opacity: 1; }
+    }
+  </style>
+
+  <defs>
+    <pattern id="px-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect x="7" y="7" width="2" height="2" fill="#E3E6EA" shape-rendering="crispEdges"/>
+    </pattern>
+    <pattern id="mesh-dots" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect x="6" y="6" width="1.5" height="1.5" fill="#DCE6F7" shape-rendering="crispEdges"/>
+    </pattern>
+  </defs>
+
+  <!-- ===================================================================== -->
+  <!-- PIXEL DRAFTING SHEET CANVAS (920 x 346)                               -->
+  <!-- ===================================================================== -->
+  <path d="M9,1 H911 V5 H915 V9 H919 V337 H915 V341 H911 V345 H9 V341 H5 V337 H1 V9 H5 V5 H9 Z" fill="#F8F9FA" shape-rendering="crispEdges"/>
+  <path d="M11,3 H909 V7 H913 V11 H917 V335 H913 V339 H909 V343 H11 V339 H7 V335 H3 V11 H7 V7 H11 Z" fill="url(#px-dots)" shape-rendering="crispEdges"/>
+  <path d="M9,1 H911 V5 H915 V9 H919 V337 H915 V341 H911 V345 H9 V341 H5 V337 H1 V9 H5 V5 H9 Z" fill="none" stroke="#D0D7DE" stroke-width="2" shape-rendering="crispEdges"/>
+
+  <!-- Subtle Corner Registration Crosshairs -->
+  <g stroke="#3B35B5" stroke-width="1.5" opacity="0.55">
+    <line x1="16" y1="20" x2="26" y2="20"/><line x1="21" y1="15" x2="21" y2="25"/>
+    <line x1="894" y1="20" x2="904" y2="20"/><line x1="899" y1="15" x2="899" y2="25"/>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- STAR-AND-MESH TOPOLOGY SPOKES (Carbon Host <-> Cospan <-> 3 Peers)    -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <!-- Trunk: Carbon Host (366,100) <-> Cospan Router (366,138) -->
+    <rect x="365" y="100" width="2" height="38" fill="#0097A7"/>
+
+    <!-- Spoke A: Cospan (338,156) <-> Astra (198,73) -->
+    <rect x="247" y="155" width="91" height="2" fill="#7356F1"/>
+    <rect x="247" y="72" width="2" height="85" fill="#7356F1"/>
+    <rect x="198" y="72" width="51" height="2" fill="#7356F1"/>
+
+    <!-- Spoke B: Cospan (338,176) <-> Sol (198,225) -->
+    <rect x="247" y="175" width="91" height="2" fill="#7356F1"/>
+    <rect x="247" y="175" width="2" height="51" fill="#7356F1"/>
+    <rect x="198" y="224" width="51" height="2" fill="#7356F1"/>
+
+    <!-- Spoke C: Cospan (394,166) -> Fan-out bus (467) -> Cluster Panel (488) -->
+    <rect x="394" y="165" width="75" height="2" fill="#1A73E8"/>
+    <rect x="467" y="101" width="2" height="110" fill="#1A73E8"/>
+    <rect x="467" y="101" width="22" height="2" fill="#1A73E8"/>
+    <rect x="467" y="154" width="22" height="2" fill="#1A73E8"/>
+    <rect x="467" y="209" width="22" height="2" fill="#1A73E8"/>
+  </g>
+
+  <!-- Edge Callout Pills (Star Topology Hops) -->
+  <g>
+    <rect x="255" y="128" width="84" height="18" rx="4" fill="#FFFFFF" stroke="#CBC5FF" stroke-width="1"/>
+    <text x="297" y="140.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#7356F1">①② design ⇄</text>
+
+    <rect x="206" y="233" width="84" height="18" rx="4" fill="#FFFFFF" stroke="#CBC5FF" stroke-width="1"/>
+    <text x="248" y="245.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#7356F1">④ review ⇄</text>
+
+    <rect x="398" y="139" width="64" height="18" rx="4" fill="#FFFFFF" stroke="#B8D4FE" stroke-width="1"/>
+    <text x="430" y="151.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="600" fill="#1A73E8">③×N ⑤✓</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- CENTER HOST NODE: Carbon (x=280..452, y=22..100)                      -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <path d="M286,26 H448 V28 H451 V31 H454 V97 H451 V100 H448 V102 H286 V100 H283 V97 H280 V31 H283 V28 H286 Z" fill="#D8DEE4"/>
+    <path d="M284,22 H448 V24 H450 V27 H452 V95 H450 V98 H448 V100 H284 V98 H282 V95 H280 V27 H282 V24 H284 Z" fill="#202124"/>
+    <path d="M285,24 H447 V26 H449 V28 H450 V94 H449 V96 H447 V98 H285 V96 H283 V94 H282 V28 H283 V26 H285 Z" fill="#FFFFFF"/>
+    <rect x="285" y="24" width="162" height="3" fill="#0097A7"/>
+    <rect class="n-carbon" opacity="0.4" x="282" y="25" width="168" height="72" fill="none" stroke="#00ACC1" stroke-width="2"/>
+
+    <rect x="402" y="32" width="38" height="14" fill="#E0F7FA"/>
+    <text x="421" y="42.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" font-weight="700" fill="#00838F">HOST</text>
+
+    <!-- Bespoke Carbon Crystal Icon (from agy-staff/assets/icons/carbon.svg) -->
+    <g transform="translate(295, 43) scale(1.2500)">
+      <rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E0F7FA"/>
+      <rect x="7" y="3" width="10" height="2" fill="#26C6DA"/>
+      <rect x="5" y="5" width="2" height="2" fill="#26C6DA"/><rect x="7" y="5" width="4" height="2" fill="#E0F7FA"/><rect x="11" y="5" width="6" height="2" fill="#26C6DA"/><rect x="17" y="5" width="2" height="2" fill="#0097A7"/>
+      <rect x="3" y="7" width="2" height="2" fill="#26C6DA"/><rect x="5" y="7" width="4" height="2" fill="#80DEEA"/><rect x="9" y="7" width="6" height="2" fill="#00BCD4"/><rect x="15" y="7" width="4" height="2" fill="#0097A7"/><rect x="19" y="7" width="2" height="2" fill="#00838F"/>
+      <rect x="1" y="9" width="6" height="2" fill="#4DD0E1"/><rect x="7" y="9" width="10" height="2" fill="#00ACC1"/><rect x="17" y="9" width="6" height="2" fill="#00838F"/>
+      <rect x="3" y="11" width="4" height="2" fill="#26C6DA"/><rect x="7" y="11" width="8" height="2" fill="#0097A7"/><rect x="15" y="11" width="6" height="2" fill="#1A73E8"/>
+      <rect x="5" y="13" width="4" height="2" fill="#26C6DA"/><rect x="9" y="13" width="6" height="2" fill="#00838F"/><rect x="15" y="13" width="4" height="2" fill="#1A73E8"/>
+      <rect x="7" y="15" width="4" height="2" fill="#00ACC1"/><rect x="11" y="15" width="4" height="2" fill="#00838F"/><rect x="15" y="15" width="2" height="2" fill="#1A73E8"/>
+      <rect x="9" y="17" width="2" height="2" fill="#00ACC1"/><rect x="11" y="17" width="4" height="2" fill="#1A73E8"/>
+      <rect x="11" y="19" width="2" height="2" fill="#1A73E8"/>
+    </g>
+  </g>
+  <text x="341" y="58" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14.5" font-weight="700" fill="#202124">Carbon</text>
+  <text x="341" y="75" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#00838F">Design · Host</text>
+
+  <!-- ===================================================================== -->
+  <!-- CENTER COSPAN ROUTER SWITCH (x=338..394, y=138..194)                  -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <path d="M346,142 H390 V144 H393 V147 H396 V191 H393 V194 H390 V196 H346 V194 H343 V191 H340 V147 H343 V144 H346 Z" fill="#D8DEE4"/>
+    <path d="M344,138 H388 V140 H391 V143 H394 V189 H391 V192 H388 V194 H344 V192 H341 V189 H338 V143 H341 V140 H344 Z" fill="#202124"/>
+    <path d="M345,140 H387 V142 H389 V144 H392 V188 H389 V190 H387 V192 H345 V190 H343 V188 H340 V144 H343 V142 H345 Z" fill="#FFFFFF"/>
+
+    <g transform="translate(348, 148) scale(1.8000)">
+      <g fill="#3B35B5"><rect x="3" y="1" width="14" height="1"/><rect x="2" y="2" width="16" height="1"/><rect x="0" y="3" width="20" height="4"/><rect x="5" y="7" width="10" height="1"/><rect x="7" y="8" width="6" height="1"/><rect x="8" y="9" width="4" height="1"/><rect x="9" y="10" width="2" height="1"/><rect x="0" y="13" width="2" height="1"/><rect x="18" y="13" width="2" height="1"/><rect x="0" y="14" width="4" height="1"/><rect x="16" y="14" width="4" height="1"/><rect x="0" y="15" width="5" height="1"/><rect x="15" y="15" width="5" height="1"/><rect x="0" y="16" width="6" height="1"/><rect x="14" y="16" width="6" height="1"/><rect x="1" y="17" width="5" height="1"/><rect x="14" y="17" width="5" height="1"/><rect x="2" y="18" width="5" height="1"/><rect x="13" y="18" width="5" height="1"/><rect x="3" y="19" width="4" height="1"/><rect x="13" y="19" width="4" height="1"/></g>
+      <g fill="#4C46CC"><rect x="3" y="0" width="14" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="17" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="18" y="2" width="1" height="1"/></g>
+      <g fill="#00C48C"><rect x="0" y="7" width="5" height="1"/><rect x="0" y="8" width="7" height="1"/><rect x="0" y="9" width="8" height="1"/><rect x="0" y="10" width="9" height="1"/><rect x="0" y="11" width="10" height="1"/><rect x="0" y="12" width="9" height="1"/><rect x="2" y="13" width="6" height="1"/><rect x="4" y="14" width="4" height="1"/><rect x="5" y="15" width="3" height="1"/><rect x="6" y="16" width="1" height="2"/></g>
+      <g fill="#00B4FF"><rect x="15" y="7" width="5" height="1"/><rect x="13" y="8" width="7" height="1"/><rect x="12" y="9" width="8" height="1"/><rect x="11" y="10" width="9" height="1"/><rect x="10" y="11" width="10" height="1"/><rect x="11" y="12" width="9" height="1"/><rect x="12" y="13" width="6" height="1"/><rect x="12" y="14" width="4" height="1"/><rect x="12" y="15" width="3" height="1"/><rect x="13" y="16" width="1" height="2"/></g>
+      <g fill="#FFE03D"><rect x="9" y="12" width="2" height="1"/><rect x="8" y="13" width="4" height="3"/><rect x="7" y="16" width="6" height="4"/></g>
+    </g>
+  </g>
+  <text x="366" y="209" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="700" fill="#3B35B5">cospan</text>
+
+  <!-- ===================================================================== -->
+  <!-- SPOKE 1 (TOP-LEFT): Astra · Design Review (x=28..198, y=22..100)      -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <path d="M34,38 H194 V40 H197 V43 H200 V109 H197 V112 H194 V114 H34 V112 H31 V109 H28 V43 H31 V40 H34 Z" fill="#D8DEE4"/>
+    <path d="M32,34 H194 V36 H196 V39 H198 V107 H196 V110 H194 V112 H32 V110 H30 V107 H28 V39 H30 V36 H32 Z" fill="#202124"/>
+    <path d="M33,36 H193 V38 H195 V40 H196 V106 H195 V108 H193 V110 H33 V108 H31 V106 H30 V40 H31 V38 H33 Z" fill="#FFFFFF"/>
+    <rect x="33" y="36" width="160" height="3" fill="#7356F1"/>
+    <rect class="n-astra" opacity="0" x="30" y="37" width="166" height="72" fill="none" stroke="#7356F1" stroke-width="2"/>
+
+    <!-- Bespoke Astra Star Pixel Icon -->
+    <g transform="translate(43, 55) scale(1.2500)">
+      <rect x="-4" y="-4" width="32" height="32" rx="6" fill="#F2EAFB"/>
+      <g fill="#7356F1">
+        <rect x="11" y="1" width="2" height="4"/><rect x="11" y="19" width="2" height="4"/>
+        <rect x="1" y="11" width="4" height="2"/><rect x="19" y="11" width="4" height="2"/>
+        <rect x="9" y="5" width="6" height="2"/><rect x="9" y="17" width="6" height="2"/>
+        <rect x="5" y="9" width="2" height="6"/><rect x="17" y="9" width="2" height="6"/>
+      </g>
+      <g fill="#9B72CB">
+        <rect x="7" y="7" width="10" height="10"/>
+        <rect x="4" y="4" width="2" height="2"/><rect x="18" y="4" width="2" height="2"/>
+        <rect x="4" y="18" width="2" height="2"/><rect x="18" y="18" width="2" height="2"/>
+      </g>
+      <rect x="10" y="10" width="4" height="4" fill="#FFE03D"/>
+    </g>
+  </g>
+  <text x="90" y="70" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#202124">Astra</text>
+  <text x="90" y="87" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#7356F1">Design Review</text>
+  <text x="186" y="53" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" fill="#8C959F">codex</text>
+
+  <!-- ===================================================================== -->
+  <!-- SPOKE 2 (BOTTOM-LEFT): Sol · Final Review (x=28..198, y=186..264)     -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <path d="M34,190 H194 V192 H197 V195 H200 V261 H197 V264 H194 V266 H34 V264 H31 V261 H28 V195 H31 V192 H34 Z" fill="#D8DEE4"/>
+    <path d="M32,186 H194 V188 H196 V191 H198 V259 H196 V262 H194 V264 H32 V262 H30 V259 H28 V191 H30 V188 H32 Z" fill="#202124"/>
+    <path d="M33,188 H193 V190 H195 V192 H196 V258 H195 V260 H193 V262 H33 V260 H31 V258 H30 V192 H31 V190 H33 Z" fill="#FFFFFF"/>
+    <rect x="33" y="188" width="160" height="3" fill="#7356F1"/>
+    <rect class="n-sol" opacity="0" x="30" y="189" width="166" height="72" fill="none" stroke="#7356F1" stroke-width="2"/>
+
+    <!-- Bespoke Sol Sun Pixel Icon -->
+    <g transform="translate(43, 207) scale(1.2500)">
+      <rect x="-4" y="-4" width="32" height="32" rx="6" fill="#F2EAFB"/>
+      <g fill="#7356F1">
+        <rect x="11" y="0" width="2" height="3"/><rect x="11" y="21" width="2" height="3"/>
+        <rect x="0" y="11" width="3" height="2"/><rect x="21" y="11" width="3" height="2"/>
+        <rect x="3" y="3" width="3" height="3"/><rect x="18" y="3" width="3" height="3"/>
+        <rect x="3" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/>
+      </g>
+      <g fill="#FF9800">
+        <rect x="9" y="5" width="6" height="2"/><rect x="9" y="17" width="6" height="2"/>
+        <rect x="5" y="9" width="2" height="6"/><rect x="17" y="9" width="2" height="6"/>
+        <rect x="7" y="7" width="10" height="10"/>
+      </g>
+      <rect x="9" y="9" width="6" height="6" fill="#FFE03D"/>
+    </g>
+  </g>
+  <text x="90" y="222" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#202124">Sol</text>
+  <text x="90" y="239" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#7356F1">Final Review</text>
+  <text x="186" y="205" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" fill="#8C959F">codex</text>
+
+  <!-- ===================================================================== -->
+  <!-- SPOKE 3 (RIGHT HALF): Pixel-Stepped Hydrogen ×N Cluster Frame         -->
+  <!-- (Matches Carbon/Astra/Sol + design.svg recessed bay aesthetic)        -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <!-- Outer Pixel-Stepped Shadow & Card (x=488..892, y=18..268) -->
+    <path d="M494,22 H888 V24 H891 V27 H894 V265 H891 V268 H888 V270 H494 V268 H491 V265 H488 V27 H491 V24 H494 Z" fill="#D8DEE4"/>
+    <path d="M492,18 H888 V20 H890 V23 H892 V263 H890 V266 H888 V268 H492 V266 H490 V263 H488 V23 H490 V20 H492 Z" fill="#202124"/>
+    <path d="M493,20 H887 V22 H889 V24 H890 V262 H889 V264 H887 V266 H493 V264 H491 V262 H490 V24 H491 V22 H493 Z" fill="#FFFFFF"/>
+
+    <!-- Top Blue Brand Bar -->
+    <rect x="493" y="20" width="394" height="3" fill="#1A73E8"/>
+
+    <!-- Cluster Header Strip (y=23..47) -->
+    <rect x="490" y="23" width="400" height="24" fill="#F8FAFF"/>
+    <rect x="490" y="47" width="400" height="1" fill="#DCE6F7"/>
+
+    <!-- Header Left: Mini 3-pixel Hydrogen jewel + Label -->
+    <rect x="502" y="32" width="4" height="4" fill="#4285F4"/>
+    <rect x="506" y="32" width="4" height="4" fill="#1A73E8"/>
+    <rect x="510" y="32" width="4" height="4" fill="#FBBC04"/>
+    <text x="521" y="38.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="700" fill="#1A73E8">HYDROGEN ×N</text>
+    <text x="601" y="38.5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#6E7781">· bulk parallel experiments</text>
+
+    <!-- Header Right: Integrated Final-Pass Pill -->
+    <g class="ok-pill" opacity="1">
+      <rect x="780" y="27" width="98" height="16" fill="#E6FBF3"/>
+      <rect x="780" y="27" width="98" height="1" fill="#9AE6CC"/>
+      <rect x="780" y="42" width="98" height="1" fill="#9AE6CC"/>
+      <rect x="780" y="27" width="1" height="16" fill="#9AE6CC"/>
+      <rect x="877" y="27" width="1" height="16" fill="#9AE6CC"/>
+      <text x="829" y="38" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.2" font-weight="700" fill="#008F66">✓ final pass</text>
+    </g>
+
+    <!-- Recessed Inner Mesh Bay (x=497..883, y=52..258) -->
+    <path d="M501,52 H879 V54 H881 V56 H883 V254 H881 V256 H879 V258 H501 V256 H499 V254 H497 V56 H499 V54 H501 Z" fill="#D0DEF5"/>
+    <path d="M502,53 H878 V55 H880 V57 H882 V253 H880 V255 H878 V257 H502 V255 H500 V253 H498 V57 H500 V55 H502 Z" fill="#F4F8FF"/>
+    <path d="M502,53 H878 V55 H880 V57 H882 V253 H880 V255 H878 V257 H502 V255 H500 V253 H498 V57 H500 V55 H502 Z" fill="url(#mesh-dots)"/>
+
+    <!-- Active Bay Highlight Rings -->
+    <rect class="n-mesh" opacity="0" x="498" y="53" width="384" height="204" fill="none" stroke="#1A73E8" stroke-width="2"/>
+    <rect class="n-pass" opacity="0" x="498" y="53" width="384" height="204" fill="#E6FBF3" fill-opacity="0.35" stroke="#00C48C" stroke-width="2"/>
+
+    <!-- Left Entry Connector Stubs inside Bay (x=488..520, y=102/155/210) -->
+    <rect x="488" y="101" width="32" height="2" fill="#1A73E8"/>
+    <rect x="488" y="154" width="122" height="2" fill="#1A73E8"/>
+    <rect x="488" y="209" width="32" height="2" fill="#1A73E8"/>
+    <!-- Subtle Blue Entry Port Pins on Panel Frame Edge -->
+    <rect x="487" y="98" width="4" height="8" fill="#1A73E8"/>
+    <rect x="487" y="151" width="4" height="8" fill="#1A73E8"/>
+    <rect x="487" y="206" width="4" height="8" fill="#1A73E8"/>
+  </g>
+
+  <!-- Mesh Interconnect Lines (2-3-2 Bohr Constellation inside Bay) -->
+  <g stroke="#B4CEF8" stroke-width="1.5" fill="none">
+    <line x1="546" y1="102" x2="644" y2="82"/>
+    <line x1="546" y1="102" x2="644" y2="155"/>
+    <line x1="546" y1="210" x2="644" y2="155"/>
+    <line x1="546" y1="210" x2="644" y2="230"/>
+    <line x1="644" y1="82" x2="644" y2="155"/>
+    <line x1="644" y1="155" x2="644" y2="230"/>
+    <line x1="644" y1="82" x2="742" y2="102"/>
+    <line x1="644" y1="155" x2="742" y2="102"/>
+    <line x1="644" y1="155" x2="742" y2="210"/>
+    <line x1="644" y1="230" x2="742" y2="210"/>
+    <line x1="742" y1="102" x2="836" y2="155"/>
+    <line x1="644" y1="155" x2="836" y2="155"/>
+    <line x1="742" y1="210" x2="836" y2="155"/>
+  </g>
+
+  <!-- Hydrogen Cluster Nodes (with agy-staff/assets/icons/hydrogen.svg Bohr atom) -->
+  <!-- H1 (546, 102) -->
+  <g transform="translate(520, 81)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H1</text>
+  </g>
+
+  <!-- H2 (546, 210) -->
+  <g transform="translate(520, 189)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H2</text>
+  </g>
+
+  <!-- H3 (644, 82) -->
+  <g transform="translate(618, 61)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H3</text>
+  </g>
+
+  <!-- Central Hydrogen Lead Node (644, 155) -->
+  <g transform="translate(610, 130)" shape-rendering="crispEdges">
+    <path d="M6,2 H66 V4 H68 V6 H70 V48 H68 V50 H66 V52 H6 V50 H4 V48 H2 V6 H4 V4 H6 Z" fill="#C7DBFA"/>
+    <path d="M4,0 H64 V2 H66 V4 H68 V46 H66 V48 H64 V50 H4 V48 H2 V46 H0 V4 H2 V2 H4 Z" fill="#1A73E8"/>
+    <path d="M5,2 H63 V4 H65 V6 H66 V44 H65 V46 H63 V48 H5 V46 H3 V44 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(26, 9) scale(0.8333)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="34" y="42" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" font-weight="700" fill="#202124">Hydrogen</text>
+  </g>
+
+  <!-- H4 (644, 230) -->
+  <g transform="translate(618, 209)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H4</text>
+  </g>
+
+  <!-- H5 (742, 102) -->
+  <g transform="translate(716, 81)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H5</text>
+  </g>
+
+  <!-- H6 (742, 210) -->
+  <g transform="translate(716, 189)" shape-rendering="crispEdges">
+    <path d="M5,2 H49 V4 H51 V6 H52 V38 H51 V40 H49 V42 H5 V40 H3 V38 H2 V6 H3 V4 H5 Z" fill="#DCE5F2"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">H6</text>
+  </g>
+
+  <!-- xN Stacked Node (836, 155) -->
+  <g transform="translate(810, 134)" shape-rendering="crispEdges">
+    <path d="M10,6 H54 V8 H56 V10 H58 V44 H56 V46 H54 V48 H10 V46 H8 V44 H6 V10 H8 V8 H10 Z" fill="#D5E0F2"/>
+    <path d="M7,3 H51 V5 H53 V7 H55 V41 H53 V43 H51 V45 H7 V43 H5 V41 H3 V7 H5 V5 H7 Z" fill="#9BB3D8"/>
+    <path d="M4,0 H48 V2 H50 V4 H52 V38 H50 V40 H48 V42 H4 V40 H2 V38 H0 V4 H2 V2 H4 Z" fill="#202124"/>
+    <path d="M5,2 H47 V4 H49 V6 H50 V36 H49 V38 H47 V40 H5 V38 H3 V36 H2 V6 H3 V4 H5 Z" fill="#FFFFFF"/>
+    <g transform="translate(19, 7) scale(0.7083)"><rect x="-4" y="-4" width="32" height="32" rx="6" fill="#E8F0FE"/><g fill="#4285F4"><rect x="9" y="1" width="6" height="2"/><rect x="7" y="3" width="2" height="2"/><rect x="15" y="3" width="2" height="2"/><rect x="5" y="5" width="2" height="2"/><rect x="3" y="7" width="2" height="2"/><rect x="19" y="7" width="2" height="2"/><rect x="1" y="9" width="2" height="6"/><rect x="21" y="9" width="2" height="6"/><rect x="3" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="5" y="17" width="2" height="2"/><rect x="17" y="17" width="2" height="2"/><rect x="7" y="19" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="9" y="21" width="6" height="2"/></g><g fill="#1A73E8"><rect x="11" y="9" width="2" height="6"/><rect x="9" y="11" width="6" height="2"/></g><rect x="11" y="11" width="2" height="2" fill="#8AB4F8"/><rect x="17" y="3" width="4" height="4" fill="#FBBC04"/></g>
+    <text x="26" y="35" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.6" font-weight="700" fill="#1A73E8">×N</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- ANIMATED STAR-TOPOLOGY PACKETS (Host Carbon <-> Peers via Cospan)     -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <g class="p-c2a" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#00ACC1"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-a2c" opacity="0">
+      <rect x="193" y="68" width="10" height="10" fill="#7356F1"/>
+      <rect x="195" y="70" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-c2h-a" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#1A73E8"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-c2h-b" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#1A73E8"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-c2h-c" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#1A73E8"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-h2c" opacity="0">
+      <rect x="605" y="150" width="10" height="10" fill="#00C48C"/>
+      <rect x="607" y="152" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-c2s" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#7356F1"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-s2c" opacity="0">
+      <rect x="193" y="220" width="10" height="10" fill="#7356F1"/>
+      <rect x="195" y="222" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+    <g class="p-c2f" opacity="0">
+      <rect x="361" y="95" width="10" height="10" fill="#00C48C"/>
+      <rect x="363" y="97" width="6" height="6" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER CAPTION STRIP: Icon + One-Sentence Summary                     -->
+  <!-- ===================================================================== -->
+  <g shape-rendering="crispEdges">
+    <path d="M26,301 H898 V303 H901 V306 H904 V327 H901 V330 H898 V332 H26 V330 H23 V327 H20 V306 H23 V303 H26 Z" fill="#E2E6EC"/>
+    <path d="M24,298 H896 V300 H899 V303 H902 V325 H899 V328 H896 V330 H24 V328 H21 V325 H18 V303 H21 V300 H24 Z" fill="#CBD0D6"/>
+    <path d="M25,299 H895 V301 H898 V304 H901 V324 H898 V327 H895 V329 H25 V327 H22 V324 H19 V304 H22 V301 H25 Z" fill="#FFFFFF"/>
+
+    <!-- Icon Badge: Host Star Topology -->
+    <path d="M28,303 H46 V305 H48 V323 H46 V325 H28 V323 H26 V305 H28 Z" fill="#B8D4FE"/>
+    <path d="M29,304 H45 V306 H47 V322 H45 V324 H29 V322 H27 V306 H29 Z" fill="#EEF4FF"/>
+    <g transform="translate(29, 306)">
+      <rect x="6" y="0" width="4" height="3" fill="#0097A7"/>
+      <rect x="7" y="3" width="2" height="3" fill="#3B35B5"/>
+      <rect x="6" y="6" width="4" height="4" fill="#3B35B5"/>
+      <rect x="7" y="7" width="2" height="2" fill="#FFE03D"/>
+      <rect x="3" y="7" width="3" height="2" fill="#7356F1"/>
+      <rect x="0" y="3" width="3" height="3" fill="#7356F1"/>
+      <rect x="0" y="10" width="3" height="3" fill="#7356F1"/>
+      <rect x="2" y="5" width="1" height="6" fill="#7356F1"/>
+      <rect x="10" y="7" width="3" height="2" fill="#1A73E8"/>
+      <rect x="13" y="4" width="3" height="3" fill="#1A73E8"/>
+      <rect x="13" y="9" width="3" height="3" fill="#00C48C"/>
+      <rect x="12" y="5" width="1" height="6" fill="#1A73E8"/>
+    </g>
+
+    <!-- 1. Inline Antigravity Pixel Logo (Carbon Host) -->
+    <g transform="translate(57, 305) scale(1.1250)">
+      <g fill="#3D85FC"><rect x="9" y="8" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="10" y="10" width="2" height="1"/><rect x="11" y="11" width="2" height="1"/><rect x="12" y="12" width="2" height="1"/></g><g fill="#64B6F5"><rect x="6" y="8" width="1" height="1"/><rect x="4" y="10" width="2" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="2" y="12" width="2" height="1"/></g><g fill="#85C64E"><rect x="5" y="4" width="1" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="4" y="6" width="2" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/></g><g fill="#F6912E"><rect x="7" y="2" width="2" height="1"/><rect x="7" y="3" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="8" y="5" width="1" height="1"/></g><g fill="#955FA5"><rect x="9" y="6" width="3" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g><g fill="#EF5441"><rect x="9" y="3" width="1" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/></g><g fill="#6C73D8"><rect x="9" y="7" width="2" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/></g><g fill="#D9B031"><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/></g><g fill="#43AEAA"><rect x="6" y="6" width="1" height="1"/><rect x="5" y="7" width="2" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/></g>
+    </g>
+
+    <!-- 2. Inline Codex Pixel Logo (Astra) -->
+    <g transform="translate(231, 306) scale(0.8000)">
+      <g fill="#B1A7FF"><rect x="6" y="1" width="4" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="5" y="3" width="10" height="1"/></g><g fill="#8FA2FF"><rect x="4" y="4" width="12" height="1"/><rect x="2" y="5" width="15" height="1"/><rect x="1" y="6" width="16" height="1"/><rect x="1" y="7" width="16" height="1"/></g><g fill="#6E89FF"><rect x="1" y="8" width="5" height="1"/><rect x="8" y="8" width="9" height="1"/><rect x="1" y="9" width="6" height="1"/><rect x="9" y="9" width="9" height="1"/><rect x="2" y="10" width="6" height="1"/><rect x="10" y="10" width="9" height="1"/><rect x="3" y="11" width="4" height="1"/><rect x="9" y="11" width="10" height="1"/></g><g fill="#5064FF"><rect x="3" y="12" width="3" height="1"/><rect x="8" y="12" width="3" height="1"/><rect x="15" y="12" width="4" height="1"/><rect x="3" y="13" width="16" height="1"/><rect x="3" y="14" width="15" height="1"/><rect x="4" y="15" width="12" height="1"/></g><g fill="#3941FF"><rect x="5" y="16" width="10" height="1"/><rect x="9" y="17" width="6" height="1"/><rect x="10" y="18" width="4" height="1"/></g><g fill="#FFFFFF"><rect x="6" y="8" width="2" height="1"/><rect x="7" y="9" width="2" height="1"/><rect x="8" y="10" width="2" height="1"/><rect x="7" y="11" width="2" height="1"/><rect x="6" y="12" width="2" height="1"/><rect x="11" y="12" width="4" height="1"/></g>
+    </g>
+
+    <!-- 3. Inline Antigravity Pixel Logo (Hydrogen xN) -->
+    <g transform="translate(349, 305) scale(1.1250)">
+      <g fill="#3D85FC"><rect x="9" y="8" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="10" y="10" width="2" height="1"/><rect x="11" y="11" width="2" height="1"/><rect x="12" y="12" width="2" height="1"/></g><g fill="#64B6F5"><rect x="6" y="8" width="1" height="1"/><rect x="4" y="10" width="2" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="2" y="12" width="2" height="1"/></g><g fill="#85C64E"><rect x="5" y="4" width="1" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="4" y="6" width="2" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/></g><g fill="#F6912E"><rect x="7" y="2" width="2" height="1"/><rect x="7" y="3" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="8" y="5" width="1" height="1"/></g><g fill="#955FA5"><rect x="9" y="6" width="3" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g><g fill="#EF5441"><rect x="9" y="3" width="1" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/></g><g fill="#6C73D8"><rect x="9" y="7" width="2" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/></g><g fill="#D9B031"><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/></g><g fill="#43AEAA"><rect x="6" y="6" width="1" height="1"/><rect x="5" y="7" width="2" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/></g>
+    </g>
+
+    <!-- 4. Inline Codex Pixel Logo (Sol) -->
+    <g transform="translate(523, 306) scale(0.8000)">
+      <g fill="#B1A7FF"><rect x="6" y="1" width="4" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="5" y="3" width="10" height="1"/></g><g fill="#8FA2FF"><rect x="4" y="4" width="12" height="1"/><rect x="2" y="5" width="15" height="1"/><rect x="1" y="6" width="16" height="1"/><rect x="1" y="7" width="16" height="1"/></g><g fill="#6E89FF"><rect x="1" y="8" width="5" height="1"/><rect x="8" y="8" width="9" height="1"/><rect x="1" y="9" width="6" height="1"/><rect x="9" y="9" width="9" height="1"/><rect x="2" y="10" width="6" height="1"/><rect x="10" y="10" width="9" height="1"/><rect x="3" y="11" width="4" height="1"/><rect x="9" y="11" width="10" height="1"/></g><g fill="#5064FF"><rect x="3" y="12" width="3" height="1"/><rect x="8" y="12" width="3" height="1"/><rect x="15" y="12" width="4" height="1"/><rect x="3" y="13" width="16" height="1"/><rect x="3" y="14" width="15" height="1"/><rect x="4" y="15" width="12" height="1"/></g><g fill="#3941FF"><rect x="5" y="16" width="10" height="1"/><rect x="9" y="17" width="6" height="1"/><rect x="10" y="18" width="4" height="1"/></g><g fill="#FFFFFF"><rect x="6" y="8" width="2" height="1"/><rect x="7" y="9" width="2" height="1"/><rect x="8" y="10" width="2" height="1"/><rect x="7" y="11" width="2" height="1"/><rect x="6" y="12" width="2" height="1"/><rect x="11" y="12" width="4" height="1"/></g>
+    </g>
+
+    <!-- 5. Inline Antigravity Pixel Logo (Hydrogen final pass) -->
+    <g transform="translate(684, 305) scale(1.1250)">
+      <g fill="#3D85FC"><rect x="9" y="8" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="10" y="10" width="2" height="1"/><rect x="11" y="11" width="2" height="1"/><rect x="12" y="12" width="2" height="1"/></g><g fill="#64B6F5"><rect x="6" y="8" width="1" height="1"/><rect x="4" y="10" width="2" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="2" y="12" width="2" height="1"/></g><g fill="#85C64E"><rect x="5" y="4" width="1" height="1"/><rect x="5" y="5" width="2" height="1"/><rect x="4" y="6" width="2" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/></g><g fill="#F6912E"><rect x="7" y="2" width="2" height="1"/><rect x="7" y="3" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="8" y="5" width="1" height="1"/></g><g fill="#955FA5"><rect x="9" y="6" width="3" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g><g fill="#EF5441"><rect x="9" y="3" width="1" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="9" y="5" width="2" height="1"/></g><g fill="#6C73D8"><rect x="9" y="7" width="2" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/></g><g fill="#D9B031"><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/></g><g fill="#43AEAA"><rect x="6" y="6" width="1" height="1"/><rect x="5" y="7" width="2" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="4" y="9" width="2" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/></g>
+    </g>
+  </g>
+
+  <text x="77" y="318" textLength="84" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#00838F">Carbon (host)</text>
+  <text x="166" y="318" textLength="59" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">plans with</text>
+  <text x="251" y="318" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">
+    <tspan font-weight="700" fill="#7356F1">Astra</tspan>, fans out
+  </text>
+  <text x="369" y="318" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">
+    <tspan font-weight="700" fill="#1A73E8">Hydrogen ×N</tspan>, audits via
+  </text>
+  <text x="543" y="318" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">
+    <tspan font-weight="700" fill="#7356F1">Sol</tspan>, and passes fixes to
+  </text>
+  <text x="705" y="318" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">
+    <tspan font-weight="700" fill="#1A73E8">Hydrogen</tspan>.
+  </text>
+</svg>
