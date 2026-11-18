@@ -309,3 +309,61 @@ test('layered config (global -> trajectory -> workspace) and events.jsonl retent
     fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });
   }
 });
+
+test('sparse config --init writes {} and config --json exposes override provenance', () => {
+  const repo = makeTempGitRepo();
+  try {
+    // 1. Initialize global config with --init --global -> writes sparse {}
+    const initGlobal = runCospan(['config', '--init', '--global', '--json'], { cwd: repo });
+    assert.equal(initGlobal.code, 0, initGlobal.stderr);
+    const globalPath = JSON.parse(initGlobal.stdout).initialized;
+    assert.equal(fs.readFileSync(globalPath, 'utf8'), '{}\n');
+
+    // 2. Sparse global config leaves overrides empty and preserves builtin effective_config
+    const cfgSparse = runCospan(['config', '--json'], { cwd: repo });
+    assert.equal(cfgSparse.code, 0, cfgSparse.stderr);
+    const parsedSparse = JSON.parse(cfgSparse.stdout);
+    assert.deepEqual(parsedSparse.loaded_files, [globalPath]);
+    assert.deepEqual(parsedSparse.overrides, {});
+    assert.deepEqual(parsedSparse.sources, [{ scope: 'global', path: globalPath, keys: [] }]);
+    assert.equal(parsedSparse.effective_config.defaults.agy.model, 'gemini-3.8-flash-medium');
+
+    // 3. Trajectory + workspace overrides report exact winning provenance
+    const initTraj = runCospan(['config', '--init', '--trajectory', '--json'], { cwd: repo });
+    const trajPath = JSON.parse(initTraj.stdout).initialized;
+    assert.equal(fs.readFileSync(trajPath, 'utf8'), '{}\n');
+    fs.writeFileSync(
+      trajPath,
+      JSON.stringify({ defaults: { agy: { model: 'carbon' }, codex: { model: 'terra' } } })
+    );
+
+    const initWs = runCospan(['config', '--init', '--workspace', '--json'], { cwd: repo });
+    const wsPath = JSON.parse(initWs.stdout).initialized;
+    assert.equal(fs.readFileSync(wsPath, 'utf8'), '{}\n');
+    fs.writeFileSync(wsPath, JSON.stringify({ defaults: { agy: { model: 'hydrogen' } } }));
+
+    const cfgLayered = runCospan(['config', '--json'], { cwd: repo });
+    assert.equal(cfgLayered.code, 0, cfgLayered.stderr);
+    const parsedLayered = JSON.parse(cfgLayered.stdout);
+    assert.deepEqual(parsedLayered.overrides['defaults.agy.model'], {
+      value: 'hydrogen',
+      source: wsPath,
+      scope: 'workspace',
+    });
+    assert.deepEqual(parsedLayered.overrides['defaults.codex.model'], {
+      value: 'terra',
+      source: trajPath,
+      scope: 'trajectory',
+    });
+
+    // 4. --init --workspace --force resets to sparse {}
+    const resetWs = runCospan(['config', '--init', '--workspace', '--force', '--json'], {
+      cwd: repo,
+    });
+    assert.equal(resetWs.code, 0, resetWs.stderr);
+    assert.equal(fs.readFileSync(wsPath, 'utf8'), '{}\n');
+  } finally {
+    fs.rmSync(repo, { recursive: true, force: true });
+    fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });
+  }
+});

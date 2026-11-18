@@ -62,9 +62,7 @@ test('claude foreground ask + detached send -> wait -> continue lifecycle', () =
 
     const askRes = runCospan(
       ['ask', '--to', 'claude', '--restricted', '--prompt', 'hello restricted claude'],
-      {
-        cwd: repo,
-      }
+      { cwd: repo }
     );
     assert.equal(askRes.code, 0, askRes.stderr);
     assert.match(askRes.stdout, /perm_mode=plan skip_perms=false restricted=true/);
@@ -95,9 +93,7 @@ test('claude foreground ask + detached send -> wait -> continue lifecycle', () =
 
     const cont = runCospan(
       ['continue', '--last', '--to', 'claude', '--json', '--prompt', 'Check second file'],
-      {
-        cwd: repo,
-      }
+      { cwd: repo }
     );
     assert.equal(cont.code, 0, cont.stderr);
     const { job_id: job2, conversation_id: convId } = JSON.parse(cont.stdout);
@@ -200,6 +196,134 @@ test('unauthenticated claude/dsh errors surface and doctor --check verifies all 
       assert.equal(parsedDoc.targets[id].driverReady, true);
       assert.equal(parsedDoc.contracts[id].ok, true);
     }
+  } finally {
+    fs.rmSync(repo, { recursive: true, force: true });
+    fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });
+  }
+});
+
+test('continue preserves inherit mode and prior resolved models across config changes', () => {
+  const repo = makeTempGitRepo();
+  try {
+    const dshSend = runCospan(['send', '--to', 'dsh', '--json', '--prompt', 'Turn 1 inherit'], {
+      cwd: repo,
+    });
+    const { job_id: dshJob1 } = JSON.parse(dshSend.stdout);
+    assert.equal(runCospan(['wait', dshJob1, '--timeout', '10s'], { cwd: repo }).code, 0);
+
+    const claudeInherit = runCospan(
+      [
+        'send',
+        '--to',
+        'claude',
+        '--model',
+        'inherit',
+        '--effort',
+        'inherit',
+        '--json',
+        '--prompt',
+        'Claude inherit turn 1',
+      ],
+      { cwd: repo }
+    );
+    const { job_id: claudeJob1 } = JSON.parse(claudeInherit.stdout);
+    assert.equal(runCospan(['wait', claudeJob1, '--timeout', '10s'], { cwd: repo }).code, 0);
+
+    const claudeConcrete = runCospan(
+      [
+        'send',
+        '--to',
+        'claude',
+        '--model',
+        'sonnet',
+        '--effort',
+        'high',
+        '--json',
+        '--prompt',
+        'Claude concrete turn 1',
+      ],
+      { cwd: repo }
+    );
+    const { job_id: claudeConcreteJob1 } = JSON.parse(claudeConcrete.stdout);
+    assert.equal(
+      runCospan(['wait', claudeConcreteJob1, '--timeout', '10s'], { cwd: repo }).code,
+      0
+    );
+
+    fs.mkdirSync(path.join(repo, '.cospan'), { recursive: true });
+    fs.writeFileSync(
+      path.join(repo, '.cospan', 'config.json'),
+      JSON.stringify({
+        defaults: {
+          dsh: { model: 'pro', effort: 'high' },
+          claude: { model: 'opus', effort: 'max' },
+        },
+        mappings: { claude: { sonnet: 'claude-sonnet-4-6', fastopus: 'opus' } },
+      })
+    );
+
+    const dshCont = runCospan(
+      ['continue', '--id', dshJob1, '--json', '--prompt', 'Turn 2 inherit'],
+      { cwd: repo }
+    );
+    const dshContInfo = JSON.parse(dshCont.stdout);
+    assert.equal(dshContInfo.model, null);
+    assert.equal(dshContInfo.effort, null);
+    const dshContWait = runCospan(['wait', dshContInfo.job_id, '--timeout', '10s'], { cwd: repo });
+    assert.match(dshContWait.stdout, /patched=false/);
+
+    const claudeContInherit = runCospan(
+      ['continue', '--id', claudeJob1, '--json', '--prompt', 'Claude inherit turn 2'],
+      { cwd: repo }
+    );
+    const claudeContInheritInfo = JSON.parse(claudeContInherit.stdout);
+    assert.equal(claudeContInheritInfo.model, null);
+    assert.equal(claudeContInheritInfo.effort, null);
+    assert.equal(
+      runCospan(['wait', claudeContInheritInfo.job_id, '--timeout', '10s'], { cwd: repo }).code,
+      0
+    );
+
+    const claudeContConcrete = runCospan(
+      ['continue', '--id', claudeConcreteJob1, '--json', '--prompt', 'Claude concrete turn 2'],
+      { cwd: repo }
+    );
+    const claudeContConcreteInfo = JSON.parse(claudeContConcrete.stdout);
+    assert.equal(claudeContConcreteInfo.model, 'sonnet');
+    assert.equal(claudeContConcreteInfo.effort, 'high');
+    assert.equal(
+      runCospan(['wait', claudeContConcreteInfo.job_id, '--timeout', '10s'], { cwd: repo }).code,
+      0
+    );
+
+    const claudeContExplicit = runCospan(
+      [
+        'continue',
+        '--id',
+        claudeJob1,
+        '--model',
+        'fastopus',
+        '--json',
+        '--prompt',
+        'Claude explicit override',
+      ],
+      { cwd: repo }
+    );
+    const claudeContExplicitInfo = JSON.parse(claudeContExplicit.stdout);
+    assert.equal(claudeContExplicitInfo.model, 'opus');
+    assert.equal(claudeContExplicitInfo.effort, null);
+    assert.equal(
+      runCospan(['wait', claudeContExplicitInfo.job_id, '--timeout', '10s'], { cwd: repo }).code,
+      0
+    );
+
+    // restart also preserves prior inherit mode when --model/--effort omitted
+    const restartRes = runCospan(['restart', dshJob1], { cwd: repo });
+    assert.equal(restartRes.code, 0, restartRes.stderr);
+    const restartedId = /new job (dsh-[^\s]+)/.exec(restartRes.stdout)?.[1];
+    assert.ok(restartedId);
+    const restartWait = runCospan(['wait', restartedId, '--timeout', '10s'], { cwd: repo });
+    assert.match(restartWait.stdout, /patched=false/);
   } finally {
     fs.rmSync(repo, { recursive: true, force: true });
     fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });

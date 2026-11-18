@@ -16,6 +16,7 @@ export {
   loadEffectiveConfig,
   resolveEffectivePermissions,
   ensureDefaultGlobalConfig,
+  resolveJobModelAndEffort,
   writeConfigTemplate,
 } from './config.mjs';
 

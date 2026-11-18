@@ -145,12 +145,27 @@ export async function cmdDoctor(opts) {
 }
 
 function resolveInitConfigPath(opts, root) {
-  if (opts.workspace && opts.trajectory) {
-    die('cannot combine `--workspace` and `--trajectory` in `cospan config --init`');
+  const scopes = [opts.global, opts.workspace, opts.trajectory].filter(Boolean);
+  if (scopes.length > 1) {
+    die('cannot combine `--global`, `--workspace`, and `--trajectory` in `cospan config --init`');
   }
   if (opts.workspace) return path.join(root, '.cospan', 'config.json');
   if (opts.trajectory) return trajectoryConfigFilePath(root);
   return globalConfigFilePath();
+}
+
+function printConfigOverridesSummary(overrides) {
+  const entries = Object.entries(overrides || {});
+  if (!entries.length) {
+    process.stdout.write('active overrides:  none (all effective values from builtin)\n');
+    return;
+  }
+  process.stdout.write('active overrides:\n');
+  for (const [key, info] of entries) {
+    process.stdout.write(
+      `  - ${key} = ${JSON.stringify(info.value)} (${info.scope}: ${info.source})\n`
+    );
+  }
 }
 
 export function cmdConfig(opts) {
@@ -164,12 +179,12 @@ export function cmdConfig(opts) {
     if (opts.json) {
       process.stdout.write(JSON.stringify({ initialized: targetFile }, null, 2) + '\n');
     } else {
-      process.stdout.write(`Initialized cospan config -> ${targetFile}\n`);
+      process.stdout.write(`Initialized sparse cospan config -> ${targetFile}\n`);
     }
     return;
   }
 
-  const { config, loadedFiles } = loadEffectiveConfig({
+  const { config, loadedFiles, sources, overrides } = loadEffectiveConfig({
     workspaceRoot: root,
     explicitConfigPath: opts.config,
   });
@@ -177,6 +192,8 @@ export function cmdConfig(opts) {
     home_dir: cospanHomeDir(),
     trajectory_dir: workspaceTrajectoryDir(root),
     loaded_files: loadedFiles,
+    sources,
+    overrides,
     effective_config: config,
   };
   if (opts.json) {
@@ -186,7 +203,11 @@ export function cmdConfig(opts) {
   process.stdout.write(`cospan home:       ${payload.home_dir}\n`);
   process.stdout.write(`trajectory dir:    ${payload.trajectory_dir}\n`);
   const loadedLabel = loadedFiles.length ? loadedFiles.join(' -> ') : '(built-in defaults only)';
-  process.stdout.write(`loaded configs:    ${loadedLabel}\n\n`);
+  process.stdout.write(`loaded configs:    ${loadedLabel}\n`);
+  printConfigOverridesSummary(overrides);
+  process.stdout.write(
+    'init / reset:      cospan config --init [--global | --workspace | --trajectory] --force\n\n'
+  );
   process.stdout.write(JSON.stringify(config, null, 2) + '\n');
 }
 

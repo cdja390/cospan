@@ -9,6 +9,7 @@ import {
   buildSpawnCommand,
   loadEffectiveConfig,
   resolveEffectivePermissions,
+  resolveJobModelAndEffort,
   resolveTargetBinary,
 } from './targets.mjs';
 import { die, durationToMs, JOB_EXIT_CODES, setWorkerMode } from './cli-args.mjs';
@@ -97,6 +98,7 @@ export function launchDetachedJob({
   model,
   effort,
   timeout,
+  prior = null,
   conversationId = null,
   continuedFrom = null,
   restartedFrom = null,
@@ -113,7 +115,7 @@ export function launchDetachedJob({
   const root = repoRoot(cwd);
   const { config } = loadEffectiveConfig({ workspaceRoot: root, explicitConfigPath });
   const effectivePermissions = permissions || resolveEffectivePermissions(config, driver.id);
-  const resolvedCfg = driver.resolveConfig({ kind: 'send', model, effort, config });
+  const resolvedCfg = resolveJobModelAndEffort({ driver, model, effort, config, prior });
   const id = makeJobId(driver.id);
   const paths = buildJobArtifactPaths(path.join(workspaceStateDir(root), 'jobs'), id);
 
@@ -123,6 +125,8 @@ export function launchDetachedJob({
     raw: Boolean(raw),
     model: resolvedCfg.model,
     effort: resolvedCfg.effort,
+    model_inherit: resolvedCfg.model === null,
+    effort_inherit: driver.id !== 'agy' && resolvedCfg.effort === null,
     timeout,
     cwd,
     ...resolveCallerAttribution(callerHost, callerSessionId),

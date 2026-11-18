@@ -3,13 +3,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 
+
 export const BUILTIN_CONFIG = {
   permissions: 'unrestricted',
   defaults: {
     agy: {
       model: 'gemini-3.8-flash-medium',
       askModel: 'gemini-3.8-flash-medium',
-      family: 'gemini-3.8-flash',
       effort: 'medium',
     },
     codex: {
@@ -129,24 +129,55 @@ function readJsonIfExists(filePath) {
   }
 }
 
-function mergeNestedRecords(targetGroup, incomingGroup) {
+function mergeGroupWithProvenance({
+  targetGroup,
+  incomingGroup,
+  prefix,
+  filePath,
+  scope,
+  overrides,
+  keys,
+}) {
   if (!incomingGroup || typeof incomingGroup !== 'object') return;
-  for (const [key, vals] of Object.entries(incomingGroup)) {
-    if (vals && typeof vals === 'object') {
-      targetGroup[key] = { ...(targetGroup[key] || {}), ...vals };
+  for (const [targetId, vals] of Object.entries(incomingGroup)) {
+    if (!vals || typeof vals !== 'object' || Array.isArray(vals)) continue;
+    targetGroup[targetId] = { ...(targetGroup[targetId] || {}), ...vals };
+    for (const [k, v] of Object.entries(vals)) {
+      const dotted = `${prefix}.${targetId}.${k}`;
+      overrides[dotted] = { value: v, source: filePath, scope };
+      keys.push(dotted);
     }
   }
 }
 
-function mergeConfigLayer(base, layer) {
-  if (!layer || typeof layer !== 'object') return base;
+function mergeConfigLayer(base, layer, { filePath, scope, overrides }) {
+  if (!layer || typeof layer !== 'object') return { merged: base, keys: [] };
   const out = structuredClone(base);
+  const keys = [];
   if (isPermissionMode(layer.permissions)) {
     out.permissions = layer.permissions;
+    overrides.permissions = { value: layer.permissions, source: filePath, scope };
+    keys.push('permissions');
   }
-  mergeNestedRecords(out.defaults, layer.defaults);
-  mergeNestedRecords(out.mappings, layer.mappings);
-  return out;
+  mergeGroupWithProvenance({
+    targetGroup: out.defaults,
+    incomingGroup: layer.defaults,
+    prefix: 'defaults',
+    filePath,
+    scope,
+    overrides,
+    keys,
+  });
+  mergeGroupWithProvenance({
+    targetGroup: out.mappings,
+    incomingGroup: layer.mappings,
+    prefix: 'mappings',
+    filePath,
+    scope,
+    overrides,
+    keys,
+  });
+  return { merged: out, keys };
 }
 
 function nonWorkspaceConfigCandidates(workspaceRoot) {
@@ -155,12 +186,16 @@ function nonWorkspaceConfigCandidates(workspaceRoot) {
     ? path.join(os.homedir(), '.config', 'cospan', 'config.json')
     : null;
   const trajPath = workspaceRoot ? trajectoryConfigFilePath(workspaceRoot) : null;
-  return [legacyXdgPath, globalConfigFilePath(), trajPath].filter(Boolean);
+  return [
+    legacyXdgPath ? { scope: 'legacy_global', path: legacyXdgPath } : null,
+    { scope: 'global', path: globalConfigFilePath() },
+    trajPath ? { scope: 'trajectory', path: trajPath } : null,
+  ].filter(Boolean);
 }
 
 /**
  * Load effective configuration across:
- * built-in -> global -> trajectory -> workspace -> explicit `--config`.
+ * built-in -> legacy global -> global -> trajectory -> workspace -> explicit `--config`.
  */
 export function loadEffectiveConfig({
   workspaceRoot = process.cwd(),
@@ -168,20 +203,25 @@ export function loadEffectiveConfig({
 } = {}) {
   let merged = structuredClone(BUILTIN_CONFIG);
   const loadedFiles = [];
+  const sources = [];
+  const overrides = {};
+
+  const applyLayer = (scope, filePath, data) => {
+    const res = mergeConfigLayer(merged, data, { filePath, scope, overrides });
+    merged = res.merged;
+    loadedFiles.push(filePath);
+    sources.push({ scope, path: filePath, keys: res.keys });
+  };
 
   for (const candidate of nonWorkspaceConfigCandidates(workspaceRoot)) {
-    const data = readJsonIfExists(candidate);
-    if (data) {
-      merged = mergeConfigLayer(merged, data);
-      loadedFiles.push(candidate);
-    }
+    const data = readJsonIfExists(candidate.path);
+    if (data) applyLayer(candidate.scope, candidate.path, data);
   }
 
   for (const wsCandidate of workspaceConfigCandidates(workspaceRoot)) {
     const data = readJsonIfExists(wsCandidate);
     if (data) {
-      merged = mergeConfigLayer(merged, data);
-      loadedFiles.push(wsCandidate);
+      applyLayer('workspace', wsCandidate, data);
       break;
     }
   }
@@ -191,11 +231,10 @@ export function loadEffectiveConfig({
     const resolved = path.resolve(explicit);
     const data = readJsonIfExists(resolved);
     if (!data) throw new Error(`cannot read or parse config file: ${resolved}`);
-    merged = mergeConfigLayer(merged, data);
-    loadedFiles.push(resolved);
+    applyLayer('explicit', resolved, data);
   }
 
-  return { config: merged, loadedFiles };
+  return { config: merged, loadedFiles, sources, overrides };
 }
 
 export function resolveEffectivePermissions(
@@ -215,12 +254,46 @@ export function ensureDefaultGlobalConfig() {
   const file = globalConfigFilePath();
   if (fs.existsSync(file)) return { path: file, created: false };
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(BUILTIN_CONFIG, null, 2) + '\n');
+  fs.writeFileSync(file, '{}\n');
   return { path: file, created: true };
 }
 
 export function writeConfigTemplate(targetFile) {
   fs.mkdirSync(path.dirname(targetFile), { recursive: true });
-  fs.writeFileSync(targetFile, JSON.stringify(BUILTIN_CONFIG, null, 2) + '\n');
+  fs.writeFileSync(targetFile, '{}\n');
   return targetFile;
+}
+
+function resolvePriorEffortInput(driver, prior) {
+  const priorEffortInherit = prior.effort_inherit ?? (driver.id !== 'agy' && prior.effort == null);
+  if (priorEffortInherit) return 'inherit';
+  return prior.effort || undefined;
+}
+
+export function resolveJobModelAndEffort({ driver, model, effort, config, prior = null }) {
+  if (!prior) return driver.resolveConfig({ kind: 'send', model, effort, config });
+  const hasModel = model !== undefined;
+  const hasEffort = effort !== undefined;
+  if (hasModel && hasEffort) return driver.resolveConfig({ kind: 'send', model, effort, config });
+  if (!hasModel && !hasEffort) {
+    return { model: prior.model ?? null, effort: prior.effort ?? null };
+  }
+  if (hasModel) {
+    return driver.resolveConfig({
+      kind: 'send',
+      model,
+      effort: resolvePriorEffortInput(driver, prior),
+      config,
+    });
+  }
+  const priorModelInherit = prior.model_inherit ?? prior.model == null;
+  if (priorModelInherit) {
+    const modelInput = driver.id === 'agy' ? undefined : 'inherit';
+    return driver.resolveConfig({ kind: 'send', model: modelInput, effort, config });
+  }
+  if (driver.id === 'agy') {
+    return driver.resolveConfig({ kind: 'send', model: prior.model, effort, config });
+  }
+  const effortOnly = driver.resolveConfig({ kind: 'send', model: 'inherit', effort, config });
+  return { model: prior.model, effort: effortOnly.effort };
 }
