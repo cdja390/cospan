@@ -19,7 +19,7 @@
     "caption_markdown": "*Header illustration generated via [`cospan-codex`](../../skills/codex/SKILL.md).*"
   },
   "cospan-0.1.0-overview.png": {
-    "status": "pending_final_0.1.0",
+    "status": "generated",
     "generator": "cospan-codex (OpenAI Codex built-in image_gen, --effort low)",
     "references": ["assets/design.png", "assets/icon-128.png"],
     "caption": "*Header illustration generated via [`cospan-codex`](../../skills/codex/SKILL.md).*",

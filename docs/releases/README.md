@@ -4,7 +4,7 @@ Versioned release notes and visual release overviews live here.
 
 ## Releases
 
-- **[v0.1.0](v0.1.0.md)** _(in progress)_ — Initial public release: unified 4-harness async orchestration across Antigravity (`agy`), OpenAI Codex (`codex`), Claude Code (`claude`), and DeepSeek Harness (`dsh`).
+- **[v0.1.0](v0.1.0.md)** — Initial public release: unified 4-harness async orchestration across Antigravity (`agy`), OpenAI Codex (`codex`), Claude Code (`claude`), and DeepSeek Harness (`dsh`).
 
 ## Release Header Image Convention
 
