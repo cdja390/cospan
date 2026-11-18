@@ -140,6 +140,9 @@ export function requestSafeJobCancellation(id, root) {
 }
 
 export function terminateVerifiedWorker(job) {
+  // Worker registers SIGTERM handlers right before publishing worker_started_at;
+  // gating on it avoids killing a booting worker before it can write a canceled report.
+  if (!job.worker_started_at) return;
   if (!job.worker_identity || process.platform === 'win32') return;
   const current = processIdentity(job.pid);
   if (

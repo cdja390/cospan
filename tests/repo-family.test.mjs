@@ -3,9 +3,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { apply as applyDshPlugin } from '../dsh/index.mjs';
+import { terminateVerifiedWorker } from '../src/commands/lifecycle.mjs';
+import { pidAlive } from '../src/job-store.mjs';
+import { processIdentity } from '../src/process-tree.mjs';
 import {
   clearRepoFamilyCaches,
   gitCommonDir,
@@ -205,4 +208,36 @@ test('repo-index registration is idempotent and /cospan-ctl surfaces worktree jo
     assert.equal(detailRes.kind, 'success');
     assert.match(JSON.parse(detailRes.text).result_text, /DSH worktree task/);
   });
+});
+
+test('terminateVerifiedWorker skips SIGTERM until worker_started_at is published', async () => {
+  const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
+    stdio: 'ignore',
+  });
+  try {
+    const identity = processIdentity(child.pid);
+    assert.ok(identity, 'expected live child processIdentity');
+
+    terminateVerifiedWorker({ pid: child.pid, worker_identity: identity });
+    await new Promise((r) => setTimeout(r, 80));
+    assert.equal(child.exitCode, null);
+    assert.equal(pidAlive(child.pid), true);
+
+    if (process.platform !== 'win32') {
+      const exited = new Promise((resolve) => {
+        child.once('exit', (code, sig) => resolve({ code, sig }));
+      });
+      terminateVerifiedWorker({
+        pid: child.pid,
+        worker_identity: identity,
+        worker_started_at: new Date().toISOString(),
+      });
+      const res = await exited;
+      assert.equal(res.sig, 'SIGTERM');
+    }
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) {
+      child.kill('SIGKILL');
+    }
+  }
 });
