@@ -275,11 +275,22 @@ function rememberWorkerSession(jobId, driverId, convId, root) {
   }, root);
 }
 
+async function waitForJobRecord(jobId, root, timeoutMs = 2000) {
+  const deadline = Date.now() + timeoutMs;
+  let job = findJob(jobId, root);
+  while (!job && Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 20));
+    job = findJob(jobId, root);
+  }
+  if (!job) throw new Error(`Worker could not find job "${jobId}" in state.`);
+  return job;
+}
+
 export async function cmdWorker(jobId) {
   setWorkerMode(true);
   const started = Date.now();
   const root = repoRoot();
-  const job = findJob(jobId, root);
+  const job = await waitForJobRecord(jobId, root);
   const spec = JSON.parse(fs.readFileSync(job.spec_file, 'utf8'));
   const driver = getDriver(spec.target);
   const controller = new AbortController();

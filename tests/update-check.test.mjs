@@ -160,7 +160,8 @@ test('doctor, send, and MCP surface update notices and stale legacy config overr
       { cwd: repo, env }
     );
     assert.equal(send1.status, 0, send1.stderr);
-    assert.ok(JSON.parse(send1.stdout).job_id);
+    const send1Id = JSON.parse(send1.stdout).job_id;
+    assert.ok(send1Id);
     assert.match(send1.stderr, /\[cospan\] update available: 0\.1\.0 -> 0\.2\.0/);
 
     const send2 = await runCospanAsync(
@@ -168,6 +169,7 @@ test('doctor, send, and MCP surface update notices and stale legacy config overr
       { cwd: repo, env }
     );
     assert.equal(send2.status, 0, send2.stderr);
+    const send2Id = JSON.parse(send2.stdout).job_id;
     assert.doesNotMatch(send2.stderr, /update available/);
 
     const cache = readUpdateCache(path.join(home, 'update-check.json'));
@@ -200,6 +202,7 @@ test('doctor, send, and MCP surface update notices and stale legacy config overr
         mcp.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n');
       });
 
+    let mcpJobId = null;
     try {
       await rpc('initialize', { protocolVersion: '2024-11-05', capabilities: {} });
       const call = await rpc('tools/call', {
@@ -207,10 +210,15 @@ test('doctor, send, and MCP surface update notices and stale legacy config overr
         arguments: { cwd: repo, to: 'agy', readonly: true, prompt: 'MCP update smoke' },
       });
       assert.equal(call.result.isError, false);
-      assert.ok(JSON.parse(call.result.content[0].text).job_id);
+      mcpJobId = JSON.parse(call.result.content[0].text).job_id;
+      assert.ok(mcpJobId);
       assert.match(call.result.content[1]?.text || '', /update available: 0\.1\.0 -> 0\.2\.0/);
     } finally {
       mcp.kill('SIGTERM');
+    }
+
+    for (const id of [send1Id, send2Id, mcpJobId].filter(Boolean)) {
+      await runCospanAsync(['wait', id, '--timeout', '10s'], { cwd: repo, env });
     }
 
     const reset = await runCospanAsync(['config', '--init', '--global', '--force'], {
