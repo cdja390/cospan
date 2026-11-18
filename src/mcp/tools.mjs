@@ -3,6 +3,14 @@ import { spawn } from 'node:child_process';
 
 const TARGET_ENUM = ['agy', 'codex', 'claude', 'dsh'];
 const EFFORT_ENUM = ['low', 'medium', 'high', 'xhigh', 'max'];
+const MODEL_PARAM_DESC =
+  'Optional model shortcut (pass verbatim, e.g. sol/terra/astra/luna, ' +
+  'flash/carbon/argon/hydrogen/opus/sonnet, haiku/fable, pro/v4.1-flash/v4-pro), ' +
+  'explicit full model ID, or <provider>/<model>. Omit when unspecified to use cospan ' +
+  'effective defaults; never guess version numbers or append effort suffixes.';
+const EFFORT_PARAM_DESC =
+  'Optional reasoning effort override. Pass separately instead of appending ' +
+  'effort suffixes (such as -medium) to model.';
 
 export const TOOLS = [
   {
@@ -36,11 +44,11 @@ export const TOOLS = [
           type: 'boolean',
           description: 'Set true to skip the cospan protocol envelope and send raw prompt text.',
         },
-        model: { type: 'string', description: 'Optional model ID or family alias override.' },
+        model: { type: 'string', description: MODEL_PARAM_DESC },
         effort: {
           type: 'string',
           enum: EFFORT_ENUM,
-          description: 'Optional reasoning effort override.',
+          description: EFFORT_PARAM_DESC,
         },
         timeout: { type: 'string', description: 'Optional worker hard limit (e.g. "60m", "30m").' },
       },
@@ -118,8 +126,8 @@ export const TOOLS = [
           type: 'boolean',
           description: 'Optional override to opt into OS sandboxing on the continued turn.',
         },
-        model: { type: 'string', description: 'Optional model override.' },
-        effort: { type: 'string', enum: EFFORT_ENUM, description: 'Optional effort override.' },
+        model: { type: 'string', description: MODEL_PARAM_DESC },
+        effort: { type: 'string', enum: EFFORT_ENUM, description: EFFORT_PARAM_DESC },
         timeout: { type: 'string', description: 'Optional worker hard limit (e.g. "60m").' },
       },
       required: ['cwd', 'prompt'],
@@ -188,8 +196,8 @@ export const TOOLS = [
           type: 'boolean',
           description: 'Optional override to opt into OS sandboxing.',
         },
-        model: { type: 'string', description: 'Optional model override.' },
-        effort: { type: 'string', enum: EFFORT_ENUM, description: 'Optional effort override.' },
+        model: { type: 'string', description: MODEL_PARAM_DESC },
+        effort: { type: 'string', enum: EFFORT_ENUM, description: EFFORT_PARAM_DESC },
         timeout: { type: 'string', description: 'Optional timeout (default "2m").' },
       },
       required: ['cwd', 'to', 'prompt'],

@@ -1,6 +1,6 @@
 ---
 name: codex
-description: Point-to-point headless delegation to OpenAI Codex (`codex`) via cospan ($cospan:codex). Delegate code review, second-opinion debugging, repository research, or scoped implementation tasks to OpenAI Codex CLI. Use when you need explicit model/effort selection or an isolated detached cospan session.
+description: Point-to-point headless delegation to OpenAI Codex (`codex`) via cospan ($cospan:codex). Delegate code review, second-opinion debugging, repository research, or scoped implementation tasks to OpenAI Codex CLI. Model shortcuts include `sol`, `terra`, `astra`, `luna`. Use when you need explicit model/effort selection or an isolated detached cospan session.
 ---
 
 # $cospan:codex — Delegate to OpenAI Codex (`codex`)
@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Default model is `gpt-6.2-sol` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / `--model`; map user shortcuts to current IDs (do NOT fall back to `gpt-6.0-*`): `sol` -> `gpt-6.2-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6.2-astra`, `luna` -> `gpt-6-luna`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`.
+   - **Models & effort (verbatim shortcut contract)**: pass user model shortcuts **verbatim** to `model` / `--model` (`sol`, `terra`, `astra`, `luna`), pass explicit full model IDs or `<provider>/<model>` verbatim when specified, or omit `model` / `--model` when unspecified so `cospan` uses effective target defaults (`~/.cospan/config.json` and `<workspace>/.cospan/config.json` defaults; pass `inherit` to defer to Codex CLI settings). **Never guess or expand version numbers (such as `gpt-6.0-*`) or append effort suffixes (such as `-medium`) on the host side**—always pass reasoning effort separately via `effort` / `--effort` (supported `--effort`: `low`, `medium`, `high`, `xhigh`) and let `cospan` resolve shortcuts deterministically at runtime.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

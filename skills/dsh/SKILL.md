@@ -1,6 +1,6 @@
 ---
 name: dsh
-description: Point-to-point headless delegation to DeepSeek Harness (`dsh`) via cospan ($cospan:dsh). Delegate repository research, verification, second-opinion debugging, or implementation tasks to DeepSeek Harness CLI.
+description: Point-to-point headless delegation to DeepSeek Harness (`dsh`) via cospan ($cospan:dsh). Delegate repository research, verification, second-opinion debugging, or implementation tasks to DeepSeek Harness CLI. Model shortcuts include `flash`, `pro`, `v4.1-flash`, `v4-pro`.
 ---
 
 # $cospan:dsh — Delegate to DeepSeek Harness (`dsh`)
@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness provider/model without overriding `~/.dsh`. DeepSeek official built-in catalog provides two models—map user shortcuts explicitly: `flash` / `v4.1-flash` -> `deepseek-flash`, `pro` / `v4-pro` -> `deepseek-v4-pro` (or pass `<provider>/<model>` plus `--effort low|high|max` to apply an ephemeral `--patch` overlay).
+   - **Models & effort (verbatim shortcut contract)**: pass user model shortcuts **verbatim** to `model` / `--model` (`flash`, `pro`, `v4.1-flash`, `v4-pro`), pass explicit full model IDs or `<provider>/<model>` verbatim when specified, or omit `model` / `--model` when unspecified so `cospan` uses effective target defaults (defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness provider/model without overriding `~/.dsh`). **Never guess or expand version numbers (such as `gpt-6.0-*`) or append effort suffixes (such as `-medium`) on the host side**—always pass reasoning effort separately via `effort` / `--effort` (supported `--effort`: `off`, `low`, `high`, `max`) and let `cospan` resolve shortcuts deterministically at runtime.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

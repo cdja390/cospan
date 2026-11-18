@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { TARGET_MODEL_SHORTCUTS } from './config.mjs';
 
 const SELF_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const PACKAGE_ROOT = path.resolve(SELF_DIR, '..');
@@ -19,64 +20,61 @@ export const MOUNTABLE_TARGET_IDS = ['agy', 'codex', 'claude', 'dsh'];
 const TARGET_DOCS = {
   codex: {
     title: 'OpenAI Codex (`codex`)',
-    defaultSend: '`gpt-6.2-sol` (`--effort high`)',
-    defaultAsk: '`gpt-6.2-sol` (`--effort low`)',
-    modelsNote:
-      'Default model is `gpt-6.2-sol` (overrideable in `~/.cospan/config.json` or ' +
-      '`<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / ' +
-      '`--model`; map user shortcuts to current IDs (do NOT fall back to `gpt-6.0-*`): ' +
-      '`sol` -> `gpt-6.2-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6.2-astra`, ' +
-      '`luna` -> `gpt-6-luna`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`.',
+    defaultNote:
+      '`~/.cospan/config.json` and `<workspace>/.cospan/config.json` defaults; ' +
+      'pass `inherit` to defer to Codex CLI settings',
+    effortsNote: 'supported `--effort`: `low`, `medium`, `high`, `xhigh`',
     strengths:
       'Delegate code review, second-opinion debugging, repository research, ' +
       'or scoped implementation tasks to OpenAI Codex CLI.',
   },
   agy: {
     title: 'Google Antigravity (`agy`)',
-    defaultSend: '`gemini-3.8-flash-medium`',
-    defaultAsk: '`gemini-3.8-flash-medium`',
-    modelsNote:
-      'Default `send` and `ask` model is `gemini-3.8-flash-medium` (overrideable in ' +
-      '`~/.cospan/config.json` or `<workspace>/.cospan/config.json`). Always pass exact target ' +
-      'model IDs to `model` / `--model`; map user shortcuts to `-medium` by default (swap the ' +
-      'suffix for `-low` / `-high`, or `-xhigh` on `gemini-4-hydrogen`, when requested): ' +
-      '`flash` -> `gemini-3.8-flash-medium`, `carbon` -> `gemini-4-carbon-medium`, ' +
-      '`argon` -> `gemini-4-argon-medium`, `hydrogen` -> `gemini-4-hydrogen-medium`, ' +
-      '`opus` -> `claude-opus-5-5-medium`, `sonnet` -> `claude-sonnet-5-5-medium`.',
+    defaultNote: '`~/.cospan/config.json` and `<workspace>/.cospan/config.json` defaults',
+    effortsNote: 'supported `--effort`: `low`, `medium`, `high`, `xhigh` (`xhigh` on `hydrogen`)',
     strengths:
       'Delegate repository-wide research, multimodal/large-context analysis, code review, ' +
       'or implementation tasks to Google Antigravity CLI.',
   },
   claude: {
     title: 'Anthropic Claude Code (`claude`)',
-    defaultSend: '`sonnet` (`--effort high`)',
-    defaultAsk: '`sonnet` (`--effort low`)',
-    modelsNote:
-      'Default model is evergreen `sonnet` (overrideable in `~/.cospan/config.json` or ' +
-      '`<workspace>/.cospan/config.json`; pass `inherit` to use Claude Code settings default). ' +
-      'Map user shortcuts to Claude CLI model aliases or exact IDs: ' +
-      '`opus` / `opus5.5` -> `opus` (Opus 5.5), `sonnet` / `sonnet5.5` -> `sonnet` (Sonnet 5.5), ' +
-      '`haiku` -> `haiku`, `fable` -> `fable`. ' +
-      'Supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`.',
+    defaultNote:
+      '`~/.cospan/config.json` and `<workspace>/.cospan/config.json` defaults; ' +
+      'pass `inherit` to use Claude Code settings default',
+    effortsNote: 'supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`',
     strengths:
       'Delegate code review, architectural analysis, repository debugging, ' +
       'or scoped implementation tasks to Anthropic Claude Code CLI.',
   },
   dsh: {
     title: 'DeepSeek Harness (`dsh`)',
-    defaultSend: 'profile default (`inherit`, typically `deepseek-flash`)',
-    defaultAsk: 'profile default (`inherit`)',
-    modelsNote:
-      'Defaults to `inherit` so `dsh --profile headless` uses your configured DeepSeek Harness ' +
-      'provider/model without overriding `~/.dsh`. DeepSeek official built-in catalog provides ' +
-      'two models—map user shortcuts explicitly: `flash` / `v4.1-flash` -> `deepseek-flash`, ' +
-      '`pro` / `v4-pro` -> `deepseek-v4-pro` (or pass `<provider>/<model>` plus ' +
-      '`--effort low|high|max` to apply an ephemeral `--patch` overlay).',
+    defaultNote:
+      'defaults to `inherit` so `dsh --profile headless` uses your configured ' +
+      'DeepSeek Harness provider/model without overriding `~/.dsh`',
+    effortsNote: 'supported `--effort`: `off`, `low`, `high`, `max`',
     strengths:
       'Delegate repository research, verification, second-opinion debugging, ' +
       'or implementation tasks to DeepSeek Harness CLI.',
   },
 };
+
+function formatTargetModelShortcuts(targetId) {
+  return (TARGET_MODEL_SHORTCUTS[targetId] || []).map((s) => `\`${s}\``).join(', ');
+}
+
+function formatModelsContractNote(targetId, doc) {
+  const shortcuts = formatTargetModelShortcuts(targetId);
+  return (
+    `**Models & effort (verbatim shortcut contract)**: pass user model shortcuts ` +
+    `**verbatim** to \`model\` / \`--model\` (${shortcuts}), pass explicit full model IDs ` +
+    `or \`<provider>/<model>\` verbatim when specified, or omit \`model\` / \`--model\` ` +
+    `when unspecified so \`cospan\` uses effective target defaults (${doc.defaultNote}). ` +
+    `**Never guess or expand version numbers (such as \`gpt-6.0-*\`) or append effort ` +
+    `suffixes (such as \`-medium\`) on the host side**—always pass reasoning effort ` +
+    `separately via \`effort\` / \`--effort\` (${doc.effortsNote}) and let \`cospan\` ` +
+    `resolve shortcuts deterministically at runtime.`
+  );
+}
 
 function renderAgyLaunchAndWaitSections(targetId, cmd, doc) {
   return (
@@ -99,7 +97,7 @@ function renderAgyLaunchAndWaitSections(targetId, cmd, doc) {
     `envelope wrapping.\n` +
     `  - For multi-paragraph prompts, write to a scratch file and pass \`--prompt-file <path>\` ` +
     `(or pipe via \`--stdin\`).\n` +
-    `  - ${doc.modelsNote}\n\n` +
+    `  - ${formatModelsContractNote(targetId, doc)}\n\n` +
     `- **Fast zero-tool foreground check (\`ask\`, seconds-long factual Q&A only):**\n` +
     `  \`\`\`bash\n` +
     `  ${cmd} ask --to ${targetId} --prompt "<short question>"\n` +
@@ -133,7 +131,7 @@ export function renderAgyHostTargetSkill({ targetId, cospanBin }) {
       : '';
   const desc =
     `Point-to-point headless delegation to ${doc.title} via cospan. ` +
-    `${doc.strengths}${selfNote}`;
+    `${doc.strengths} Model shortcuts include ${formatTargetModelShortcuts(targetId)}.${selfNote}`;
   return (
     `---\nname: cospan-${targetId}\ndescription: ${desc}\n---\n\n` +
     `# cospan-${targetId} — Delegate to ${doc.title}\n\n` +
@@ -239,7 +237,7 @@ function renderCodexMcpDetails(targetId, doc) {
     `\`unrestricted\`)\n` +
     `   - \`model\` *(optional)* / \`effort\` *(optional)* / \`raw\` *(optional)* / ` +
     `\`timeout\` *(optional, e.g. \`"60m"\`)*\n` +
-    `   - ${doc.modelsNote}\n\n` +
+    `   - ${formatModelsContractNote(targetId, doc)}\n\n` +
     `2. **Collect (\`cospan_wait\`):**\n` +
     `   Call MCP tool \`cospan_wait\` with ` +
     `\`{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }\`.\n` +
@@ -270,7 +268,7 @@ export function renderCodexHostTargetSkill({ targetId, cospanBin }) {
       : '';
   const desc =
     `Point-to-point headless delegation to ${doc.title} via cospan ($cospan:${targetId}). ` +
-    `${doc.strengths}${selfNote}`;
+    `${doc.strengths} Model shortcuts include ${formatTargetModelShortcuts(targetId)}.${selfNote}`;
   return (
     `---\nname: ${targetId}\ndescription: ${desc}\n---\n\n` +
     `# $cospan:${targetId} — Delegate to ${doc.title}\n\n` +

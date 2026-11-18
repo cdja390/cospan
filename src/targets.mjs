@@ -6,6 +6,7 @@ import { cospanHomeDir, targetsFilePath } from './config.mjs';
 
 export {
   BUILTIN_CONFIG,
+  TARGET_MODEL_SHORTCUTS,
   cospanHomeDir,
   configDir,
   targetsFilePath,

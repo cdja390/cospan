@@ -1,6 +1,6 @@
 ---
 name: claude
-description: Point-to-point headless delegation to Anthropic Claude Code (`claude`) via cospan ($cospan:claude). Delegate code review, architectural analysis, repository debugging, or scoped implementation tasks to Anthropic Claude Code CLI.
+description: Point-to-point headless delegation to Anthropic Claude Code (`claude`) via cospan ($cospan:claude). Delegate code review, architectural analysis, repository debugging, or scoped implementation tasks to Anthropic Claude Code CLI. Model shortcuts include `sonnet`, `opus`, `haiku`, `fable`.
 ---
 
 # $cospan:claude — Delegate to Anthropic Claude Code (`claude`)
@@ -19,7 +19,7 @@ Always prefer the bundled `cospan` MCP tools over raw shell command calls—they
    - `readonly`: `true` for read-only inspection/review, `false` (default) when file edits are allowed
    - `restricted` *(optional)*: `true` to opt into strict OS sandboxing (defaults to `unrestricted`)
    - `model` *(optional)* / `effort` *(optional)* / `raw` *(optional)* / `timeout` *(optional, e.g. `"60m"`)*
-   - Default model is evergreen `sonnet` (overrideable in `~/.cospan/config.json` or `<workspace>/.cospan/config.json`; pass `inherit` to use Claude Code settings default). Map user shortcuts to Claude CLI model aliases or exact IDs: `opus` / `opus5.5` -> `opus` (Opus 5.5), `sonnet` / `sonnet5.5` -> `sonnet` (Sonnet 5.5), `haiku` -> `haiku`, `fable` -> `fable`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`.
+   - **Models & effort (verbatim shortcut contract)**: pass user model shortcuts **verbatim** to `model` / `--model` (`sonnet`, `opus`, `haiku`, `fable`), pass explicit full model IDs or `<provider>/<model>` verbatim when specified, or omit `model` / `--model` when unspecified so `cospan` uses effective target defaults (`~/.cospan/config.json` and `<workspace>/.cospan/config.json` defaults; pass `inherit` to use Claude Code settings default). **Never guess or expand version numbers (such as `gpt-6.0-*`) or append effort suffixes (such as `-medium`) on the host side**—always pass reasoning effort separately via `effort` / `--effort` (supported `--effort`: `low`, `medium`, `high`, `xhigh`, `max`) and let `cospan` resolve shortcuts deterministically at runtime.
 
 2. **Collect (`cospan_wait`):**
    Call MCP tool `cospan_wait` with `{ "cwd": "<workspace>", "id": "<job_id>", "timeout": "20m" }`.

@@ -14,6 +14,7 @@ import {
   workspaceStateDir,
 } from '../src/cli.mjs';
 import { installForAgyHost, installForCodexHost } from '../src/installer.mjs';
+import { TARGET_MODEL_SHORTCUTS } from '../src/config.mjs';
 import { listWorkspaceBoard } from '../src/sidebar-state.mjs';
 import { apply as applyDshPlugin } from '../dsh/index.mjs';
 
@@ -25,20 +26,41 @@ const FAKE_CODEX = path.join(TEST_DIR, 'fakes', 'fake-codex.mjs');
 const FAKE_CLAUDE = path.join(TEST_DIR, 'fakes', 'fake-claude.mjs');
 const FAKE_DSH = path.join(TEST_DIR, 'fakes', 'fake-dsh.mjs');
 
+function assertVerbatimSkillContract(skillText, targetId) {
+  const frontmatterMatch = /^---\n([\s\S]*?)\n---\n/.exec(skillText);
+  assert.ok(frontmatterMatch, `${targetId} SKILL.md must include YAML frontmatter`);
+  const descLine = frontmatterMatch[1].split('\n').find((line) => line.startsWith('description:'));
+  assert.ok(descLine, `${targetId} frontmatter must include description`);
+  for (const shortcut of TARGET_MODEL_SHORTCUTS[targetId]) {
+    assert.ok(
+      descLine.includes(shortcut),
+      `${targetId} frontmatter description must include shortcut "${shortcut}"`
+    );
+    assert.ok(
+      skillText.includes(`\`${shortcut}\``),
+      `${targetId} skill body must list shortcut "${shortcut}"`
+    );
+  }
+  assert.match(skillText, /verbatim/i);
+  assert.match(skillText, /Never guess or expand version numbers/i);
+  assert.match(skillText, /append effort suffixes/i);
+  assert.doesNotMatch(
+    skillText,
+    /gpt-6\.2-|gpt-6\.1-|gpt-6-|gpt-5\.3-codex-spark|gemini-3\.8-|gemini-4-|claude-opus-5-5|claude-sonnet-5-5|Opus 5\.5|Sonnet 5\.5|deepseek-flash|deepseek-v4-pro|deepseek-chat|deepseek-reasoner/
+  );
+}
+
 function assertRenderedCodexSkills(codexPkgRoot) {
   for (const id of ['agy', 'codex', 'claude', 'dsh']) {
-    assert.ok(fs.existsSync(path.join(codexPkgRoot, 'skills', id, 'SKILL.md')));
+    const skillPath = path.join(codexPkgRoot, 'skills', id, 'SKILL.md');
+    assert.ok(fs.existsSync(skillPath));
+    const text = fs.readFileSync(skillPath, 'utf8');
+    assertVerbatimSkillContract(text, id);
   }
-  const readSkill = (id) =>
-    fs.readFileSync(path.join(codexPkgRoot, 'skills', id, 'SKILL.md'), 'utf8');
-  assert.match(readSkill('agy'), /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/);
-  assert.match(readSkill('agy'), /gemini-3\.8-flash-medium/);
-  assert.match(readSkill('codex'), /gpt-6\.2-sol/);
-  assert.match(readSkill('codex'), /gpt-6\.2-astra/);
-  assert.doesNotMatch(readSkill('codex'), /gpt-5\.3-codex-spark/);
-  assert.match(readSkill('claude'), /Opus 5\.5/);
-  assert.match(readSkill('dsh'), /deepseek-v4-pro/);
-  assert.doesNotMatch(readSkill('dsh'), /deepseek-chat|deepseek-reasoner/);
+  assert.match(
+    fs.readFileSync(path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md'), 'utf8'),
+    /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/
+  );
 }
 
 test('host installer mounts all detected targets and adheres to host schemas', async () => {
@@ -92,6 +114,13 @@ test('host installer mounts all detected targets and adheres to host schemas', a
     assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-codex', 'SKILL.md')));
     assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-claude', 'SKILL.md')));
     assert.ok(fs.existsSync(path.join(agyRes.pluginDir, 'skills', 'cospan-dsh', 'SKILL.md')));
+    for (const id of ['agy', 'codex', 'claude', 'dsh']) {
+      const agySkill = fs.readFileSync(
+        path.join(agyRes.pluginDir, 'skills', `cospan-${id}`, 'SKILL.md'),
+        'utf8'
+      );
+      assertVerbatimSkillContract(agySkill, id);
+    }
 
     const agyManifest = JSON.parse(
       fs.readFileSync(path.join(agyRes.pluginDir, 'plugin.json'), 'utf8')
@@ -234,7 +263,10 @@ test('stdio MCP server handles initialize, tools/list, cospan_send, and cospan_w
     assert.equal(init.result.serverInfo.name, 'cospan');
 
     const list = await rpc('tools/list', {});
-    assert.ok(list.result.tools.some((t) => t.name === 'cospan_send'));
+    const sendTool = list.result.tools.find((t) => t.name === 'cospan_send');
+    assert.ok(sendTool);
+    assert.match(sendTool.inputSchema.properties.model.description, /verbatim/i);
+    assert.match(sendTool.inputSchema.properties.model.description, /never guess version numbers/i);
     assert.ok(list.result.tools.some((t) => t.name === 'cospan_wait'));
 
     const sendCall = await rpc('tools/call', {

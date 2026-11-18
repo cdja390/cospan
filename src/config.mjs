@@ -3,6 +3,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 
+export const TARGET_MODEL_SHORTCUTS = {
+  agy: ['flash', 'carbon', 'argon', 'hydrogen', 'opus', 'sonnet'],
+  codex: ['sol', 'terra', 'astra', 'luna'],
+  claude: ['sonnet', 'opus', 'haiku', 'fable'],
+  dsh: ['flash', 'pro', 'v4.1-flash', 'v4-pro'],
+};
 
 export const BUILTIN_CONFIG = {
   permissions: 'unrestricted',
