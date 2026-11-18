@@ -15,7 +15,6 @@ import {
 import { die, durationToMs, JOB_EXIT_CODES, setWorkerMode } from './cli-args.mjs';
 import { diagnosticPacket, isTimeoutReason, readObservation } from './job-diagnostics.mjs';
 import {
-  findJob,
   finishJob,
   loadState,
   makeJobId,
@@ -277,10 +276,11 @@ function rememberWorkerSession(jobId, driverId, convId, root) {
 
 async function waitForJobRecord(jobId, root, timeoutMs = 2000) {
   const deadline = Date.now() + timeoutMs;
-  let job = findJob(jobId, root);
+  const readRecord = () => (loadState(root).jobs || []).find((j) => j.id === jobId) || null;
+  let job = readRecord();
   while (!job && Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, 20));
-    job = findJob(jobId, root);
+    job = readRecord();
   }
   if (!job) throw new Error(`Worker could not find job "${jobId}" in state.`);
   return job;
