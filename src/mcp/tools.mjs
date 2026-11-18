@@ -252,10 +252,14 @@ function appendCommonExecFlags(cliArgs, args) {
 }
 
 function formatTextOutcome(res, isError) {
-  return {
-    isError,
-    content: [{ type: 'text', text: (res.stdout || res.stderr).trim() }],
-  };
+  const content = [{ type: 'text', text: (res.stdout || res.stderr).trim() }];
+  if (res.stdout && res.stderr) {
+    const notice = res.stderr
+      .split('\n')
+      .find((line) => line.startsWith('[cospan] update available:'));
+    if (notice) content.push({ type: 'text', text: notice.trim() });
+  }
+  return { isError, content };
 }
 
 const TOOL_HANDLERS = {

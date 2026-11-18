@@ -12,6 +12,7 @@ export const TARGET_MODEL_SHORTCUTS = {
 
 export const BUILTIN_CONFIG = {
   permissions: 'unrestricted',
+  updateCheck: true,
   defaults: {
     agy: {
       model: 'gemini-3.8-flash-medium',
@@ -164,6 +165,11 @@ function mergeConfigLayer(base, layer, { filePath, scope, overrides }) {
     out.permissions = layer.permissions;
     overrides.permissions = { value: layer.permissions, source: filePath, scope };
     keys.push('permissions');
+  }
+  if (typeof layer.updateCheck === 'boolean') {
+    out.updateCheck = layer.updateCheck;
+    overrides.updateCheck = { value: layer.updateCheck, source: filePath, scope };
+    keys.push('updateCheck');
   }
   mergeGroupWithProvenance({
     targetGroup: out.defaults,

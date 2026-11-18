@@ -18,6 +18,13 @@ import {
 } from '../cli-args.mjs';
 import { findJob, liveJobStatus, loadState, repoRoot } from '../job-store.mjs';
 import { launchDetachedJob } from '../job-worker.mjs';
+import { consumeCachedUpdateNotice, triggerBackgroundUpdateCheck } from '../update-check.mjs';
+
+function maybeEmitUpdateNotice(config) {
+  triggerBackgroundUpdateCheck({ config });
+  const notice = consumeCachedUpdateNotice({ config });
+  if (notice) process.stderr.write(`${notice}\n`);
+}
 
 export function cmdSend(opts) {
   if (!opts.to) die('`send` requires `--to <agy|codex|claude|dsh>`');
@@ -30,6 +37,7 @@ export function cmdSend(opts) {
     restricted: Boolean(opts.restricted),
     unrestricted: Boolean(opts.unrestricted),
   });
+  maybeEmitUpdateNotice(config);
   const record = launchDetachedJob({
     target: opts.to,
     prompt,
@@ -137,6 +145,7 @@ export function cmdAsk(opts) {
   const t0 = Date.now();
   const parsed = executeForegroundAsk(driver, binary, inv, workspace, timeout, timeoutMs);
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+  maybeEmitUpdateNotice(config);
   process.stderr.write(
     `[cospan] ask target=${driver.id} model=${resolvedCfg.model || 'default'}` +
       (resolvedCfg.effort ? ` effort=${resolvedCfg.effort}` : '') +
@@ -186,6 +195,8 @@ export function cmdContinue(opts) {
   }
   const prompt = readTaskPrompt(opts);
   const timeout = validateSendTimeout(opts.timeout || prev.timeout);
+  const { config } = loadEffectiveConfig({ workspaceRoot: root, explicitConfigPath: opts.config });
+  maybeEmitUpdateNotice(config);
   const record = launchDetachedJob({
     target: prev.target,
     prompt,

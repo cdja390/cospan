@@ -18,6 +18,11 @@ import {
 } from '../targets.mjs';
 import { die } from '../cli-args.mjs';
 import { repoRoot } from '../job-store.mjs';
+import {
+  checkForUpdate,
+  detectStaleConfigOverrides,
+  formatUpdateStatusLine,
+} from '../update-check.mjs';
 
 function pingTarget(targetId, binary, config) {
   const driver = getDriver(targetId);
@@ -108,15 +113,33 @@ function printDoctorTargetBlock(id, info, contractReport, pingReport) {
   }
 }
 
+function printStaleOverridesWarning(staleOverrides) {
+  if (!staleOverrides?.length) return;
+  process.stdout.write(
+    '\nWarning: global/repo config pins legacy model defaults that override newer built-ins:\n'
+  );
+  for (const item of staleOverrides) {
+    process.stdout.write(
+      `  - ${item.key} = ${JSON.stringify(item.current_value)} ` +
+        `(builtin: ${JSON.stringify(item.builtin_value)}; from ${item.source})\n`
+    );
+  }
+  process.stdout.write(
+    '  Reset global config to sparse `{}` with: cospan config --init --global --force\n'
+  );
+}
+
 export async function cmdDoctor(opts) {
   const discovered = discoverAllTargets();
-  const { config } = loadEffectiveConfig({
+  const { config, overrides } = loadEffectiveConfig({
     workspaceRoot: repoRoot(),
     explicitConfigPath: opts.config,
   });
+  const staleOverrides = detectStaleConfigOverrides(overrides);
   const contractCheck = opts.check ? checkAllInstalledContracts(discovered) : null;
   if (contractCheck && !contractCheck.allOk) process.exitCode = 1;
 
+  const updateInfo = await checkForUpdate({ offline: Boolean(opts.offline), config });
   const pings = {};
   if (opts.ping) {
     const active = listActiveTargetIds().filter((id) => discovered[id]?.installed);
@@ -129,6 +152,8 @@ export async function cmdDoctor(opts) {
   if (opts.json) {
     const out = {
       targets: discovered,
+      update: updateInfo,
+      stale_overrides: staleOverrides,
       ...(contractCheck
         ? { contracts_ok: contractCheck.allOk, contracts: contractCheck.contracts }
         : {}),
@@ -142,6 +167,8 @@ export async function cmdDoctor(opts) {
   for (const [id, info] of Object.entries(discovered)) {
     printDoctorTargetBlock(id, info, contractCheck?.contracts?.[id], pings[id]);
   }
+  process.stdout.write(`\n  update   ${formatUpdateStatusLine(updateInfo)}\n`);
+  printStaleOverridesWarning(staleOverrides);
 }
 
 function resolveInitConfigPath(opts, root) {
@@ -188,12 +215,14 @@ export function cmdConfig(opts) {
     workspaceRoot: root,
     explicitConfigPath: opts.config,
   });
+  const staleOverrides = detectStaleConfigOverrides(overrides);
   const payload = {
     home_dir: cospanHomeDir(),
     trajectory_dir: workspaceTrajectoryDir(root),
     loaded_files: loadedFiles,
     sources,
     overrides,
+    stale_overrides: staleOverrides,
     effective_config: config,
   };
   if (opts.json) {
@@ -205,6 +234,7 @@ export function cmdConfig(opts) {
   const loadedLabel = loadedFiles.length ? loadedFiles.join(' -> ') : '(built-in defaults only)';
   process.stdout.write(`loaded configs:    ${loadedLabel}\n`);
   printConfigOverridesSummary(overrides);
+  printStaleOverridesWarning(staleOverrides);
   process.stdout.write(
     'init / reset:      cospan config --init [--global | --workspace | --trajectory] --force\n\n'
   );
@@ -252,4 +282,6 @@ export function cmdInstall(opts) {
       );
     }
   }
+  const { overrides } = loadEffectiveConfig({ workspaceRoot: repoRoot() });
+  printStaleOverridesWarning(detectStaleConfigOverrides(overrides));
 }

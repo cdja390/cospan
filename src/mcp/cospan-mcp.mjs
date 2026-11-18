@@ -8,6 +8,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { callTool, TOOLS } from './tools.mjs';
 
@@ -25,10 +26,36 @@ function resolveCospanBin() {
   return path.resolve(SELF_DIR, '..', '..', 'bin', 'cospan.mjs');
 }
 
+function resolvePackageVersion() {
+  try {
+    const pkgPath = path.resolve(SELF_DIR, '..', '..', 'package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    if (typeof pkg?.version === 'string' && pkg.version.trim()) return pkg.version.trim();
+  } catch {}
+  return '0.1.0';
+}
+
 const COSPAN_BIN = resolveCospanBin();
+const COSPAN_VERSION = resolvePackageVersion();
 
 let framingMode = 'jsonl';
 let clientCallerHost = null;
+
+function triggerUpdateCheckOnce() {
+  const disabled = ['1', 'true'].includes(
+    String(process.env.COSPAN_NO_UPDATE_CHECK || '').toLowerCase()
+  );
+  if (disabled) return;
+  if (!process.env.COSPAN_UPDATE_URL && (process.env.NODE_TEST_CONTEXT || process.env.CI)) return;
+  try {
+    const child = spawn(process.execPath, [COSPAN_BIN, '_update_check'], {
+      detached: true,
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+    child.unref();
+  } catch {}
+}
 
 function sendMessage(msg) {
   const payload = JSON.stringify(msg);
@@ -46,11 +73,12 @@ const RPC_METHODS = {
     if (typeof clientName === 'string' && clientName.trim()) {
       clientCallerHost = clientName.trim();
     }
+    triggerUpdateCheckOnce();
     const negotiated = params?.protocolVersion === '2025-03-26' ? '2025-03-26' : '2024-11-05';
     return {
       protocolVersion: negotiated,
       capabilities: { tools: {} },
-      serverInfo: { name: 'cospan', version: '0.1.0' },
+      serverInfo: { name: 'cospan', version: COSPAN_VERSION },
       instructions:
         'Use cospan_send + cospan_wait (always passing your workspace `cwd`) to delegate tasks ' +
         'to external headless harnesses (`agy`, `codex`, `claude`, `dsh`) and collect results ' +

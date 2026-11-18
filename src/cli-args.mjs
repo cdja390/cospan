@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { PACKAGE_VERSION } from './update-check.mjs';
 
 export const MAX_INLINE_BYTES = 512 * 1024;
 export const MAX_BACKGROUND_MS = 120 * 60 * 1000; // 120m ceiling
@@ -74,6 +75,7 @@ const BOOL_FLAGS = new Set([
   '--no-codex-cli',
   '--check',
   '--ping',
+  '--offline',
   '--help',
   '-h',
   '--version',
@@ -211,7 +213,8 @@ export function pickExplicitPermission(opts, fallback = null) {
 
 export function printHelp() {
   const lines = [
-    'cospan v0.1.0 — Persona-free point-to-point cross-harness headless session primitive',
+    `cospan v${PACKAGE_VERSION} — Persona-free point-to-point cross-harness ` +
+      'headless session primitive',
     '',
     'Usage:',
     '  cospan send --to <agy|codex|claude|dsh> [--readonly] [--restricted|--unrestricted]',
@@ -231,7 +234,7 @@ export function printHelp() {
     '  cospan status [<job-id>]',
     '  cospan config [--init [--global | --workspace | --trajectory] [--force]]',
     '    [--config <path>] [--json]',
-    '  cospan doctor [--check] [--ping] [--json]',
+    '  cospan doctor [--check] [--ping] [--offline] [--json]',
     '  cospan install [--host all|agy|codex] [--force] [--no-codex-cli] [--json]',
     '',
     'Exit codes for `wait` / `status <id>`:',

@@ -19,6 +19,7 @@ import {
   renderCodexHostTargetSkill,
 } from './installer-templates.mjs';
 import { syncDshClient } from './ui/sync-dsh-client.mjs';
+import { PACKAGE_VERSION } from './update-check.mjs';
 
 export { COSPAN_BIN_PATH, PACKAGE_ROOT } from './installer-templates.mjs';
 
@@ -73,7 +74,7 @@ export function installForAgyHost({
   const manifest = {
     name: 'cospan',
     displayName: 'Cospan',
-    version: '0.1.0',
+    version: PACKAGE_VERSION,
     description:
       'Persona-free point-to-point headless delegation primitive across ' +
       'Antigravity (agy), OpenAI Codex, Claude Code, and DeepSeek Harness (dsh).',
@@ -148,7 +149,7 @@ function writeCodexBundleAtRoot({
 
   const codexManifest = {
     name: 'cospan',
-    version: '0.1.0',
+    version: PACKAGE_VERSION,
     description:
       'Persona-free point-to-point headless delegation primitive for Codex ' +
       '($cospan:agy, $cospan:codex, $cospan:claude, $cospan:dsh + cospan MCP).',

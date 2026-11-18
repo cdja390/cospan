@@ -4,6 +4,7 @@ import { cmdAsk, cmdContinue, cmdRestart, cmdSend } from './commands/dispatch.mj
 import { cmdCancel, cmdObserve, cmdResult, cmdStatus, cmdWait } from './commands/lifecycle.mjs';
 import { repoRoot, workspaceStateDir } from './job-store.mjs';
 import { cmdWorker } from './job-worker.mjs';
+import { checkForUpdate, PACKAGE_VERSION } from './update-check.mjs';
 
 export { durationToMs, JOB_EXIT_CODES, parseCliArgs, repoRoot, workspaceStateDir };
 
@@ -20,6 +21,7 @@ const SUBCOMMAND_HANDLERS = {
   config: cmdConfig,
   doctor: cmdDoctor,
   install: cmdInstall,
+  _update_check: () => checkForUpdate(),
   _worker: (opts) => cmdWorker(opts._[0]),
 };
 
@@ -27,7 +29,7 @@ export async function main(argv = process.argv.slice(2)) {
   try {
     const { subcmd, opts } = parseCliArgs(argv);
     if (opts.version) {
-      process.stdout.write('cospan 0.1.0\n');
+      process.stdout.write(`cospan ${PACKAGE_VERSION}\n`);
       return;
     }
     if (!subcmd || subcmd === 'help' || opts.help) {
