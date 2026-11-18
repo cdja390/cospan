@@ -19,13 +19,13 @@ export const MOUNTABLE_TARGET_IDS = ['agy', 'codex', 'claude', 'dsh'];
 const TARGET_DOCS = {
   codex: {
     title: 'OpenAI Codex (`codex`)',
-    defaultSend: '`gpt-6.1-sol` (`--effort high`)',
-    defaultAsk: '`gpt-6.1-sol` (`--effort low`)',
+    defaultSend: '`gpt-6.2-sol` (`--effort high`)',
+    defaultAsk: '`gpt-6.2-sol` (`--effort low`)',
     modelsNote:
-      'Default model is `gpt-6.1-sol` (overrideable in `~/.cospan/config.json` or ' +
+      'Default model is `gpt-6.2-sol` (overrideable in `~/.cospan/config.json` or ' +
       '`<workspace>/.cospan/config.json`). Always pass exact target model IDs to `model` / ' +
       '`--model`; map user shortcuts to current IDs (do NOT fall back to `gpt-6.0-*`): ' +
-      '`sol` -> `gpt-6.1-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6-astra`, ' +
+      '`sol` -> `gpt-6.2-sol`, `terra` -> `gpt-6.1-terra`, `astra` -> `gpt-6.2-astra`, ' +
       '`luna` -> `gpt-6-luna`. Supported `--effort`: `low`, `medium`, `high`, `xhigh`.',
     strengths:
       'Delegate code review, second-opinion debugging, repository research, ' +

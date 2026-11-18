@@ -16,7 +16,7 @@ Unified async delegation across **Antigravity**, **Codex**, **Claude Code**, **D
 
 ## Why Cospan
 
-Frontier coding models perform best inside the native harnesses they were co-trained with—so the real unit of orchestration is **`Model × Harness`**, and different ecosystems bring distinct strengths: **Gemini 4 Carbon** (`agy`) for architecture and planning, **GPT-6.1-Sol** (`codex`) for deep bug-hunting review, **GPT-6.1-Terra** (`codex`) for live GUI and browser computer use, and **Claude** (`claude`) for frontend craft. Combining them unlocks massive leverage; humans can bridge harnesses manually with handoff prompts today, but orchestration belongs to the agents themselves.
+Frontier coding models perform best inside the native harnesses they were co-trained with—so the real unit of orchestration is **`Model × Harness`**, and different ecosystems bring distinct strengths: **Gemini 4 Carbon** (`agy`) for architecture and planning, **GPT-6.2-Sol** (`codex`) for deep bug-hunting review, **GPT-6.1-Terra** (`codex`) for live GUI and browser computer use, and **Claude** (`claude`) for frontend craft. Combining them unlocks massive leverage; humans can bridge harnesses manually with handoff prompts today, but orchestration belongs to the agents themselves.
 
 Inspired and battle-tested by [`agy-staff`](https://github.com/keli-wen/agy-staff), Cospan turns cross-harness delegation into an **async, progressively disclosed protocol** behind one unified adapter: your host dispatches peer `Model × Harness` units in the background, stays unblocked with a clean context window, and pulls live status or full execution traces only when needed—forming a clean foundation for next-generation multi-agent collaboration.
 
@@ -37,17 +37,17 @@ Invoke `/cospan-<harness>` (or `/cospan:<harness>` in Claude Code, `$cospan:<har
 
 ### Cross-ecosystem workflows
 
-- **Build with `Carbon`, fan out parallel `Sol` reviews** (`Antigravity` → `2× Codex`) — Finish coding on **Gemini 4 Carbon**, then fan out multiple **GPT-6.1-Sol** reviewers across slices (`webhook/` & `retry/`) without blocking your host—Carbon keeps running local tests while staggered background results merge cleanly on wakeup:
+- **Build with `Carbon`, fan out parallel `Sol` reviews** (`Antigravity` → `2× Codex`) — Finish coding on **Gemini 4 Carbon**, then fan out multiple **GPT-6.2-Sol** reviewers across slices (`webhook/` & `retry/`) without blocking your host—Carbon keeps running local tests while staggered background results merge cleanly on wakeup:
 
   > `/cospan-codex` _"Fan out 2 `sol` reviews across `webhook/` and `retry/` for real bugs."_
 
-  ![Animated multi-agent demo: Gemini 4 Carbon fans out 2 parallel GPT-6.1-Sol reviewers non-blockingly, continues local tests, and merges staggered async results on wakeup](assets/cuj-carbon-sol.svg)
+  ![Animated multi-agent demo: Gemini 4 Carbon fans out 2 parallel GPT-6.2-Sol reviewers non-blockingly, continues local tests, and merges staggered async results on wakeup](assets/cuj-carbon-sol.svg)
 
-- **Bring in `Carbon` as a second brain for `Astra`** (`Codex` ⇄ `Antigravity`) — Driving a complex migration on **GPT-6-Astra** in Codex? Consult **Gemini 4 Carbon** from a second model family to stress-test assumptions, propose an alternative route, and verify edge cases across multiple turns in the same session:
+- **Bring in `Carbon` as a second brain for `Astra`** (`Codex` ⇄ `Antigravity`) — Driving a complex migration on **GPT-6.2-Astra** in Codex? Consult **Gemini 4 Carbon** from a second model family to stress-test assumptions, propose an alternative route, and verify edge cases across multiple turns in the same session:
 
   > `$cospan:agy` _"Ask `carbon` to stress-test `docs/plan.md`, propose a cleaner route, and verify crash recovery."_
 
-  ![Animated multi-turn second-brain demo: GPT-6-Astra in Codex consults Gemini 4 Carbon in Antigravity across two resumed turns while auditing SQL callers locally](assets/cuj-astra-carbon.svg)
+  ![Animated multi-turn second-brain demo: GPT-6.2-Astra in Codex consults Gemini 4 Carbon in Antigravity across two resumed turns while auditing SQL callers locally](assets/cuj-astra-carbon.svg)
 
 - **Delegate computer use from `Claude Code` to `Terra`** (`Claude Code` → `Codex`) — Keep main code orchestration in **Claude Code**, and hand off live browser or GUI computer-use workflows to **GPT-6.1-Terra** while Claude keeps writing unit tests locally:
 

@@ -16,7 +16,7 @@
 
 ## 核心理念
 
-多智能体编排（Agent Orchestration）具备极高的杠杆率——前沿模型往往在与自身协同训练的原生 Harness 中表现最强，因此真正应该被调度的基本单元是 **`Model × Harness`**。不同模型家族各有鲜明长板：**Gemini 4 Carbon**（`agy`）擅长架构与规划，**GPT-6.1-Sol**（`codex`）擅长深度查错 Review，**GPT-6.1-Terra**（`codex`）擅长结合 Codex 跑 Computer Use，而 **Claude** 家族（`claude`）擅长前端设计与交互打磨。今天人们还能靠 Handoff Prompt 在不同窗口间手工传话，但未来的趋势必然是让 Agent 自主完成跨端委派与协同。
+多智能体编排（Agent Orchestration）具备极高的杠杆率——前沿模型往往在与自身协同训练的原生 Harness 中表现最强，因此真正应该被调度的基本单元是 **`Model × Harness`**。不同模型家族各有鲜明长板：**Gemini 4 Carbon**（`agy`）擅长架构与规划，**GPT-6.2-Sol**（`codex`）擅长深度查错 Review，**GPT-6.1-Terra**（`codex`）擅长结合 Codex 跑 Computer Use，而 **Claude** 家族（`claude`）擅长前端设计与交互打磨。今天人们还能靠 Handoff Prompt 在不同窗口间手工传话，但未来的趋势必然是让 Agent 自主完成跨端委派与协同。
 
 受 [`agy-staff`](https://github.com/keli-wen/agy-staff) 的实践验证与**渐进式披露（Progressive Disclosure）**启发，Cospan 通过一个统一的编排适配器提供**默认异步、按需展开**的协议工具：Host Agent 可统一在后台非阻塞调度其他 `Model × Harness` 单元，平时只收回精炼结论，仅在需要时按需拉取实时进展与完整轨迹——构建下一代多智能体编排与协作的基础设施。
 
@@ -37,17 +37,17 @@
 
 ### 跨生态多智能体工作流
 
-- **用 `Carbon` 开发，并发扇出多个 `Sol` 分片审查**（`Antigravity` → `2× Codex`）— 用 **Gemini 4 Carbon** 完成编码后，并发派发多个 **GPT-6.1-Sol** 分别审查不同模块（如 `webhook/` 与 `retry/`）；主端**非阻塞**继续跑本地测试，两个 `Sol` 错峰完成后自动唤醒合并结论：
+- **用 `Carbon` 开发，并发扇出多个 `Sol` 分片审查**（`Antigravity` → `2× Codex`）— 用 **Gemini 4 Carbon** 完成编码后，并发派发多个 **GPT-6.2-Sol** 分别审查不同模块（如 `webhook/` 与 `retry/`）；主端**非阻塞**继续跑本地测试，两个 `Sol` 错峰完成后自动唤醒合并结论：
 
   > `/cospan-codex` _“并发派 2 个 `sol` 分别审查 `webhook/` 与 `retry/` 的改动，找出真正的 Bug。”_
 
-  ![多 Agent 异步动图演示：Gemini 4 Carbon 非阻塞扇出 2 个并行 GPT-6.1-Sol 分片审查，主端继续本地跑单测，错峰完成后自动唤醒汇总](assets/cuj-carbon-sol.svg)
+  ![多 Agent 异步动图演示：Gemini 4 Carbon 非阻塞扇出 2 个并行 GPT-6.2-Sol 分片审查，主端继续本地跑单测，错峰完成后自动唤醒汇总](assets/cuj-carbon-sol.svg)
 
-- **在 `Astra` 中引入 `Carbon` 作为多轮第二大脑**（`Codex` ⇄ `Antigravity`）— 在 Codex 中用 **GPT-6-Astra** 推进复杂重构时，请另一模型家族的 **Gemini 4 Carbon** 挑刺方案、给出替代路线，并沿同一会话继续追问验证崩溃恢复细节：
+- **在 `Astra` 中引入 `Carbon` 作为多轮第二大脑**（`Codex` ⇄ `Antigravity`）— 在 Codex 中用 **GPT-6.2-Astra** 推进复杂重构时，请另一模型家族的 **Gemini 4 Carbon** 挑刺方案、给出替代路线，并沿同一会话继续追问验证崩溃恢复细节：
 
   > `$cospan:agy` _“请 `carbon` 挑一挑 `docs/plan.md` 方案盲点、给出更优路线，并继续验证崩溃恢复。”_
 
-  ![多轮第二大脑动图演示：GPT-6-Astra 非阻塞咨询 Gemini 4 Carbon 并在同一会话内自动二次追问验证，同时本地排查 SQL 调用方](assets/cuj-astra-carbon.svg)
+  ![多轮第二大脑动图演示：GPT-6.2-Astra 非阻塞咨询 Gemini 4 Carbon 并在同一会话内自动二次追问验证，同时本地排查 SQL 调用方](assets/cuj-astra-carbon.svg)
 
 - **在 `Claude Code` 中把 Computer Use 交给 `Terra`**（`Claude Code` → `Codex`）— 主线留在 **Claude Code** 统筹编码与补单测，遇到桌面或浏览器端真实交互验证时，非阻塞委派给擅长 Computer Use 的 **GPT-6.1-Terra**：
 

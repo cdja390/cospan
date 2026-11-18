@@ -67,7 +67,7 @@ test('sidebar-state queries board, caller attribution, legacy jobs, and safe can
         target: 'codex',
         status: 'done',
         readonly: true,
-        model: 'gpt-6.1-sol',
+        model: 'gpt-6.2-sol',
         started_at: '2026-01-01T00:00:00.000Z',
         finished_at: '2026-01-01T00:00:05.000Z',
         result_file: legacyResult,

@@ -148,12 +148,16 @@ test('agy invocation flags: unrestricted default vs restricted sandbox', () => {
 test('codex model resolution, unrestricted default, and restricted flag asymmetry', () => {
   const emptyCfg = { defaults: {}, mappings: {} };
   assert.deepEqual(resolveCodexModelAndEffort({ kind: 'send', config: emptyCfg }), {
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
   });
   assert.deepEqual(resolveCodexModelAndEffort({ kind: 'ask', config: emptyCfg }), {
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'low',
+  });
+  assert.deepEqual(resolveCodexModelAndEffort({ kind: 'send', model: 'astra', config: emptyCfg }), {
+    model: 'gpt-6.2-astra',
+    effort: 'high',
   });
   assert.deepEqual(
     resolveCodexModelAndEffort({ kind: 'send', model: 'terra', effort: 'xhigh', config: emptyCfg }),
@@ -186,7 +190,7 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
   const initialRw = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'apply patch',
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
     workspace: '/repo',
     readonly: false,
@@ -197,7 +201,7 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
   const initialRoUnrestricted = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'inspect repo across caches',
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
     workspace: '/repo',
     readonly: true,
@@ -210,7 +214,7 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
   const restrictedRw = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'apply patch safely',
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
     workspace: '/repo',
     readonly: false,
@@ -223,7 +227,7 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
   const resumeUnrestricted = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'follow up',
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
     workspace: '/repo',
     readonly: false,
@@ -237,7 +241,7 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
   const resumeRestrictedRo = codexDriver.buildInvocation({
     kind: 'send',
     prompt: 'follow up readonly',
-    model: 'gpt-6.1-sol',
+    model: 'gpt-6.2-sol',
     effort: 'high',
     workspace: '/repo',
     readonly: true,

@@ -56,7 +56,7 @@ test('ask foreground works for agy and codex (unrestricted default + --restricte
 
     const codexRes = runCospan(['ask', '--to', 'codex', '--prompt', 'hello codex'], { cwd: repo });
     assert.equal(codexRes.code, 0, codexRes.stderr);
-    assert.match(codexRes.stdout, /codex_model=gpt-6\.1-sol/);
+    assert.match(codexRes.stdout, /codex_model=gpt-6\.2-sol/);
     assert.match(codexRes.stdout, /bypass=true/);
 
     const restrictedCodex = runCospan(
@@ -103,7 +103,7 @@ test('send -> observe -> wait -> continue lifecycle on codex keeps git status cl
     // Full wait collects output with exit 0
     const doneWait = runCospan(['wait', jobId, '--timeout', '10s'], { cwd: repo });
     assert.equal(doneWait.code, 0, doneWait.stderr);
-    assert.match(doneWait.stdout, /codex_model=gpt-6\.1-sol/);
+    assert.match(doneWait.stdout, /codex_model=gpt-6\.2-sol/);
     assert.match(doneWait.stdout, /Access mode: READ-ONLY/);
     assert.match(doneWait.stdout, /Inspect --flag literal safely/);
 

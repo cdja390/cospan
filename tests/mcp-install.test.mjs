@@ -33,7 +33,8 @@ function assertRenderedCodexSkills(codexPkgRoot) {
     fs.readFileSync(path.join(codexPkgRoot, 'skills', id, 'SKILL.md'), 'utf8');
   assert.match(readSkill('agy'), /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/);
   assert.match(readSkill('agy'), /gemini-3\.8-flash-medium/);
-  assert.match(readSkill('codex'), /gpt-6\.1-sol/);
+  assert.match(readSkill('codex'), /gpt-6\.2-sol/);
+  assert.match(readSkill('codex'), /gpt-6\.2-astra/);
   assert.doesNotMatch(readSkill('codex'), /gpt-5\.3-codex-spark/);
   assert.match(readSkill('claude'), /Opus 5\.5/);
   assert.match(readSkill('dsh'), /deepseek-v4-pro/);

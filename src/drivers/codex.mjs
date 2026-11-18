@@ -28,7 +28,7 @@ function normalizeCodexEffort(effort, fallback) {
 }
 
 function pickCodexBaseDefaults(defaults, kind) {
-  const sendModel = defaults.model || defaults.sendModel || 'gpt-6.1-sol';
+  const sendModel = defaults.model || defaults.sendModel || 'gpt-6.2-sol';
   if (kind === 'ask') {
     return {
       defaultModel: defaults.askModel || sendModel,

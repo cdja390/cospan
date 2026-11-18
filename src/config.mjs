@@ -13,9 +13,9 @@ export const BUILTIN_CONFIG = {
       effort: 'medium',
     },
     codex: {
-      model: 'gpt-6.1-sol',
+      model: 'gpt-6.2-sol',
       effort: 'high',
-      askModel: 'gpt-6.1-sol',
+      askModel: 'gpt-6.2-sol',
       askEffort: 'low',
     },
     claude: {
@@ -48,9 +48,9 @@ export const BUILTIN_CONFIG = {
       sonnet: 'claude-sonnet-5-5-medium',
     },
     codex: {
-      sol: 'gpt-6.1-sol',
+      sol: 'gpt-6.2-sol',
       terra: 'gpt-6.1-terra',
-      astra: 'gpt-6-astra',
+      astra: 'gpt-6.2-astra',
       luna: 'gpt-6-luna',
       spark: 'gpt-5.3-codex-spark',
     },
