@@ -45,6 +45,56 @@ window.__ModuleLoader__.load({
   display: none !important;
 }
 
+:where(.cospan-board button) {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+:root[data-cospan-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-cospan-theme='dark'] {
+  color-scheme: dark;
+}
+
+.cospan-board,
+.cospan-board * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cospan-border-strong) transparent;
+}
+
+.cospan-board::-webkit-scrollbar,
+.cospan-board *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cospan-board::-webkit-scrollbar-track,
+.cospan-board *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cospan-board::-webkit-scrollbar-thumb,
+.cospan-board *::-webkit-scrollbar-thumb {
+  background: var(--cospan-border-strong);
+  border-radius: 999px;
+}
+
+.cospan-board::-webkit-scrollbar-thumb:hover,
+.cospan-board *::-webkit-scrollbar-thumb:hover {
+  background: var(--cospan-muted);
+}
+
+.cospan-board::-webkit-scrollbar-corner,
+.cospan-board *::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .cospan-board {
   --cospan-bg: transparent;
   --cospan-surface: var(--dsw-alias-bg-layer-2, var(--background, #ffffff));
@@ -85,6 +135,9 @@ window.__ModuleLoader__.load({
   --cospan-orange-tint: rgba(246, 145, 46, 0.14);
   --cospan-orange-ring: rgba(246, 145, 46, 0.34);
 
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   height: 100%;
   min-height: 0;
   width: 100%;
@@ -104,6 +157,7 @@ window.__ModuleLoader__.load({
 body[data-ds-dark-theme] .cospan-board,
 [data-cospan-theme='dark'] .cospan-board,
 .cospan-board[data-cospan-theme='dark'] {
+  color-scheme: dark;
   --cospan-surface: var(--dsw-alias-bg-layer-2, rgba(255, 255, 255, 0.035));
   --cospan-surface-subtle: var(--dsw-alias-bg-layer-1, rgba(0, 0, 0, 0.22));
   --cospan-surface-elevated: rgba(255, 255, 255, 0.07);
@@ -143,6 +197,7 @@ body[data-ds-dark-theme] .cospan-board,
 
 @media (prefers-color-scheme: dark) {
   .cospan-board[data-cospan-host='agy']:not([data-cospan-theme='light']) {
+    color-scheme: dark;
     --cospan-bg: var(--background, #18181b);
     --cospan-surface: rgba(255, 255, 255, 0.035);
     --cospan-surface-subtle: rgba(0, 0, 0, 0.22);

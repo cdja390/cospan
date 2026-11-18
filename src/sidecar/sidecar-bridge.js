@@ -9,7 +9,7 @@
 
   function parseCssColorLuminance(rawColor) {
     const c = String(rawColor || '').trim();
-    const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(c);
+    const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(c);
     if (hexMatch) {
       const hex = hexMatch[1];
       const full =
@@ -18,7 +18,7 @@
               .split('')
               .map((ch) => ch + ch)
               .join('')
-          : hex;
+          : hex.slice(0, 6);
       const r = parseInt(full.slice(0, 2), 16);
       const g = parseInt(full.slice(2, 4), 16);
       const b = parseInt(full.slice(4, 6), 16);
@@ -45,6 +45,7 @@
       cssVariables['--background'] ||
       cssVariables['--editor-background'] ||
       cssVariables['--vscode-editor-background'] ||
+      cssVariables['--vscode-sideBar-background'] ||
       '';
     const lum = parseCssColorLuminance(bgSample);
     if (lum !== null) {
