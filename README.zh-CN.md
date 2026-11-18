@@ -8,77 +8,77 @@
   <a href="LICENSE"><img src="assets/badges/license-mit.svg" height="20" alt="license: MIT"></a>
 </p>
 
-**让每个模型留在最强的原生 Harness，由 Agent 自主编排彼此。**
-连接 **Antigravity**、**Codex**、**Claude Code**、**DeepSeek Harness**（更多 Harness 持续支持中）的统一异步编排适配器。
+**让每个模型待在自己最顺手的原生客户端里干活，AI 之间自己互相派活。**
+把 **Antigravity**、**Codex**、**Claude Code** 和 **DeepSeek Harness** 串起来的后台协作插件（更多工具陆续接入中）。
 
-[![Cospan 编排适配器：连接 Antigravity、Codex、Claude Code 与 DeepSeek Harness](assets/design.png)](assets/design.svg)
+[![Cospan 连接 Antigravity、Codex、Claude Code 与 DeepSeek Harness](assets/design.png)](assets/design.svg)
 
-**[核心理念](#核心理念) · [核心场景](#核心场景) · [安装](#安装) · [支持生态](#支持生态) · [参考与致谢](#参考与致谢)**
+**[为什么做 Cospan](#为什么做-cospan) · [常见用法](#常见用法) · [安装](#安装) · [支持的工具与模型](#支持的工具与模型) · [参考与致谢](#参考与致谢)**
 
-## 核心理念
+## 为什么做 Cospan
 
-多智能体编排（Agent Orchestration）具备极高的杠杆率——前沿模型往往在与自身协同训练的原生 Harness 中表现最强，因此真正应该被调度的基本单元是 **`Model × Harness`**。不同模型家族各有鲜明长板：**Gemini 4 Carbon**（`agy`）擅长架构与规划，**GPT-6.2-Sol**（`codex`）擅长深度查错 Review，**GPT-6.1-Terra**（`codex`）擅长结合 Codex 跑 Computer Use，而 **Claude** 家族（`claude`）擅长前端设计与交互打磨。今天人们还能靠 Handoff Prompt 在不同窗口间手工传话，但未来的趋势必然是让 Agent 自主完成跨端委派与协同。
+各家强力编程模型，往往都是在自家配套的客户端和工具链里调教得最好——所以真正该被调用的最小单位其实是**“模型 + 它自家的原生客户端”**。不同模型各有擅长：**Gemini 4 Carbon**（`agy`）适合做架构设计和方案规划，**GPT-6.2-Sol**（`codex`）适合深挖代码漏洞做 Review，**GPT-6.1-Terra**（`codex`）适合配合 Codex 直接操作浏览器测页面，而 **Claude**（`claude`）写前端界面和交互细节很稳。以前想把它们配合起来，只能人肉在不同窗口之间来回复制粘贴“传话”；现在可以让当前对话里的 AI 直接把活派给另一家。
 
-受 [`agy-staff`](https://github.com/keli-wen/agy-staff) 的实践验证与**渐进式披露（Progressive Disclosure）**启发，Cospan 通过一个统一的编排适配器提供**默认异步、按需展开**的协议工具：Host Agent 可统一在后台非阻塞调度其他 `Model × Harness` 单元，平时只收回精炼结论，仅在需要时按需拉取实时进展与完整轨迹——构建下一代多智能体编排与协作的基础设施。
+沿用了 [`agy-staff`](https://github.com/keli-wen/agy-staff) 验证过的思路，Cospan 把跨客户端派活做成了**默认丢到后台跑、结果按需看**的模式：主对话把任务发出去之后不会卡住，也不会被对方翻文件、跑命令的过程刷屏——平时只收回总结好的结论，真要盯进度或查完整执行记录时再拉取即可，省上下文也省精力。
 
-![Why Cospan 极简线条插画：从人工传话（You are the router）转向通过 Cospan 让 Agent 自主编排各原生 Model × Harness 单元（Agents orchestrate peers）](assets/why.png)
+![Why Cospan 极简线条插画：从人肉传话（You are the router）变成让 AI 之间直接互相派活（Agents orchestrate peers）](assets/why.png)
 
-## 核心场景
+## 常见用法
 
-### 基础用法：一行指令，其余全自动
+### 一句话派活，剩下全自动
 
-直接通过 `/cospan-<harness>`（Claude Code 中为 `/cospan:<harness>`，Codex 中为 `$cospan:<harness>`）即可指定目标**模型**、**推理强度（effort）**与**超时时间（timeout）**：
+直接用 `/cospan-<工具>`（Claude Code 里是 `/cospan:<工具>`，Codex 里是 `$cospan:<工具>`），在指令里写清楚想用的**模型**、**思考深度（effort）**和**超时时间**就行：
 
 ```text
-/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出真正的边界 Bug。
+/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出可能漏掉的边界问题。
 ```
 
 > [!TIP]
-> **底层机制全自动接管（你无需手动理解或干预）：** 下达指令后，Host Agent 会自主选择内联文本或 `--prompt-file` 组织任务并在后台发起会话（`send`），非阻塞地通过 `wait` / 定界 `observe` 跟踪进度（仅在深挖时按需读取完整轨迹），收回结果后还可沿同一会话直接 `continue` 多轮追问。
+> **背后的流程不用你操心：** 收到指令后，你当前使用的 AI 会自动整理任务（文字太长会自动写成临时文件）、丢到后台启动（`send`）、在后台安安静静等结果（`wait`）或按需瞄一眼进度快照（`observe`），拿到报告后还能在同一段会话里接着追问（`continue`）。
 
-### 统一实时侧边栏（`agy` 与 `dsh`）
+### 统一任务侧边栏（`agy` 和 `dsh`）
 
-在 **Antigravity (`agy`)** 或 **DeepSeek Harness (`dsh`)** 中安装后，会同步启用统一的 Cospan 侧边栏面板——实时追踪四家生态的后台任务进度、展开查看提问与回复结果，并自动聚合同一仓库下的 Git worktree 任务（`wt:*`）（[安装方式 ↓](#安装)）：
+装在 **Antigravity (`agy`)** 或 **DeepSeek Harness (`dsh`)** 里时，还会多出一个统一的 Cospan 侧边栏——四家的后台任务走到哪一步、你问了什么、对方答了什么都能点开看，同一个仓库下不同 Git worktree（`wt:*`）的任务也会自动归到一起（[安装方式 ↓](#安装)）：
 
 <p align="center">
   <img src="assets/sidebar-extension.png" width="420" alt="Antigravity (agy) 与 DeepSeek Harness (dsh) 中的 Cospan 统一侧边栏面板截图，展示 Codex、Claude Code、Antigravity worktree 与 DeepSeek Harness 四家并行任务">
 </p>
 
-### 跨生态多智能体工作流
+### 跨工具配合的几个常见场景
 
-- **用 `Carbon` 主导开发，并发扇出多个 `Sol` 分片审查**（`Antigravity` → `2× Codex`）— 按模块拆分深度 Review 且不阻塞本地跑单测，错峰完成后自动唤醒汇总：
+- **主号用 `Carbon`，后台同时派 2 个 `Sol` 分头查代码**（`Antigravity` → `2× Codex`）— 把 `webhook/` 和 `retry/` 两个模块的排查拆给两个 `sol` 并行去查，你本地照常跑单测、改代码，两头互不耽误，谁查完结果自动回来汇总：
 
-  > `/cospan-codex` _“并发派 2 个 `sol` 分别审查 `webhook/` 与 `retry/` 的改动，找出真正的 Bug。”_
+  > `/cospan-codex` _“同时派 2 个 `sol` 分别审查 `webhook/` 与 `retry/` 的改动，找出真正的 Bug。”_
 
-  ![Gemini 4 Carbon 使用 2 个并行 GPT-6.2-Sol 非阻塞审查 webhook/ 与 retry/](assets/cuj-carbon-sol.svg)
+  ![Gemini 4 Carbon 使用 2 个并行 GPT-6.2-Sol 在后台同时审查 webhook/ 与 retry/](assets/cuj-carbon-sol.svg)
 
-- **在 `Astra` 中引入 `Carbon` 作为多轮第二大脑**（`Codex` ⇄ `Antigravity`）— 借助另一模型家族挑刺方案并在同一会话内二次追问验证，同时主端保持本地推进：
+- **用 `Astra` 写代码时，请 `Carbon` 当第二大脑多轮把关**（`Codex` ⇄ `Antigravity`）— 让另一家模型帮着挑 `docs/plan.md` 方案里的毛病、问有没有更稳的改法，同一段上下文还能接着追问崩溃恢复细节，主窗口不用干等：
 
-  > `$cospan:agy` _“请 `carbon` 挑一挑 `docs/plan.md` 方案盲点、给出更优路线，并继续验证崩溃恢复。”_
+  > `$cospan:agy` _“请 `carbon` 帮忙看看 `docs/plan.md` 方案哪里有盲点、有没有更简洁的做法，并继续核实崩溃恢复。”_
 
-  ![GPT-6.2-Astra 跨 2 轮咨询 Gemini 4 Carbon，挑刺 docs/plan.md 并验证崩溃恢复](assets/cuj-astra-carbon.svg)
+  ![GPT-6.2-Astra 跨 2 轮咨询 Gemini 4 Carbon，挑刺 docs/plan.md 并核实崩溃恢复](assets/cuj-astra-carbon.svg)
 
-- **在 `Claude Code` 中把 Computer Use 交给 `Terra`**（`Claude Code` → `Codex`）— 主线留在 **Claude Sonnet** 统筹编码与单测，将真实浏览器交互排查非阻塞委派给 **GPT-6.1-Terra**：
+- **在 `Claude Code` 里把打开浏览器实测的活交给 `Terra`**（`Claude Code` → `Codex`）— 主线留在 **Claude Sonnet** 写代码、跑单测，把“打开本地网页、实际走一遍结账优惠券流程、看看手机屏幕下有没有遮挡”交给 **GPT-6.1-Terra** 去点点看：
 
   > `/cospan:codex` _“让 `terra` 打开本地应用，实际走一遍结账优惠券流程并检查界面状态。”_
 
-  ![Claude Sonnet 使用 GPT-6.1-Terra 驱动浏览器 GUI，在 375px 下测试 SAVE20 并捕获移动端按钮遮挡 Bug](assets/cuj-claude-terra.svg)
+  ![Claude Sonnet 让 GPT-6.1-Terra 打开浏览器，在 375px 下测试 SAVE20 并抓出移动端按钮遮挡 Bug](assets/cuj-claude-terra.svg)
 
-- **跨生态高速分流，节省 `Fable` 旗舰额度**（`Claude Code` → `Antigravity` + `DeepSeek Harness`）— 将代码摸底与竞态核验同时分流给两款高速跨生态侧翼模型，主对话零探索刷屏：
+- **把翻代码和跑核查分流给快又省的模型，替 `Fable` 省额度**（`Claude Code` → `Antigravity` + `DeepSeek Harness`）— 一边让 `hydrogen` 去梳理鉴权刷新入口，一边让 `v4.1-flash` 去查并发 401 下的锁竞争，主对话保持干净，不浪费旗舰模型上下文和额度：
 
-  > _“让 `hydrogen` 快速梳理鉴权刷新入口，同时让 `v4.1-flash` 核查并发 401 下的锁竞态。”_
+  > _“让 `hydrogen` 快速梳理鉴权刷新入口，同时让 `v4.1-flash` 核查并发 401 下的锁竞争。”_
 
-  ![Claude Fable 并行将鉴权梳理交给 Gemini 4 Hydrogen，将竞态核验交给 DeepSeek V4.1 Flash](assets/cuj-fanout-sidecars.svg)
+  ![Claude Fable 并行将鉴权梳理交给 Gemini 4 Hydrogen，将竞争核查交给 DeepSeek V4.1 Flash](assets/cuj-fanout-sidecars.svg)
 
-- **以 `Carbon` 为 Host 的端到端研究与审校闭环拓扑**（`Antigravity` ⇄ `Codex` + `×N Antigravity`）— 由 **Gemini 4 Carbon** 作为主控，串联 **Astra** 方案审查、**Hydrogen ×N** 大批量并行实验、**Sol** 最终审计，并把审查建议交由 **Hydrogen** 完成最后一遍收口：
+- **让 `Carbon` 当总管，串起多个模型接力干完一整套流程**（`Antigravity` ⇄ `Codex` + `×N Antigravity`）— 先请 `astra` 审方案，再并发派多个 `hydrogen` 跑完各组实验，然后交给 `sol` 做最终审查，最后把 `sol` 提的修改意见退回给 `hydrogen` 收尾改干净：
 
-  > _“先让 `astra` 审查我的方案，再并行扇出 `hydrogen` 跑完各组实验，接着让 `sol` 做最终审查，并把 `sol` 的建议交回 `hydrogen` 过最后一遍。”_
+  > _“先让 `astra` 审查我的方案，再同时派 `hydrogen` 跑完各组实验，接着让 `sol` 做最终审查，并把 `sol` 的建议交回 `hydrogen` 过最后一遍。”_
 
-  ![Carbon（host）与 Astra 共建方案，扇出 Hydrogen ×N 并发实验，经 Sol 审计后由 Hydrogen 完成最终一遍修正](assets/cuj-research-pipeline.svg)
+  ![Carbon 作为主控与 Astra 敲定方案，派 Hydrogen ×N 并行做实验，经 Sol 审查后由 Hydrogen 完成最后一轮修改](assets/cuj-research-pipeline.svg)
 
 ## 安装
 
-只需 **Node.js `>= 20`** 以及你想连接的任意 Agent CLI（`agy`、`claude`、`codex`、`dsh`）。在你日常使用的主力客户端中通过原生插件命令安装即可：
+提前准备好 **Node.js `>= 20`** 和你想调用的命令行工具（`agy`、`claude`、`codex`、`dsh` 装了哪几个就能连哪几个）。按你平时使用的主力客户端对应安装即可：
 
 **Antigravity (`agy`)**
 
@@ -107,24 +107,49 @@ codex plugin add cospan@cospan
 dsh plugin --profile desktop add github:keli-wen/cospan
 ```
 
-_（也可直接在 DeepSeek Harness 桌面端侧边栏 **Plugins** 中输入 `github:keli-wen/cospan` 安装。）_
+_（也可以直接在 DeepSeek Harness 桌面端侧边栏 **Plugins** 里填 `github:keli-wen/cospan` 安装。）_
 
-安装完成后重启 Claude Code 或 Codex 即可加载插件（Antigravity 与 DeepSeek Harness 中为 `/cospan-…`，Claude Code 中为 `/cospan:…`，Codex 中为 `$cospan:…`，或直接用自然语言描述需求）。
+装完记得重启一次 Claude Code 或 Codex 让插件生效（Antigravity 与 DeepSeek Harness 里用 `/cospan-…`，Claude Code 里用 `/cospan:…`，Codex 里用 `$cospan:…`，或者直接用大白话吩咐它干活也行）。
 
-## 支持生态
+### 让 AI 帮你安装
 
-| Agent 客户端                 | 模型生态                 | 内置模型简写                                                   |
+懒得自己区分环境和命令，可以把下面这段话直接发给你正在用的任意 Coding Agent，让它自己读安装规范帮你装好并做体检：
+
+```text
+请读取 https://raw.githubusercontent.com/keli-wen/cospan/master/docs/INSTALL_FOR_AGENTS.md 的原始内容
+（用 curl 拉取原文，不要只看摘要），按里面的步骤为当前客户端安装并验证 Cospan，最后用中文告诉我结果。
+```
+
+<details>
+<summary>更新插件与健康检查</summary>
+
+- **Antigravity (`agy`)**：`git -C ~/.cospan/repo pull --ff-only && node ~/.cospan/repo/bin/cospan.mjs install --host agy`
+- **Claude Code (`claude`)**：`claude plugin marketplace update cospan && claude plugin update cospan@cospan`
+- **OpenAI Codex (`codex`)**：`codex plugin marketplace upgrade && codex plugin add cospan@cospan`
+- **DeepSeek Harness (`dsh`)**：`dsh plugin --profile desktop add 'github:keli-wen/cospan#<tag-or-commit>'`
+
+Claude Code 和 Codex 会按版本号缓存插件，更新完要重启客户端才能生效。随时可以跑 `node <cospan路径>/bin/cospan.mjs doctor --check`（不消耗任何模型额度）检查四家 CLI 路径和参数是否正常；Windows 写法和缓存强制刷新细节见 [docs/INSTALL_FOR_AGENTS.md](docs/INSTALL_FOR_AGENTS.md)。
+
+</details>
+
+## 支持的工具与模型
+
+| 客户端                       | 模型家族                 | 内置模型简写                                                   |
 | ---------------------------- | ------------------------ | -------------------------------------------------------------- |
 | **Antigravity** (`agy`)      | Google · Gemini & Claude | `flash`, `carbon`, `argon`, `hydrogen`, `opus`, `sonnet`       |
 | **Codex** (`codex`)          | OpenAI · GPT             | `sol`, `terra`, `astra`, `luna`                                |
 | **Claude Code** (`claude`)   | Anthropic · Claude       | `sonnet`, `opus`, `haiku`, `fable`                             |
 | **DeepSeek Harness** (`dsh`) | DeepSeek 及自定义提供商  | `v4.1-flash` / `flash`, `v4-pro` / `pro`, `<provider>/<model>` |
 
-_更多 Harness 正在持续接入中——Cospan 的驱动层架构支持平滑扩展更多编程 Agent CLI。_
+_后续还会陆续接入更多工具——Cospan 的驱动层设计得比较轻量，接入新的编程 Agent CLI 很方便。_
 
 ## 参考与致谢
 
-- **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — 将 Google Antigravity CLI（`agy`）作为高速执行者与第二大脑接入 Claude Code、Codex、DeepSeek Harness、Pi 与 OpenCode。Cospan 将 `agy-staff` 中率先实践并完成基准评测（[Bench v1 技术报告](https://lastwhisper.dev/zen-of-harness-engineering/agy-staff-bench-v1/)）的异步 `jobs` 协议与渐进式披露机制推广为通用的跨生态双向编排基础设施。
+- **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — 把 Google Antigravity CLI（`agy`）作为快速帮手和第二大脑接入 Claude Code、Codex、DeepSeek Harness、Pi 与 OpenCode。Cospan 把 `agy-staff` 里率先跑通并做过评测（[Bench v1 技术报告](https://lastwhisper.dev/zen-of-harness-engineering/agy-staff-bench-v1/)）的后台任务与按需查看结果这套机制，进一步推广成了各家工具之间互相派活的通用插件。
+
+## 社区
+
+- [LINUX DO](https://linux.do/) — 新的理想型社区（_Where possible begins_），欢迎交流使用经验。
 
 ## 许可证
 

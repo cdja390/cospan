@@ -9,7 +9,7 @@
   "repository": "https://github.com/keli-wen/cospan",
   "suggestedPrompts": [
     "Use cospan-codex in --readonly mode to review our current git diff",
-    "Use cospan-agy with --model carbon --effort high to stress-test this architecture plan",
+    "Use cospan-agy with --model hydrogen --effort xhigh to review this design",
     "Continue the latest cospan job with a follow-up question"
   ]
 }

@@ -111,6 +111,28 @@ _(Or in the DeepSeek Harness desktop app: **Plugins** → install from `github:k
 
 Restart Claude Code or Codex afterwards so the plugin loads (`/cospan-…` in Antigravity and DeepSeek Harness, `/cospan:…` in Claude Code, `$cospan:…` in Codex—or describe what you want in plain language).
 
+### For agents
+
+Paste this into any coding agent to let it install and verify Cospan for your environment:
+
+```text
+Read the raw text of https://raw.githubusercontent.com/keli-wen/cospan/master/docs/INSTALL_FOR_AGENTS.md
+(curl it — do not work from a summary) and follow it to install and verify Cospan for the harness you are running in.
+Respond in the user's language.
+```
+
+<details>
+<summary>Upgrading & diagnostics</summary>
+
+- **Antigravity (`agy`)**: `git -C ~/.cospan/repo pull --ff-only && node ~/.cospan/repo/bin/cospan.mjs install --host agy`
+- **Claude Code (`claude`)**: `claude plugin marketplace update cospan && claude plugin update cospan@cospan`
+- **OpenAI Codex (`codex`)**: `codex plugin marketplace upgrade && codex plugin add cospan@cospan`
+- **DeepSeek Harness (`dsh`)**: `dsh plugin --profile desktop add 'github:keli-wen/cospan#<tag-or-commit>'`
+
+Claude Code and Codex cache plugins by version and require a restart after upgrading. Run `node <cospan-repo>/bin/cospan.mjs doctor --check` (zero tokens) at any time to verify installed CLI binaries and flag contracts; see [docs/INSTALL_FOR_AGENTS.md](docs/INSTALL_FOR_AGENTS.md) for cache-refresh and Windows notes.
+
+</details>
+
 ## Harnesses
 
 | Harness                      | Ecosystem                   | Built-in model shortcuts                                       |
@@ -125,6 +147,10 @@ _More harnesses are on the way—Cospan's driver layer is designed to plug in ad
 ## References
 
 - **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — Hire Google's Antigravity CLI (`agy`) as a fast worker and second brain across Claude Code, Codex, DeepSeek Harness, Pi, and OpenCode. Cospan generalizes the async `jobs` protocol and progressive disclosure architecture first pioneered and benchmarked in `agy-staff` ([Bench v1 Tech Report](https://lastwhisper.dev/en/zen-of-harness-engineering/agy-staff-bench-v1/)).
+
+## Community
+
+- [LINUX DO](https://linux.do/) — _Where possible begins._ A developer & AI community.
 
 ## License
 
