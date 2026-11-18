@@ -13,7 +13,7 @@ Connect **Antigravity**, **Codex**, **Claude Code**, **DeepSeek Harness**, and m
 
 [![Cospan orchestration adapter connecting Antigravity, Codex, Claude Code, and DeepSeek Harness](assets/design.png)](assets/design.svg)
 
-**[Why Cospan](#why-cospan) · [Core CUJs](#core-cujs) · [Install](#install) · [Harnesses](#harnesses) · [References](#references)**
+**[Why Cospan](#why-cospan) · [Core CUJs](#core-cujs) · [Install](#install) · [Harnesses](#harnesses) · [Roadmap](#roadmap) · [References](#references-and-license)**
 
 ## Why Cospan
 
@@ -149,14 +149,8 @@ _More harnesses are on the way—Cospan's driver layer is designed to plug in ad
 
 - [ ] **Cross-machine peer delegation over SSH** — Fire-and-collect async task handoff across machines (LAN / Tailscale) via short-lived SSH, keeping remote credentials and execution isolated without long-lived connections.
 
-## References
+## References and License
 
 - **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — Hire Google's Antigravity CLI (`agy`) as a fast worker and second brain across Claude Code, Codex, DeepSeek Harness, Pi, and OpenCode. Cospan generalizes the async `jobs` protocol and progressive disclosure architecture first pioneered and benchmarked in `agy-staff` ([Bench v1 Tech Report](https://lastwhisper.dev/en/zen-of-harness-engineering/agy-staff-bench-v1/)).
-
-## Community
-
-- [LINUX DO](https://linux.do/) — _Where possible begins._ A developer & AI community.
-
-## License
-
-MIT © 2026 Keli Wen · Release notes in [`docs/releases/`](docs/releases/) · Architecture & contributor guide in [`AGENTS.md`](AGENTS.md).
+- **Community** — [LINUX DO](https://linux.do/) (_Where possible begins_, a developer & AI community).
+- **License** — [MIT](LICENSE) © 2026 Keli Wen · Release notes in [`docs/releases/`](docs/releases/) · Architecture & contributor guide in [`AGENTS.md`](AGENTS.md).

@@ -13,7 +13,7 @@
 
 [![Cospan 连接 Antigravity、Codex、Claude Code 与 DeepSeek Harness](assets/design.png)](assets/design.svg)
 
-**[为什么做 Cospan](#为什么做-cospan) · [常见用法](#常见用法) · [安装](#安装) · [支持的工具与模型](#支持的工具与模型) · [参考与致谢](#参考与致谢)**
+**[为什么做 Cospan](#为什么做-cospan) · [常见用法](#常见用法) · [安装](#安装) · [支持的工具与模型](#支持的工具与模型) · [路线图](#路线图) · [参考与许可](#参考与许可)**
 
 ## 为什么做 Cospan
 
@@ -148,14 +148,8 @@ _后续还会陆续接入更多工具——Cospan 的驱动层设计得比较轻
 
 - [ ] **基于 SSH 的跨机对等委派** — 通过短连接 SSH（局域网 / Tailscale）将任务异步投递给另一台机器闭环执行并按需取回结果，无需挂长连接，远端凭据与敏感环境留在本地。
 
-## 参考与致谢
+## 参考与许可
 
 - **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — 把 Google Antigravity CLI（`agy`）作为快速帮手和第二大脑接入 Claude Code、Codex、DeepSeek Harness、Pi 与 OpenCode。Cospan 把 `agy-staff` 里率先跑通并做过评测（[Bench v1 技术报告](https://lastwhisper.dev/zen-of-harness-engineering/agy-staff-bench-v1/)）的后台任务与按需查看结果这套机制，进一步推广成了各家工具之间互相派活的通用插件。
-
-## 社区
-
-- [LINUX DO](https://linux.do/) — 新的理想型社区（_Where possible begins_），欢迎交流使用经验。
-
-## 许可证
-
-MIT © 2026 Keli Wen · 发布说明见 [`docs/releases/`](docs/releases/) · 架构与工程规范见 [`AGENTS.md`](AGENTS.md)。
+- **社区** — [LINUX DO](https://linux.do/)（新的理想型社区，_Where possible begins_），欢迎交流使用经验。
+- **许可证** — [MIT](LICENSE) © 2026 Keli Wen · 发布说明见 [`docs/releases/`](docs/releases/) · 架构与工程规范见 [`AGENTS.md`](AGENTS.md)。
