@@ -3,7 +3,8 @@
 <p align="center"><a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a></p>
 
 <p align="center">
-  <a href="https://antigravity.google/product/antigravity-cli"><img src="assets/badges/antigravity-plugin.svg" height="20" alt="Antigravity: plugin"></a> <a href="https://developers.openai.com/codex/"><img src="assets/badges/codex-plugin.svg" height="20" alt="Codex: plugin"></a> <a href="https://claude.com/claude-code"><img src="assets/badges/claude-code-plugin.svg" height="20" alt="Claude Code: plugin"></a> <a href="#安装"><img src="assets/badges/dsh-plugin.svg" height="20" alt="DeepSeek Harness: plugin"></a><br>
+  <a href="https://antigravity.google/product/antigravity-cli"><img src="assets/badges/antigravity-plugin.svg" height="20" alt="Antigravity: plugin"></a> <a href="https://developers.openai.com/codex/"><img src="assets/badges/codex-plugin.svg" height="20" alt="Codex: plugin"></a><br>
+  <a href="https://claude.com/claude-code"><img src="assets/badges/claude-code-plugin.svg" height="20" alt="Claude Code: plugin"></a> <a href="#安装"><img src="assets/badges/dsh-plugin.svg" height="20" alt="DeepSeek Harness: plugin"></a><br>
   <a href="LICENSE"><img src="assets/badges/license-mit.svg" height="20" alt="license: MIT"></a>
 </p>
 
@@ -24,42 +25,59 @@
 
 ## 核心场景
 
-### 基础用法：一行指令，其余全自动
+### 基础用法与统一侧边栏面板
 
-直接通过 `/cospan-<harness>`（Claude Code 中为 `/cospan:<harness>`，Codex 中为 `$cospan:<harness>`）即可指定目标**模型**、**推理强度（effort）**与**超时时间（timeout）**：
-
-```text
-/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出真正的边界 Bug。
-```
-
-> [!TIP]
-> **底层机制全自动接管（你无需手动理解或干预）：** 下达指令后，Host Agent 会自主选择内联文本或 `--prompt-file` 组织任务并在后台发起会话（`send`），非阻塞地通过 `wait` / 定界 `observe` 跟踪进度（仅在深挖时按需读取完整轨迹），收回结果后还可沿同一会话直接 `continue` 多轮追问。
+<table>
+  <tr>
+    <td valign="top" width="54%">
+      <p>直接通过 <code>/cospan-&lt;harness&gt;</code>（Claude Code 中为 <code>/cospan:&lt;harness&gt;</code>，Codex 中为 <code>$cospan:&lt;harness&gt;</code>）即可指定目标<strong>模型</strong>、<strong>推理强度（effort）</strong>与<strong>超时时间（timeout）</strong>：</p>
+      <pre><code>/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出真正的边界 Bug。</code></pre>
+      <p><strong>底层全自动接管（无需手动干预）：</strong></p>
+      <ul>
+        <li>自主选择内联文本或 <code>--prompt-file</code> 组织上下文，并在后台非阻塞发起会话（<code>send</code>）。</li>
+        <li>通过 <code>wait</code> / 定界 <code>observe</code> 持续跟踪进度，保持主对话上下文清爽。</li>
+        <li>收回结论后可直接沿原会话 <code>continue</code> 多轮追问。</li>
+        <li>在 <strong>Antigravity（<code>agy</code>）</strong> 或 <strong>DeepSeek Harness（<code>dsh</code>）</strong> 中安装后同步启用右侧统一侧边栏——实时追踪后台任务、展开问答结果并聚合 Git worktree（<code>wt:*</code>）。</li>
+      </ul>
+      <p><a href="#安装">前往安装 →</a></p>
+    </td>
+    <td align="center" valign="middle" width="46%">
+      <img src="assets/sidebar-extension.png" width="360" alt="Antigravity (agy) 与 DeepSeek Harness (dsh) 中的 Cospan 统一侧边栏面板截图，展示 Codex、Claude Code、Antigravity worktree 与 DeepSeek Harness 四家并行任务">
+    </td>
+  </tr>
+</table>
 
 ### 跨生态多智能体工作流
 
-- **用 `Carbon` 开发，并发扇出多个 `Sol` 分片审查**（`Antigravity` → `2× Codex`）— 用 **Gemini 4 Carbon** 完成编码后，并发派发多个 **GPT-6.2-Sol** 分别审查不同模块（如 `webhook/` 与 `retry/`）；主端**非阻塞**继续跑本地测试，两个 `Sol` 错峰完成后自动唤醒合并结论：
+- **用 `Carbon` 主导开发，并发扇出多个 `Sol` 分片审查**（`Antigravity` → `2× Codex`）— 按模块拆分深度 Review 且不阻塞本地跑单测，错峰完成后自动唤醒汇总：
 
   > `/cospan-codex` _“并发派 2 个 `sol` 分别审查 `webhook/` 与 `retry/` 的改动，找出真正的 Bug。”_
 
-  ![多 Agent 异步动图演示：Gemini 4 Carbon 非阻塞扇出 2 个并行 GPT-6.2-Sol 分片审查，主端继续本地跑单测，错峰完成后自动唤醒汇总](assets/cuj-carbon-sol.svg)
+  ![Gemini 4 Carbon 使用 2 个并行 GPT-6.2-Sol 非阻塞审查 webhook/ 与 retry/](assets/cuj-carbon-sol.svg)
 
-- **在 `Astra` 中引入 `Carbon` 作为多轮第二大脑**（`Codex` ⇄ `Antigravity`）— 在 Codex 中用 **GPT-6.2-Astra** 推进复杂重构时，请另一模型家族的 **Gemini 4 Carbon** 挑刺方案、给出替代路线，并沿同一会话继续追问验证崩溃恢复细节：
+- **在 `Astra` 中引入 `Carbon` 作为多轮第二大脑**（`Codex` ⇄ `Antigravity`）— 借助另一模型家族挑刺方案并在同一会话内二次追问验证，同时主端保持本地推进：
 
   > `$cospan:agy` _“请 `carbon` 挑一挑 `docs/plan.md` 方案盲点、给出更优路线，并继续验证崩溃恢复。”_
 
-  ![多轮第二大脑动图演示：GPT-6.2-Astra 非阻塞咨询 Gemini 4 Carbon 并在同一会话内自动二次追问验证，同时本地排查 SQL 调用方](assets/cuj-astra-carbon.svg)
+  ![GPT-6.2-Astra 跨 2 轮咨询 Gemini 4 Carbon，挑刺 docs/plan.md 并验证崩溃恢复](assets/cuj-astra-carbon.svg)
 
-- **在 `Claude Code` 中把 Computer Use 交给 `Terra`**（`Claude Code` → `Codex`）— 主线留在 **Claude Code** 统筹编码与补单测，遇到桌面或浏览器端真实交互验证时，非阻塞委派给擅长 Computer Use 的 **GPT-6.1-Terra**：
+- **在 `Claude Code` 中把 Computer Use 交给 `Terra`**（`Claude Code` → `Codex`）— 主线留在 **Claude Sonnet** 统筹编码与单测，将真实浏览器交互排查非阻塞委派给 **GPT-6.1-Terra**：
 
   > `/cospan:codex` _“让 `terra` 打开本地应用，实际走一遍结账优惠券流程并检查界面状态。”_
 
-  ![Screen Studio 风格 Computer Use 动图演示：镜头先聚焦 Claude Code 非阻塞派发任务，随后平移推近至桌面浏览器，展示 Codex Terra 驱动光标输入 SAVE20、切换 375px 移动端并捕获吸底遮挡 Bug，最后拉回桌面全景唤醒合并报告](assets/cuj-claude-terra.svg)
+  ![Claude Sonnet 使用 GPT-6.1-Terra 驱动浏览器 GUI，在 375px 下测试 SAVE20 并捕获移动端按钮遮挡 Bug](assets/cuj-claude-terra.svg)
 
-- **跨生态高速分流，节省稀缺旗舰额度**（`Claude Code` → `Antigravity` + `DeepSeek Harness`）— 使用 **Claude Fable** 等稀缺主力额度时，将大范围代码摸底与并发竞态核验同时扇出给两款跨生态高速模型 **Gemini 4 Hydrogen** 与 **DeepSeek V4.1 Flash**，主对话零探索刷屏：
+- **跨生态高速分流，节省 `Fable` 旗舰额度**（`Claude Code` → `Antigravity` + `DeepSeek Harness`）— 将代码摸底与竞态核验同时分流给两款高速跨生态侧翼模型，主对话零探索刷屏：
 
   > _“让 `hydrogen` 快速梳理鉴权刷新入口，同时让 `v4.1-flash` 核查并发 401 下的锁竞态。”_
 
-  ![跨生态并发分流动图演示：Claude Fable 同时派发 Gemini 4 Hydrogen 快速扫描与 DeepSeek V4.1 Flash 竞态核验，错峰唤醒汇总](assets/cuj-fanout-sidecars.svg)
+  ![Claude Fable 并行将鉴权梳理交给 Gemini 4 Hydrogen，将竞态核验交给 DeepSeek V4.1 Flash](assets/cuj-fanout-sidecars.svg)
+
+- **以 `Carbon` 为 Host 的端到端研究与审校闭环拓扑**（`Antigravity` ⇄ `Codex` + `×N Antigravity`）— 由 **Gemini 4 Carbon** 作为主控，串联 **Astra** 方案审查、**Hydrogen ×N** 大批量并行实验、**Sol** 最终审计，并把审查建议交由 **Hydrogen** 完成最后一遍收口：
+
+  > _“先让 `astra` 审查我的方案，再并行扇出 `hydrogen` 跑完各组实验，接着让 `sol` 做最终审查，并把 `sol` 的建议交回 `hydrogen` 过最后一遍。”_
+
+  ![Carbon（host）与 Astra 共建方案，扇出 Hydrogen ×N 并发实验，经 Sol 审计后由 Hydrogen 完成最终一遍修正](assets/cuj-research-pipeline.svg)
 
 ## 安装
 

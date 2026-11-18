@@ -3,7 +3,8 @@
 <p align="center"><a href="README.md">English</a> | <a href="README.zh-CN.md">Simplified Chinese</a></p>
 
 <p align="center">
-  <a href="https://antigravity.google/product/antigravity-cli"><img src="assets/badges/antigravity-plugin.svg" height="20" alt="Antigravity: plugin"></a> <a href="https://developers.openai.com/codex/"><img src="assets/badges/codex-plugin.svg" height="20" alt="Codex: plugin"></a> <a href="https://claude.com/claude-code"><img src="assets/badges/claude-code-plugin.svg" height="20" alt="Claude Code: plugin"></a> <a href="#install"><img src="assets/badges/dsh-plugin.svg" height="20" alt="DeepSeek Harness: plugin"></a><br>
+  <a href="https://antigravity.google/product/antigravity-cli"><img src="assets/badges/antigravity-plugin.svg" height="20" alt="Antigravity: plugin"></a> <a href="https://developers.openai.com/codex/"><img src="assets/badges/codex-plugin.svg" height="20" alt="Codex: plugin"></a><br>
+  <a href="https://claude.com/claude-code"><img src="assets/badges/claude-code-plugin.svg" height="20" alt="Claude Code: plugin"></a> <a href="#install"><img src="assets/badges/dsh-plugin.svg" height="20" alt="DeepSeek Harness: plugin"></a><br>
   <a href="LICENSE"><img src="assets/badges/license-mit.svg" height="20" alt="license: MIT"></a>
 </p>
 
@@ -24,42 +25,59 @@ Inspired and battle-tested by [`agy-staff`](https://github.com/keli-wen/agy-staf
 
 ## Core CUJs
 
-### Basic dispatch: one command, zero plumbing
+### Basic dispatch &amp; unified live sidebar
 
-Invoke `/cospan-<harness>` (or `/cospan:<harness>` in Claude Code, `$cospan:<harness>` in Codex) and specify any target **model**, **reasoning effort**, or **timeout** right in your prompt:
-
-```text
-/cospan-codex Use sol (high effort, 20m timeout) to review src/webhook/ and flag real edge cases.
-```
-
-> [!TIP]
-> **Handled automatically under the hood (no need to manage this yourself):** Your host agent autonomously frames context (inline text or `--prompt-file`), launches a detached background session (`send`), monitors progress non-blockingly (`wait` / bounded `observe`, inspecting full trajectory logs only if needed), and collects the result—or resumes the same session (`continue`) for follow-up turns.
+<table>
+  <tr>
+    <td valign="top" width="54%">
+      <p>Invoke <code>/cospan-&lt;harness&gt;</code> (or <code>/cospan:&lt;harness&gt;</code> in Claude Code, <code>$cospan:&lt;harness&gt;</code> in Codex) and specify any target <strong>model</strong>, <strong>reasoning effort</strong>, or <strong>timeout</strong> right in your prompt:</p>
+      <pre><code>/cospan-codex Use sol (high effort, 20m timeout) to review src/webhook/ and flag real edge cases.</code></pre>
+      <p><strong>Handled automatically under the hood:</strong></p>
+      <ul>
+        <li>Frames context inline or via <code>--prompt-file</code> and launches detached background workers (<code>send</code>).</li>
+        <li>Tracks progress non-blockingly (<code>wait</code> / bounded <code>observe</code>) while keeping your main context window clean.</li>
+        <li>Resumes the same session (<code>continue</code>) for multi-turn follow-ups.</li>
+        <li>Installing on <strong>Antigravity (<code>agy</code>)</strong> or <strong>DeepSeek Harness (<code>dsh</code>)</strong> enables this live sidebar panel for cross-harness monitoring, Q&amp;A inspection, and Git worktree (<code>wt:*</code>) aggregation.</li>
+      </ul>
+      <p><a href="#install">Jump to Install →</a></p>
+    </td>
+    <td align="center" valign="middle" width="46%">
+      <img src="assets/sidebar-extension.png" width="360" alt="Unified Cospan sidebar panel inside Antigravity (agy) and DeepSeek Harness (dsh) tracking Codex, Claude Code, Antigravity worktree, and DeepSeek Harness tasks">
+    </td>
+  </tr>
+</table>
 
 ### Cross-ecosystem workflows
 
-- **Build with `Carbon`, fan out parallel `Sol` reviews** (`Antigravity` → `2× Codex`) — Finish coding on **Gemini 4 Carbon**, then fan out multiple **GPT-6.2-Sol** reviewers across slices (`webhook/` & `retry/`) without blocking your host—Carbon keeps running local tests while staggered background results merge cleanly on wakeup:
+- **Parallel `Sol` slice reviews from `Carbon`** (`Antigravity` → `2× Codex`) — Split deep code reviews across modules without blocking local tests; staggered async results merge cleanly on wakeup:
 
   > `/cospan-codex` _"Fan out 2 `sol` reviews across `webhook/` and `retry/` for real bugs."_
 
-  ![Animated multi-agent demo: Gemini 4 Carbon fans out 2 parallel GPT-6.2-Sol reviewers non-blockingly, continues local tests, and merges staggered async results on wakeup](assets/cuj-carbon-sol.svg)
+  ![Gemini 4 Carbon uses 2 GPT-6.2-Sol reviewers to audit webhook/ & retry/ in parallel without blocking](assets/cuj-carbon-sol.svg)
 
-- **Bring in `Carbon` as a second brain for `Astra`** (`Codex` ⇄ `Antigravity`) — Driving a complex migration on **GPT-6.2-Astra** in Codex? Consult **Gemini 4 Carbon** from a second model family to stress-test assumptions, propose an alternative route, and verify edge cases across multiple turns in the same session:
+- **Multi-turn `Carbon` second brain for `Astra`** (`Codex` ⇄ `Antigravity`) — Stress-test migration plans against a second model family and follow up in the same session while staying unblocked locally:
 
   > `$cospan:agy` _"Ask `carbon` to stress-test `docs/plan.md`, propose a cleaner route, and verify crash recovery."_
 
-  ![Animated multi-turn second-brain demo: GPT-6.2-Astra in Codex consults Gemini 4 Carbon in Antigravity across two resumed turns while auditing SQL callers locally](assets/cuj-astra-carbon.svg)
+  ![GPT-6.2-Astra consults Gemini 4 Carbon across 2 turns to stress-test docs/plan.md & verify crash safety](assets/cuj-astra-carbon.svg)
 
-- **Delegate computer use from `Claude Code` to `Terra`** (`Claude Code` → `Codex`) — Keep main code orchestration in **Claude Code**, and hand off live browser or GUI computer-use workflows to **GPT-6.1-Terra** while Claude keeps writing unit tests locally:
+- **Delegate GUI computer use from `Claude Code` to `Terra`** (`Claude Code` → `Codex`) — Keep code and unit-test orchestration in **Claude Sonnet**, while **GPT-6.1-Terra** drives the live browser to catch layout bugs:
 
   > `/cospan:codex` _"Have `terra` open the local app and walk through the checkout coupon flow."_
 
-  ![Screen Studio style computer-use demo: camera zooms into Claude Code dispatching GPT-6.1-Terra, pans and zooms onto the desktop browser as Codex Terra controls the cursor to apply SAVE20 and test 375px mobile layout, catches a sticky banner overlap, and pulls back as Claude receives the async report](assets/cuj-claude-terra.svg)
+  ![Claude Sonnet uses GPT-6.1-Terra to drive the browser GUI, test SAVE20 at 375px, and catch a mobile CTA bug](assets/cuj-claude-terra.svg)
 
-- **Offload parallel cross-ecosystem sidecars** (`Claude Code` → `Antigravity` + `DeepSeek Harness`) — Protect scarce flagship context and quota (like **Claude Fable**) by fanning out fast repo surveys to **Gemini 4 Hydrogen** and independent concurrency checks to **DeepSeek V4.1 Flash** simultaneously:
+- **Parallel cross-ecosystem sidecars for `Fable`** (`Claude Code` → `Antigravity` + `DeepSeek Harness`) — Protect scarce flagship context and quota by offloading repo surveys and concurrency checks simultaneously:
 
   > _"Map auth token refresh with `hydrogen` and verify 401 race conditions with `v4.1-flash`."_
 
-  ![Animated cross-ecosystem fan-out demo: Claude Fable dispatches Gemini 4 Hydrogen and DeepSeek V4.1 Flash in parallel, merging staggered async findings on wakeup](assets/cuj-fanout-sidecars.svg)
+  ![Claude Fable offloads auth mapping to Gemini 4 Hydrogen & race checks to DeepSeek V4.1 Flash in parallel](assets/cuj-fanout-sidecars.svg)
+
+- **End-to-end research & review topology from `Carbon` host** (`Antigravity` ⇄ `Codex` + `×N Antigravity`) — Drive a full plan → gate → bulk experiment → final audit → fix pass topology from **Gemini 4 Carbon** across **Astra**, **Hydrogen ×N**, and **Sol**:
+
+  > _"Have `astra` review my spec, fan out `hydrogen` across all experiment configs, audit with `sol`, and send `sol`'s fixes back to `hydrogen` for one final pass."_
+
+  ![Carbon (host) plans with Astra, fans out Hydrogen ×N, audits via Sol, and passes fixes to Hydrogen](assets/cuj-research-pipeline.svg)
 
 ## Install
 
