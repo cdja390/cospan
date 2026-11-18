@@ -25,27 +25,24 @@
 
 ## 核心场景
 
-### 基础用法与统一侧边栏面板
+### 基础用法：一行指令，其余全自动
 
-<table>
-  <tr>
-    <td valign="top" width="54%">
-      <p>直接通过 <code>/cospan-&lt;harness&gt;</code>（Claude Code 中为 <code>/cospan:&lt;harness&gt;</code>，Codex 中为 <code>$cospan:&lt;harness&gt;</code>）即可指定目标<strong>模型</strong>、<strong>推理强度（effort）</strong>与<strong>超时时间（timeout）</strong>：</p>
-      <pre><code>/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出真正的边界 Bug。</code></pre>
-      <p><strong>底层全自动接管（无需手动干预）：</strong></p>
-      <ul>
-        <li>自主选择内联文本或 <code>--prompt-file</code> 组织上下文，并在后台非阻塞发起会话（<code>send</code>）。</li>
-        <li>通过 <code>wait</code> / 定界 <code>observe</code> 持续跟踪进度，保持主对话上下文清爽。</li>
-        <li>收回结论后可直接沿原会话 <code>continue</code> 多轮追问。</li>
-        <li>在 <strong>Antigravity（<code>agy</code>）</strong> 或 <strong>DeepSeek Harness（<code>dsh</code>）</strong> 中安装后同步启用右侧统一侧边栏——实时追踪后台任务、展开问答结果并聚合 Git worktree（<code>wt:*</code>）。</li>
-      </ul>
-      <p><a href="#安装">前往安装 →</a></p>
-    </td>
-    <td align="center" valign="middle" width="46%">
-      <img src="assets/sidebar-extension.png" width="360" alt="Antigravity (agy) 与 DeepSeek Harness (dsh) 中的 Cospan 统一侧边栏面板截图，展示 Codex、Claude Code、Antigravity worktree 与 DeepSeek Harness 四家并行任务">
-    </td>
-  </tr>
-</table>
+直接通过 `/cospan-<harness>`（Claude Code 中为 `/cospan:<harness>`，Codex 中为 `$cospan:<harness>`）即可指定目标**模型**、**推理强度（effort）**与**超时时间（timeout）**：
+
+```text
+/cospan-codex 用 sol（high effort，20m 超时）审查 src/webhook/ 的改动，找出真正的边界 Bug。
+```
+
+> [!TIP]
+> **底层机制全自动接管（你无需手动理解或干预）：** 下达指令后，Host Agent 会自主选择内联文本或 `--prompt-file` 组织任务并在后台发起会话（`send`），非阻塞地通过 `wait` / 定界 `observe` 跟踪进度（仅在深挖时按需读取完整轨迹），收回结果后还可沿同一会话直接 `continue` 多轮追问。
+
+### 统一实时侧边栏（`agy` 与 `dsh`）
+
+在 **Antigravity (`agy`)** 或 **DeepSeek Harness (`dsh`)** 中安装后，会同步启用统一的 Cospan 侧边栏面板——实时追踪四家生态的后台任务进度、展开查看提问与回复结果，并自动聚合同一仓库下的 Git worktree 任务（`wt:*`）（[安装方式 ↓](#安装)）：
+
+<p align="center">
+  <img src="assets/sidebar-extension.png" width="420" alt="Antigravity (agy) 与 DeepSeek Harness (dsh) 中的 Cospan 统一侧边栏面板截图，展示 Codex、Claude Code、Antigravity worktree 与 DeepSeek Harness 四家并行任务">
+</p>
 
 ### 跨生态多智能体工作流
 

@@ -25,27 +25,24 @@ Inspired and battle-tested by [`agy-staff`](https://github.com/keli-wen/agy-staf
 
 ## Core CUJs
 
-### Basic dispatch &amp; unified live sidebar
+### Basic dispatch: one command, zero plumbing
 
-<table>
-  <tr>
-    <td valign="top" width="54%">
-      <p>Invoke <code>/cospan-&lt;harness&gt;</code> (or <code>/cospan:&lt;harness&gt;</code> in Claude Code, <code>$cospan:&lt;harness&gt;</code> in Codex) and specify any target <strong>model</strong>, <strong>reasoning effort</strong>, or <strong>timeout</strong> right in your prompt:</p>
-      <pre><code>/cospan-codex Use sol (high effort, 20m timeout) to review src/webhook/ and flag real edge cases.</code></pre>
-      <p><strong>Handled automatically under the hood:</strong></p>
-      <ul>
-        <li>Frames context inline or via <code>--prompt-file</code> and launches detached background workers (<code>send</code>).</li>
-        <li>Tracks progress non-blockingly (<code>wait</code> / bounded <code>observe</code>) while keeping your main context window clean.</li>
-        <li>Resumes the same session (<code>continue</code>) for multi-turn follow-ups.</li>
-        <li>Installing on <strong>Antigravity (<code>agy</code>)</strong> or <strong>DeepSeek Harness (<code>dsh</code>)</strong> enables this live sidebar panel for cross-harness monitoring, Q&amp;A inspection, and Git worktree (<code>wt:*</code>) aggregation.</li>
-      </ul>
-      <p><a href="#install">Jump to Install →</a></p>
-    </td>
-    <td align="center" valign="middle" width="46%">
-      <img src="assets/sidebar-extension.png" width="360" alt="Unified Cospan sidebar panel inside Antigravity (agy) and DeepSeek Harness (dsh) tracking Codex, Claude Code, Antigravity worktree, and DeepSeek Harness tasks">
-    </td>
-  </tr>
-</table>
+Invoke `/cospan-<harness>` (or `/cospan:<harness>` in Claude Code, `$cospan:<harness>` in Codex) and specify any target **model**, **reasoning effort**, or **timeout** right in your prompt:
+
+```text
+/cospan-codex Use sol (high effort, 20m timeout) to review src/webhook/ and flag real edge cases.
+```
+
+> [!TIP]
+> **Handled automatically under the hood (no need to manage this yourself):** Your host agent autonomously frames context (inline text or `--prompt-file`), launches a detached background session (`send`), monitors progress non-blockingly (`wait` / bounded `observe`, inspecting full trajectory logs only if needed), and collects the result—or resumes the same session (`continue`) for follow-up turns.
+
+### Unified live sidebar (`agy` & `dsh`)
+
+Installing on **Antigravity (`agy`)** or **DeepSeek Harness (`dsh`)** adds the unified Cospan sidebar panel—tracking live background runs across all four harnesses, inspecting Q&A outputs, and aggregating sibling Git worktrees (`wt:*`) in one view ([Install ↓](#install)):
+
+<p align="center">
+  <img src="assets/sidebar-extension.png" width="420" alt="Unified Cospan sidebar panel inside Antigravity (agy) and DeepSeek Harness (dsh) tracking Codex, Claude Code, Antigravity worktree, and DeepSeek Harness tasks">
+</p>
 
 ### Cross-ecosystem workflows
 
