@@ -1,7 +1,7 @@
 {
   "name": "cospan",
   "version": "0.1.0",
-  "description": "Orchestrate every model in its native harness — unified async delegation across Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness.",
+  "description": "Unified orchestration across coding agents — connect Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness through one async delegation protocol.",
   "icon": "assets/icon-512.png",
   "author": {
     "name": "Keli Wen",

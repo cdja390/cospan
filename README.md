@@ -8,8 +8,8 @@
   <a href="LICENSE"><img src="assets/badges/license-mit.svg" height="20" alt="license: MIT"></a>
 </p>
 
-**Orchestrate every model in its native harness.**
-Unified async delegation across **Antigravity**, **Codex**, **Claude Code**, **DeepSeek Harness**, and more harnesses coming soon.
+**Unified orchestration across coding agents.**
+Connect **Antigravity**, **Codex**, **Claude Code**, **DeepSeek Harness**, and more through one async delegation protocol.
 
 [![Cospan orchestration adapter connecting Antigravity, Codex, Claude Code, and DeepSeek Harness](assets/design.png)](assets/design.svg)
 
@@ -46,31 +46,31 @@ Installing on **Antigravity (`agy`)** or **DeepSeek Harness (`dsh`)** adds the u
 
 ### Cross-ecosystem workflows
 
-- **Parallel `Sol` slice reviews from `Carbon`** (`Antigravity` → `2× Codex`) — Split deep code reviews across modules without blocking local tests; staggered async results merge cleanly on wakeup:
+- <img src="assets/badges/cuj-parallel-review.svg" height="18" alt="Parallel Review"> **Fan out 2× Sol slice reviews from Carbon** _(Antigravity → 2× Codex)_ — Split deep code reviews across modules without blocking local tests; staggered async results merge cleanly on wakeup:
 
   > `/cospan-codex` _"Fan out 2 `sol` reviews across `webhook/` and `retry/` for real bugs."_
 
   ![Gemini 4 Carbon uses 2 GPT-6.2-Sol reviewers to audit webhook/ & retry/ in parallel without blocking](assets/cuj-carbon-sol.svg)
 
-- **Multi-turn `Carbon` second brain for `Astra`** (`Codex` ⇄ `Antigravity`) — Stress-test migration plans against a second model family and follow up in the same session while staying unblocked locally:
+- <img src="assets/badges/cuj-second-brain.svg" height="18" alt="Second Brain"> **Multi-turn Carbon second brain for Astra** _(Codex ⇄ Antigravity)_ — Stress-test migration plans against a second model family and follow up in the same session while staying unblocked locally:
 
   > `$cospan:agy` _"Ask `carbon` to stress-test `docs/plan.md`, propose a cleaner route, and verify crash recovery."_
 
   ![GPT-6.2-Astra consults Gemini 4 Carbon across 2 turns to stress-test docs/plan.md & verify crash safety](assets/cuj-astra-carbon.svg)
 
-- **Delegate GUI computer use from `Claude Code` to `Terra`** (`Claude Code` → `Codex`) — Keep code and unit-test orchestration in **Claude Sonnet**, while **GPT-6.1-Terra** drives the live browser to catch layout bugs:
+- <img src="assets/badges/cuj-computer-use.svg" height="18" alt="Computer Use"> **Live browser & GUI testing via Terra** _(Claude Code → Codex)_ — Keep code and unit-test orchestration in **Claude Sonnet**, while **GPT-6.1-Terra** drives the live browser to catch layout bugs:
 
   > `/cospan:codex` _"Have `terra` open the local app and walk through the checkout coupon flow."_
 
   ![Claude Sonnet uses GPT-6.1-Terra to drive the browser GUI, test SAVE20 at 375px, and catch a mobile CTA bug](assets/cuj-claude-terra.svg)
 
-- **Parallel cross-ecosystem sidecars for `Fable`** (`Claude Code` → `Antigravity` + `DeepSeek Harness`) — Protect scarce flagship context and quota by offloading repo surveys and concurrency checks simultaneously:
+- <img src="assets/badges/cuj-fast-sidecars.svg" height="18" alt="Fast Sidecars"> **Offload repo scans & race checks to protect Fable quota** _(Claude Code → Antigravity + DeepSeek Harness)_ — Save scarce flagship context and quota by delegating repo surveys and concurrency checks simultaneously:
 
   > _"Map auth token refresh with `hydrogen` and verify 401 race conditions with `v4.1-flash`."_
 
   ![Claude Fable offloads auth mapping to Gemini 4 Hydrogen & race checks to DeepSeek V4.1 Flash in parallel](assets/cuj-fanout-sidecars.svg)
 
-- **End-to-end research & review topology from `Carbon` host** (`Antigravity` ⇄ `Codex` + `×N Antigravity`) — Drive a full plan → gate → bulk experiment → final audit → fix pass topology from **Gemini 4 Carbon** across **Astra**, **Hydrogen ×N**, and **Sol**:
+- <img src="assets/badges/cuj-full-pipeline.svg" height="18" alt="Full Pipeline"> **End-to-end research & review pipeline from Carbon** _(Antigravity ⇄ Codex + ×N Antigravity)_ — Drive a full plan → gate → bulk experiment → final audit → fix pass loop across **Astra**, **Hydrogen ×N**, and **Sol**:
 
   > _"Have `astra` review my spec, fan out `hydrogen` across all experiment configs, audit with `sol`, and send `sol`'s fixes back to `hydrogen` for one final pass."_
 
@@ -78,7 +78,18 @@ Installing on **Antigravity (`agy`)** or **DeepSeek Harness (`dsh`)** adds the u
 
 ## Install
 
-Requires **Node.js `>= 20`** plus the CLIs for whichever harnesses you want to connect (`agy`, `claude`, `codex`, `dsh`). Install the native plugin into the harness(es) you drive from:
+Requires **Node.js `>= 20`** plus whichever coding agent CLIs you want to connect (`agy`, `claude`, `codex`, `dsh`).
+
+> [!TIP]
+> <img src="assets/icons/cospan-pixel.svg" width="16" height="16" alt=""> **Recommended — For agents:** Paste this into any coding agent to let it detect your environment, install Cospan, and verify CLI contracts automatically:
+>
+> ```text
+> Read the raw text of https://raw.githubusercontent.com/keli-wen/cospan/master/docs/INSTALL_FOR_AGENTS.md
+> (curl it — do not work from a summary) and follow it to install and verify Cospan for the harness you are running in.
+> Respond in the user's language.
+> ```
+
+### Manual install
 
 **Antigravity (`agy`)**
 
@@ -111,16 +122,6 @@ _(Or in the DeepSeek Harness desktop app: **Plugins** → install from `github:k
 
 Restart Claude Code or Codex afterwards so the plugin loads (`/cospan-…` in Antigravity and DeepSeek Harness, `/cospan:…` in Claude Code, `$cospan:…` in Codex—or describe what you want in plain language).
 
-### For agents
-
-Paste this into any coding agent to let it install and verify Cospan for your environment:
-
-```text
-Read the raw text of https://raw.githubusercontent.com/keli-wen/cospan/master/docs/INSTALL_FOR_AGENTS.md
-(curl it — do not work from a summary) and follow it to install and verify Cospan for the harness you are running in.
-Respond in the user's language.
-```
-
 <details>
 <summary>Upgrading & diagnostics</summary>
 
@@ -144,6 +145,10 @@ Claude Code and Codex cache plugins by version and require a restart after upgra
 
 _More harnesses are on the way—Cospan's driver layer is designed to plug in additional coding agent CLIs cleanly._
 
+## Roadmap
+
+- [ ] **Cross-machine peer delegation over SSH** — Fire-and-collect async task handoff across machines (LAN / Tailscale) via short-lived SSH, keeping remote credentials and execution isolated without long-lived connections.
+
 ## References
 
 - **[`agy-staff`](https://github.com/keli-wen/agy-staff)** — Hire Google's Antigravity CLI (`agy`) as a fast worker and second brain across Claude Code, Codex, DeepSeek Harness, Pi, and OpenCode. Cospan generalizes the async `jobs` protocol and progressive disclosure architecture first pioneered and benchmarked in `agy-staff` ([Bench v1 Tech Report](https://lastwhisper.dev/en/zen-of-harness-engineering/agy-staff-bench-v1/)).
@@ -154,4 +159,4 @@ _More harnesses are on the way—Cospan's driver layer is designed to plug in ad
 
 ## License
 
-MIT © 2026 Keli Wen · Architecture & contributor guide in [`AGENTS.md`](AGENTS.md).
+MIT © 2026 Keli Wen · Release notes in [`docs/releases/`](docs/releases/) · Architecture & contributor guide in [`AGENTS.md`](AGENTS.md).

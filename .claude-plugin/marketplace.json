@@ -4,7 +4,7 @@
     "name": "Keli Wen",
     "url": "https://github.com/keli-wen"
   },
-  "description": "Orchestrate every model in its native harness — unified async delegation across Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness.",
+  "description": "Unified orchestration across coding agents — connect Antigravity, OpenAI Codex, Claude Code, and DeepSeek Harness through one async delegation protocol.",
   "plugins": [
     {
       "name": "cospan",

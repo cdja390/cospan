@@ -599,11 +599,15 @@
   <!-- =================================================================== -->
   <!-- FOOTER CAPTION STRIP: Icon + One-Sentence Summary                   -->
   <!-- =================================================================== -->
-  <rect x="28" y="384" width="864" height="34" rx="8" fill="#111626" fill-opacity="0.92" stroke="#2D3548" stroke-width="1"/>
+  <g shape-rendering="crispEdges">
+    <path d="M34,387 H888 V389 H891 V392 H894 V413 H891 V416 H888 V418 H34 V416 H31 V413 H28 V392 H31 V389 H34 Z" fill="#0B0F1A" fill-opacity="0.45"/>
+    <path d="M32,384 H886 V386 H889 V389 H892 V411 H889 V414 H886 V416 H32 V414 H29 V411 H26 V389 H29 V386 H32 Z" fill="#CBD0D6"/>
+    <path d="M33,385 H885 V387 H888 V390 H891 V410 H888 V413 H885 V415 H33 V413 H30 V410 H27 V390 H30 V387 H33 Z" fill="#FFFFFF"/>
 
-  <!-- Icon Badge: Computer-Use GUI Cursor + Mobile Bug -->
-  <rect x="36" y="390" width="22" height="22" rx="5" fill="#1E1B3A" stroke="#4C3A85" stroke-width="1"/>
-  <g transform="translate(39, 393)" shape-rendering="crispEdges">
+    <!-- Icon Badge: Computer-Use GUI Cursor + Mobile Bug -->
+    <path d="M36,389 H54 V391 H56 V409 H54 V411 H36 V409 H34 V391 H36 Z" fill="#EDE9FE"/>
+  </g>
+  <g transform="translate(38, 392)" shape-rendering="crispEdges">
     <!-- Mini browser window -->
     <rect x="0" y="1" width="15" height="3" fill="#475569"/>
     <rect x="1" y="2" width="2" height="1" fill="#FF5F56"/>
@@ -619,14 +623,14 @@
   </g>
 
   <!-- Inline Claude Code Pixel Logo (16x16) -->
-  <g transform="translate(68, 393)" shape-rendering="crispEdges" fill="#D97757">
+  <g transform="translate(65, 392)" shape-rendering="crispEdges" fill="#D97757">
     <rect x="2" y="3" width="12" height="1"/><rect x="2" y="4" width="12" height="1"/><rect x="2" y="5" width="2" height="1"/><rect x="5" y="5" width="6" height="1"/><rect x="12" y="5" width="2" height="1"/><rect x="2" y="6" width="2" height="1"/><rect x="5" y="6" width="6" height="1"/><rect x="12" y="6" width="2" height="1"/><rect x="0" y="7" width="16" height="1"/><rect x="0" y="8" width="16" height="1"/><rect x="2" y="9" width="12" height="1"/><rect x="2" y="10" width="12" height="1"/><rect x="3" y="11" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="10" y="11" width="1" height="1"/><rect x="12" y="11" width="1" height="1"/><rect x="3" y="12" width="1" height="1"/><rect x="5" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/>
   </g>
-  <text x="89" y="405" textLength="86" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#FFA657">Claude Sonnet</text>
-  <text x="180" y="405" textLength="26" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#CBD5E1">uses</text>
+  <text x="86" y="404" textLength="86" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#D97757">Claude Sonnet</text>
+  <text x="177" y="404" textLength="26" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">uses</text>
 
   <!-- Inline Codex Pixel Logo (20x20 -> 16x16) -->
-  <g transform="translate(211, 393) scale(0.8000)" shape-rendering="crispEdges">
+  <g transform="translate(208, 392) scale(0.8000)" shape-rendering="crispEdges">
     <g fill="#B1A7FF"><rect x="6" y="1" width="4" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="5" y="3" width="10" height="1"/></g>
     <g fill="#8FA2FF"><rect x="4" y="4" width="12" height="1"/><rect x="2" y="5" width="15" height="1"/><rect x="1" y="6" width="16" height="1"/><rect x="1" y="7" width="16" height="1"/></g>
     <g fill="#6E89FF"><rect x="1" y="8" width="5" height="1"/><rect x="8" y="8" width="9" height="1"/><rect x="1" y="9" width="6" height="1"/><rect x="9" y="9" width="9" height="1"/><rect x="2" y="10" width="6" height="1"/><rect x="10" y="10" width="9" height="1"/><rect x="3" y="11" width="4" height="1"/><rect x="9" y="11" width="10" height="1"/></g>
@@ -634,8 +638,8 @@
     <g fill="#3941FF"><rect x="5" y="16" width="10" height="1"/><rect x="9" y="17" width="6" height="1"/><rect x="10" y="18" width="4" height="1"/></g>
     <g fill="#FFFFFF"><rect x="6" y="8" width="2" height="1"/><rect x="7" y="9" width="2" height="1"/><rect x="8" y="10" width="2" height="1"/><rect x="7" y="11" width="2" height="1"/><rect x="6" y="12" width="2" height="1"/><rect x="11" y="12" width="4" height="1"/></g>
   </g>
-  <text x="231" y="405" textLength="84" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#A78BFA">GPT-6.1-Terra</text>
-  <text x="320" y="405" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#CBD5E1">to drive the browser GUI, test SAVE20 at 375px, and catch a mobile CTA bug.</text>
+  <text x="228" y="404" textLength="84" lengthAdjust="spacing" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#7356F1">GPT-6.1-Terra</text>
+  <text x="317" y="404" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#424A53">to drive the browser GUI, test SAVE20 at 375px, and catch a mobile CTA bug.</text>
   </g>
 
   <!-- Outer Stage Frame Border -->
