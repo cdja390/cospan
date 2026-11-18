@@ -8,6 +8,7 @@ import {
   ensureDefaultGlobalConfig,
   savePinnedTargets,
 } from './targets.mjs';
+import { renderCodexDrawReference } from './codex-draw-reference.mjs';
 import {
   COSPAN_BIN_PATH,
   MOUNTABLE_TARGET_IDS,
@@ -47,10 +48,17 @@ export function installForAgyHost({
   for (const targetId of MOUNTABLE_TARGET_IDS) {
     if (force || discovered[targetId]?.installed) {
       mountedTargets.push(targetId);
+      const skillDir = path.join(skillsRoot, `cospan-${targetId}`);
       writeCleanDirFile(
-        path.join(skillsRoot, `cospan-${targetId}`, 'SKILL.md'),
+        path.join(skillDir, 'SKILL.md'),
         renderAgyHostTargetSkill({ targetId, cospanBin })
       );
+      if (targetId === 'codex') {
+        writeCleanDirFile(
+          path.join(skillDir, 'references', 'draw.md'),
+          renderCodexDrawReference({ hostMode: 'agy', cospanBin })
+        );
+      }
     }
   }
 
@@ -137,10 +145,17 @@ function writeCodexBundleAtRoot({
   for (const targetId of MOUNTABLE_TARGET_IDS) {
     if (force || discovered[targetId]?.installed) {
       mountedTargets.push(targetId);
+      const skillDir = path.join(skillsRoot, targetId);
       writeCleanDirFile(
-        path.join(skillsRoot, targetId, 'SKILL.md'),
+        path.join(skillDir, 'SKILL.md'),
         renderCodexHostTargetSkill({ targetId, cospanBin })
       );
+      if (targetId === 'codex') {
+        writeCleanDirFile(
+          path.join(skillDir, 'references', 'draw.md'),
+          renderCodexDrawReference({ hostMode: 'mcp', cospanBin })
+        );
+      }
     }
   }
   writeCleanDirFile(path.join(skillsRoot, 'jobs', 'SKILL.md'), renderCodexHostJobsSkill());

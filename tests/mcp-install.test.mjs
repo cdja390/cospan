@@ -56,11 +56,42 @@ function assertRenderedCodexSkills(codexPkgRoot) {
     assert.ok(fs.existsSync(skillPath));
     const text = fs.readFileSync(skillPath, 'utf8');
     assertVerbatimSkillContract(text, id);
+    const drawPath = path.join(codexPkgRoot, 'skills', id, 'references', 'draw.md');
+    assert.equal(fs.existsSync(drawPath), id === 'codex');
   }
   assert.match(
     fs.readFileSync(path.join(codexPkgRoot, 'skills', 'agy', 'SKILL.md'), 'utf8'),
     /<skill-dir>\/\.\.\/\.\.\/bin\/cospan\.mjs/
   );
+  const mcpDraw = fs.readFileSync(
+    path.join(codexPkgRoot, 'skills', 'codex', 'references', 'draw.md'),
+    'utf8'
+  );
+  assert.match(mcpDraw, /\$imagegen/);
+  assert.match(mcpDraw, /cospan_send/);
+  assert.match(mcpDraw, /cospan_continue/);
+  assert.match(mcpDraw, /Explicit opt-in only/);
+}
+
+function assertAgyDrawReference(agyPluginDir) {
+  for (const id of ['agy', 'codex', 'claude', 'dsh']) {
+    const drawPath = path.join(agyPluginDir, 'skills', `cospan-${id}`, 'references', 'draw.md');
+    assert.equal(fs.existsSync(drawPath), id === 'codex');
+  }
+  const agyCodexSkill = fs.readFileSync(
+    path.join(agyPluginDir, 'skills', 'cospan-codex', 'SKILL.md'),
+    'utf8'
+  );
+  assert.match(agyCodexSkill, /references\/draw\.md/);
+  assert.match(agyCodexSkill, /only when explicitly requested via Codex/i);
+  const agyDraw = fs.readFileSync(
+    path.join(agyPluginDir, 'skills', 'cospan-codex', 'references', 'draw.md'),
+    'utf8'
+  );
+  assert.match(agyDraw, /\$imagegen/);
+  assert.match(agyDraw, /--effort low/);
+  assert.match(agyDraw, /continue --id/);
+  assert.match(agyDraw, /Explicit opt-in only/);
 }
 
 test('host installer mounts all detected targets and adheres to host schemas', async () => {
@@ -121,6 +152,7 @@ test('host installer mounts all detected targets and adheres to host schemas', a
       );
       assertVerbatimSkillContract(agySkill, id);
     }
+    assertAgyDrawReference(agyRes.pluginDir);
 
     const agyManifest = JSON.parse(
       fs.readFileSync(path.join(agyRes.pluginDir, 'plugin.json'), 'utf8')

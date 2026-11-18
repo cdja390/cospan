@@ -11,7 +11,7 @@ function shellQuote(p) {
   return `"${String(p).replaceAll('"', '\\"')}"`;
 }
 
-function cliCommandPrefix(cospanBin = COSPAN_BIN_PATH) {
+export function cliCommandPrefix(cospanBin = COSPAN_BIN_PATH) {
   return `node ${shellQuote(cospanBin)}`;
 }
 
@@ -26,7 +26,8 @@ const TARGET_DOCS = {
     effortsNote: 'supported `--effort`: `low`, `medium`, `high`, `xhigh`',
     strengths:
       'Delegate code review, second-opinion debugging, repository research, ' +
-      'or scoped implementation tasks to OpenAI Codex CLI.',
+      'scoped implementation tasks, or (only when explicitly requested via Codex) ' +
+      'raster image generation/editing to OpenAI Codex CLI.',
   },
   agy: {
     title: 'Google Antigravity (`agy`)',
@@ -132,6 +133,17 @@ export function renderAgyHostTargetSkill({ targetId, cospanBin }) {
   const desc =
     `Point-to-point headless delegation to ${doc.title} via cospan. ` +
     `${doc.strengths} Model shortcuts include ${formatTargetModelShortcuts(targetId)}.${selfNote}`;
+  const drawSection =
+    targetId === 'codex'
+      ? `\n## 4. Raster Image Generation & Editing (Explicit Opt-In)\n\n` +
+        `- **Only when the user explicitly asks to generate or edit an image via Codex / ` +
+        `\`cospan-codex\`** (never hijack generic image requests meant for the host's default ` +
+        `image tools): read \`references/draw.md\` (in this skill's directory) before ` +
+        `dispatching.\n` +
+        `- Covers built-in \`$imagegen\` (\`image_gen\` on ChatGPT subscription, no ` +
+        `\`OPENAI_API_KEY\`), \`--effort low\` writable dispatch, transparent alpha output, ` +
+        `and multi-turn visual edits via \`continue\`.\n`
+      : '';
   return (
     `---\nname: cospan-${targetId}\ndescription: ${desc}\n---\n\n` +
     `# cospan-${targetId} — Delegate to ${doc.title}\n\n` +
@@ -161,7 +173,8 @@ export function renderAgyHostTargetSkill({ targetId, cospanBin }) {
     `  - Never mask a failed or timed-out delegation with a silent host-side substitute—report ` +
     `the delegation failure first.\n` +
     `  - When \`--readonly\` was used for a review, present the findings to the user before ` +
-    `auto-applying controversial edits if they only asked for a review.\n`
+    `auto-applying controversial edits if they only asked for a review.\n` +
+    drawSection
   );
 }
 
@@ -269,6 +282,15 @@ export function renderCodexHostTargetSkill({ targetId, cospanBin }) {
   const desc =
     `Point-to-point headless delegation to ${doc.title} via cospan ($cospan:${targetId}). ` +
     `${doc.strengths} Model shortcuts include ${formatTargetModelShortcuts(targetId)}.${selfNote}`;
+  const drawSection =
+    targetId === 'codex'
+      ? `\n## 3. Raster Image Generation & Editing (Non-Codex Hosts, Explicit Opt-In)\n\n` +
+        `- **Only when running in a non-Codex host (such as Claude Code or DeepSeek Harness) ` +
+        `and the user explicitly asks to generate or edit an image via Codex**: read ` +
+        `\`<skill-dir>/references/draw.md\` (\`references/draw.md\` in this skill's directory) ` +
+        `before dispatching. Inside Codex itself, use \`$imagegen\` directly instead of ` +
+        `delegating.\n`
+      : '';
   return (
     `---\nname: ${targetId}\ndescription: ${desc}\n---\n\n` +
     `# $cospan:${targetId} — Delegate to ${doc.title}\n\n` +
@@ -288,7 +310,8 @@ export function renderCodexHostTargetSkill({ targetId, cospanBin }) {
     `## 2. CLI Fallback (only if \`cospan\` MCP server is unavailable)\n\n` +
     `Run unsandboxed in your workspace directory:\n` +
     `\`\`\`bash\n${cmd} send --to ${targetId} [--readonly] --prompt "<task>"\n` +
-    `${cmd} wait <job-id> --timeout 10m\n\`\`\`\n`
+    `${cmd} wait <job-id> --timeout 10m\n\`\`\`\n` +
+    drawSection
   );
 }
 

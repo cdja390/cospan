@@ -1,6 +1,6 @@
 ---
 name: codex
-description: Point-to-point headless delegation to OpenAI Codex (`codex`) via cospan ($cospan:codex). Delegate code review, second-opinion debugging, repository research, or scoped implementation tasks to OpenAI Codex CLI. Model shortcuts include `sol`, `terra`, `astra`, `luna`. Use when you need explicit model/effort selection or an isolated detached cospan session.
+description: Point-to-point headless delegation to OpenAI Codex (`codex`) via cospan ($cospan:codex). Delegate code review, second-opinion debugging, repository research, scoped implementation tasks, or (only when explicitly requested via Codex) raster image generation/editing to OpenAI Codex CLI. Model shortcuts include `sol`, `terra`, `astra`, `luna`. Use when you need explicit model/effort selection or an isolated detached cospan session.
 ---
 
 # $cospan:codex — Delegate to OpenAI Codex (`codex`)
@@ -45,3 +45,7 @@ Run unsandboxed in your workspace directory:
 node "<skill-dir>/../../bin/cospan.mjs" send --to codex [--readonly] --prompt "<task>"
 node "<skill-dir>/../../bin/cospan.mjs" wait <job-id> --timeout 10m
 ```
+
+## 3. Raster Image Generation & Editing (Non-Codex Hosts, Explicit Opt-In)
+
+- **Only when running in a non-Codex host (such as Claude Code or DeepSeek Harness) and the user explicitly asks to generate or edit an image via Codex**: read `<skill-dir>/references/draw.md` (`references/draw.md` in this skill's directory) before dispatching. Inside Codex itself, use `$imagegen` directly instead of delegating.
