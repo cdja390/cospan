@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { checkTargetCliContract } from '../src/contract-check.mjs';
 import { claudeDriver, resolveClaudeModelAndEffort } from '../src/drivers/claude.mjs';
 import { dshDriver, resolveDshModelAndEffort } from '../src/drivers/dsh.mjs';
+import { extractDshAgentDefaultModelFromText } from '../src/drivers/dsh-protocol.mjs';
 import { listActiveTargetIds } from '../src/drivers/index.mjs';
 
 const TEST_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -251,6 +252,94 @@ test('dsh model/effort resolution, out-of-tree --patch overlay, and stream proje
     if (prevHome === undefined) delete process.env.COSPAN_HOME;
     else process.env.COSPAN_HOME = prevHome;
     fs.rmSync(tmpHome, { recursive: true, force: true });
+  }
+});
+
+test('dsh inherit + --effort preserves DSH_HOME model without deepseek-flash fallback', () => {
+  const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-dsh-inherit-'));
+  const tmpDsh = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-dsh-home-'));
+  const prevHome = process.env.COSPAN_HOME;
+  const prevDshHome = process.env.DSH_HOME;
+  const prevDshBin = process.env.DSH_BIN;
+  process.env.COSPAN_HOME = tmpHome;
+  process.env.DSH_HOME = tmpDsh;
+  process.env.DSH_BIN = FAKE_DSH;
+  try {
+    assert.throws(
+      () =>
+        dshDriver.buildInvocation({
+          kind: 'send',
+          prompt: 'hi',
+          model: null,
+          effort: 'high',
+          workspace: '/repo',
+        }),
+      /cannot apply --effort "high" for dsh when model is "inherit"/
+    );
+
+    fs.mkdirSync(path.join(tmpDsh, 'profiles', 'headless'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tmpDsh, 'profiles', 'headless', 'cordis.patch.yml'),
+      `- id: agent-default-model\n  name: "@deepseek-ai/dsh-agent-default-model"\n` +
+        `  config:\n    provider: custom-prov\n    model: deepseek-v4-pro\n`
+    );
+    const invProfile = dshDriver.buildInvocation({
+      kind: 'send',
+      prompt: 'hi',
+      model: null,
+      effort: 'high',
+      workspace: '/repo',
+    });
+    const pIdx1 = invProfile.args.indexOf('--patch');
+    const patch1 = JSON.parse(fs.readFileSync(invProfile.args[pIdx1 + 1], 'utf8'));
+    assert.deepEqual(patch1, [
+      {
+        id: 'agent-default-model',
+        config: { provider: 'custom-prov', model: 'deepseek-v4-pro', reasoningEffort: 'high' },
+      },
+    ]);
+
+    fs.writeFileSync(
+      path.join(tmpDsh, 'cordis.patch.yml'),
+      JSON.stringify([
+        {
+          id: 'agent-default-model',
+          config: { provider: 'home-prov', model: 'home-model' },
+        },
+      ])
+    );
+    const invHome = dshDriver.buildInvocation({
+      kind: 'send',
+      prompt: 'hi',
+      model: null,
+      effort: 'max',
+      workspace: '/repo',
+    });
+    const pIdx2 = invHome.args.indexOf('--patch');
+    const patch2 = JSON.parse(fs.readFileSync(invHome.args[pIdx2 + 1], 'utf8'));
+    assert.deepEqual(patch2, [
+      {
+        id: 'agent-default-model',
+        config: { provider: 'home-prov', model: 'home-model', reasoningEffort: 'max' },
+      },
+    ]);
+
+    assert.deepEqual(
+      extractDshAgentDefaultModelFromText(
+        '- id: other\n  config:\n    foo: bar\n' +
+          '- id: agent-default-model\n  config:\n    provider: "p1"\n    model: \'m1\' # comment\n'
+      ),
+      { provider: 'p1', model: 'm1' }
+    );
+  } finally {
+    if (prevHome === undefined) delete process.env.COSPAN_HOME;
+    else process.env.COSPAN_HOME = prevHome;
+    if (prevDshHome === undefined) delete process.env.DSH_HOME;
+    else process.env.DSH_HOME = prevDshHome;
+    if (prevDshBin === undefined) delete process.env.DSH_BIN;
+    else process.env.DSH_BIN = prevDshBin;
+    fs.rmSync(tmpHome, { recursive: true, force: true });
+    fs.rmSync(tmpDsh, { recursive: true, force: true });
   }
 });
 

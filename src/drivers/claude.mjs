@@ -33,7 +33,12 @@ export function resolveClaudeModelAndEffort({ kind = 'send', model, effort, conf
 
   const { defaultModel, defaultEffort } = pickClaudeBaseDefaults(defaults, kind);
   const rawModel = model || defaultModel;
-  const resolvedModel = rawModel === 'inherit' ? null : mappings[rawModel] || rawModel;
+  const resolvedModel =
+    rawModel === 'inherit'
+      ? null
+      : Object.hasOwn(mappings, rawModel)
+        ? mappings[rawModel]
+        : rawModel;
   const resolvedEffort = normalizeClaudeEffort(
     effort,
     defaultEffort === 'inherit' ? null : defaultEffort

@@ -93,6 +93,33 @@ test('agy model resolution: gemini-3.8-flash-medium default, mappings, and overr
     resolveAgyModel({ kind: 'send', effort: 'low', config: hydrogenDefaultCfg }),
     'gemini-4-hydrogen-low'
   );
+
+  // Custom non-family default model + --effort must NOT fall back to gemini-3.8-flash
+  const customEnterpriseCfg = {
+    defaults: { agy: { model: 'custom-enterprise-model' } },
+    mappings: {},
+  };
+  assert.equal(
+    resolveAgyModel({ kind: 'send', effort: 'high', config: customEnterpriseCfg }),
+    'custom-enterprise-model'
+  );
+  assert.equal(
+    resolveAgyModel({
+      kind: 'send',
+      effort: 'high',
+      config: { defaults: { agy: { model: 'custom-enterprise-model-medium' } }, mappings: {} },
+    }),
+    'custom-enterprise-model-medium'
+  );
+  assert.equal(
+    resolveAgyModel({
+      kind: 'send',
+      model: 'my-org/custom-model',
+      effort: 'high',
+      config: emptyCfg,
+    }),
+    'my-org/custom-model'
+  );
 });
 
 test('agy invocation flags: unrestricted default vs restricted sandbox', () => {
@@ -184,6 +211,23 @@ test('codex model resolution, unrestricted default, and restricted flag asymmetr
       config: { defaults: { codex: { model: 'inherit', effort: 'inherit' } }, mappings: {} },
     }),
     { model: null, effort: null }
+  );
+  // Single-hop lookup (never recursive) and unknown IDs pass through untouched
+  assert.deepEqual(
+    resolveCodexModelAndEffort({
+      kind: 'send',
+      model: 'hop1',
+      config: { defaults: {}, mappings: { codex: { hop1: 'hop2', hop2: 'gpt-6.1-terra' } } },
+    }),
+    { model: 'hop2', effort: 'high' }
+  );
+  assert.deepEqual(
+    resolveCodexModelAndEffort({
+      kind: 'send',
+      model: 'openai/gpt-custom-preview',
+      config: emptyCfg,
+    }),
+    { model: 'openai/gpt-custom-preview', effort: 'high' }
   );
 
   // Default (`permissions: "unrestricted"`) bypasses approvals/sandbox for writable & readonly

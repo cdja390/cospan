@@ -205,3 +205,36 @@ test('unauthenticated claude/dsh errors surface and doctor --check verifies all 
     fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });
   }
 });
+
+test('dsh inherit + --effort uses DSH_HOME configured model in runtime execution', () => {
+  const repo = makeTempGitRepo();
+  const dshHome = fs.mkdtempSync(path.join(os.tmpdir(), 'cospan-dsh-rt-'));
+  try {
+    fs.mkdirSync(path.join(dshHome, 'profiles', 'headless'), { recursive: true });
+    fs.writeFileSync(
+      path.join(dshHome, 'profiles', 'headless', 'cordis.patch.yml'),
+      '- id: agent-default-model\n  config:\n    provider: custom-prov\n    model: custom-v4\n'
+    );
+    const sendRes = runCospan(
+      ['send', '--to', 'dsh', '--effort', 'high', '--json', '--prompt', 'Use DSH_HOME model'],
+      { cwd: repo, env: { DSH_HOME: dshHome } }
+    );
+    assert.equal(sendRes.code, 0, sendRes.stderr);
+    const { job_id: jobId, model, effort } = JSON.parse(sendRes.stdout);
+    assert.equal(model, null);
+    assert.equal(effort, 'high');
+    const waitRes = runCospan(['wait', jobId, '--timeout', '10s'], {
+      cwd: repo,
+      env: { DSH_HOME: dshHome },
+    });
+    assert.equal(waitRes.code, 0, waitRes.stderr);
+    assert.match(
+      waitRes.stdout,
+      /dsh_provider=custom-prov dsh_model=custom-v4 effort=high patched=true/
+    );
+  } finally {
+    fs.rmSync(repo, { recursive: true, force: true });
+    fs.rmSync(`${repo}-cospan-cfg`, { recursive: true, force: true });
+    fs.rmSync(dshHome, { recursive: true, force: true });
+  }
+});

@@ -56,29 +56,16 @@ function pickDefaultAgyBase(defaults, kind) {
   return defaults.model || defaults.sendModel || 'gemini-3.8-flash-medium';
 }
 
-function resolveDefaultAgyModel(mappedDefault, effort, defaults) {
+function resolveAgyFamilyAndEffort(mapped, effort, defaults) {
   const fallbackEffort = defaults.effort || 'medium';
-  if (EFFORT_FAMILIES.has(mappedDefault)) {
-    return formatFamilyWithEffort(mappedDefault, effort, fallbackEffort);
+  if (EFFORT_FAMILIES.has(mapped)) {
+    return formatFamilyWithEffort(mapped, effort, fallbackEffort);
   }
-  if (!effort) return mappedDefault;
-  const baseMatch = /^(.*)-(low|medium|high|xhigh)$/.exec(mappedDefault);
-  const baseFamily = baseMatch ? baseMatch[1] : defaults.family;
-  if (baseFamily && EFFORT_FAMILIES.has(baseFamily)) {
-    return formatFamilyWithEffort(baseFamily, effort, baseMatch?.[2] || fallbackEffort);
-  }
-  return mappedDefault;
-}
-
-function resolveExplicitAgyModel(aliased, effort, defaults) {
-  if (EFFORT_FAMILIES.has(aliased)) {
-    return formatFamilyWithEffort(aliased, effort, defaults.effort || 'medium');
-  }
-  const suffixMatch = /^(.*)-(low|medium|high|xhigh)$/.exec(aliased);
+  const suffixMatch = /^(.*)-(low|medium|high|xhigh)$/.exec(mapped);
   if (suffixMatch && effort && EFFORT_FAMILIES.has(suffixMatch[1])) {
     return formatFamilyWithEffort(suffixMatch[1], effort, suffixMatch[2]);
   }
-  return aliased;
+  return mapped;
 }
 
 export function resolveAgyModel({ kind = 'send', model, effort, config } = {}) {
@@ -86,11 +73,9 @@ export function resolveAgyModel({ kind = 'send', model, effort, config } = {}) {
   const defaults = { ...BUILTIN_CONFIG.defaults.agy, ...(effective?.defaults?.agy || {}) };
   const mappings = { ...BUILTIN_CONFIG.mappings.agy, ...(effective?.mappings?.agy || {}) };
 
-  if (!model) {
-    const defaultFull = pickDefaultAgyBase(defaults, kind);
-    return resolveDefaultAgyModel(mappings[defaultFull] || defaultFull, effort, defaults);
-  }
-  return resolveExplicitAgyModel(mappings[model] || model, effort, defaults);
+  const rawModel = model || pickDefaultAgyBase(defaults, kind);
+  const mapped = Object.hasOwn(mappings, rawModel) ? mappings[rawModel] : rawModel;
+  return resolveAgyFamilyAndEffort(mapped, effort, defaults);
 }
 
 function sanitizeAgyErrorRecord(value, warn) {

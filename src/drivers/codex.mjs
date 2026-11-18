@@ -48,7 +48,12 @@ export function resolveCodexModelAndEffort({ kind = 'send', model, effort, confi
 
   const { defaultModel, defaultEffort } = pickCodexBaseDefaults(defaults, kind);
   const rawModel = model || defaultModel;
-  const resolvedModel = rawModel === 'inherit' ? null : mappings[rawModel] || rawModel;
+  const resolvedModel =
+    rawModel === 'inherit'
+      ? null
+      : Object.hasOwn(mappings, rawModel)
+        ? mappings[rawModel]
+        : rawModel;
   const resolvedEffort = normalizeCodexEffort(
     effort,
     defaultEffort === 'inherit' ? null : defaultEffort
