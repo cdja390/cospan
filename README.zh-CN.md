@@ -13,7 +13,11 @@
 
 [![Cospan 连接 Antigravity、Codex、Claude Code 与 DeepSeek Harness](assets/design.png)](assets/design.svg)
 
-**[为什么做 Cospan](#为什么做-cospan) · [常见用法](#常见用法) · [安装](#安装) · [支持的工具与模型](#支持的工具与模型) · [路线图](#路线图) · [参考与许可](#参考与许可)**
+**[40 秒演示](#40-秒演示) · [为什么做 Cospan](#为什么做-cospan) · [常见用法](#常见用法) · [安装](#安装) · [支持的工具与模型](#支持的工具与模型) · [路线图](#路线图) · [参考与许可](#参考与许可)**
+
+## 40 秒演示
+
+https://github.com/user-attachments/assets/43384bfd-ca36-4d6b-9074-84ca5257cc20
 
 ## 为什么做 Cospan
 

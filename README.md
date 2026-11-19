@@ -13,7 +13,11 @@ Connect **Antigravity**, **Codex**, **Claude Code**, **DeepSeek Harness**, and m
 
 [![Cospan orchestration adapter connecting Antigravity, Codex, Claude Code, and DeepSeek Harness](assets/design.png)](assets/design.svg)
 
-**[Why Cospan](#why-cospan) · [Core CUJs](#core-cujs) · [Install](#install) · [Harnesses](#harnesses) · [Roadmap](#roadmap) · [References](#references-and-license)**
+**[40s Demo](#40s-demo) · [Why Cospan](#why-cospan) · [Core CUJs](#core-cujs) · [Install](#install) · [Harnesses](#harnesses) · [Roadmap](#roadmap) · [References](#references-and-license)**
+
+## 40s Demo
+
+https://github.com/user-attachments/assets/f51a33fc-486c-479c-95d5-3cf35a1aeab1
 
 ## Why Cospan
 
