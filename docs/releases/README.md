@@ -18,3 +18,32 @@ Every release doc includes an attribution line directly beneath its header image
 ```markdown
 _Header illustration generated via [`cospan-codex`](../../skills/codex/SKILL.md)._
 ```
+
+## Release Upgrade Section Convention
+
+Every release doc (and its corresponding GitHub Release body) ends with an agent-first `## Upgrade` section pointing coding agents at the raw [`docs/INSTALL_FOR_AGENTS.md`](../INSTALL_FOR_AGENTS.md) guide, followed by a collapsed `<details>` block with manual one-liners for all four hosts (`agy`, `claude`, `codex`, `dsh` pinned to `#<tag>`):
+
+````markdown
+## Upgrade
+
+> [!TIP]
+> **Recommended — For coding agents:** Paste this into any coding agent to upgrade Cospan to `<tag>` and verify CLI contracts for your current harness automatically:
+>
+> ```text
+> Read the raw text of https://raw.githubusercontent.com/keli-wen/cospan/master/docs/INSTALL_FOR_AGENTS.md
+> (curl it — do not work from a summary) and follow it to upgrade Cospan to <tag> and verify it for the harness you are running in.
+> Respond in the user's language.
+> ```
+
+<details>
+<summary>Manual upgrade commands (agy / claude / codex / dsh)</summary>
+
+- **Antigravity (`agy`)**: `git -C ~/.cospan/repo pull --ff-only && node ~/.cospan/repo/bin/cospan.mjs install --host agy`
+- **Claude Code (`claude`)**: `claude plugin marketplace update cospan && claude plugin update cospan@cospan`
+- **OpenAI Codex (`codex`)**: `codex plugin marketplace upgrade && codex plugin add cospan@cospan`
+- **DeepSeek Harness (`dsh`)**: `dsh plugin --profile desktop add 'github:keli-wen/cospan#<tag>'`
+
+Restart Claude Code or Codex after upgrading, then run `node <cospan-root>/bin/cospan.mjs doctor --check` (zero tokens).
+
+</details>
+````
