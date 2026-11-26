@@ -90,11 +90,6 @@ function finalizeDshStreamState({
   return { payload: null, streamFailure: null, native };
 }
 
-function hasExplicitDshErrorField(error) {
-  if (typeof error === 'string') return error.trim().length > 0;
-  return typeof error?.message === 'string' && error.message.trim().length > 0;
-}
-
 function pickDshErrorText(candidates, fallback = 'DeepSeek Harness turn ended with error.') {
   for (const raw of candidates) {
     const text = typeof raw === 'string' ? raw.trim() : '';
@@ -103,28 +98,30 @@ function pickDshErrorText(candidates, fallback = 'DeepSeek Harness turn ended wi
   return fallback;
 }
 
-function extractDshTerminalError(event) {
+function extractDshTerminalError(event, priorError = null) {
+  const fallback = priorError || 'DeepSeek Harness turn ended with error.';
   if (event?.reason?.kind === 'error') {
-    return pickDshErrorText([
-      event.reason.error,
-      event.reason.error?.message,
-      event.reason.message,
-      event.message,
-      event.text,
-    ]);
+    return pickDshErrorText(
+      [
+        event.reason.error,
+        event.reason.error?.message,
+        event.reason.message,
+        event.message,
+        event.text,
+      ],
+      fallback
+    );
   }
-  if (
-    event?.isError === true ||
-    event?.is_error === true ||
-    hasExplicitDshErrorField(event?.error)
-  ) {
-    return pickDshErrorText([event.error, event.error?.message, event.message, event.text]);
+  const explicitError = pickDshErrorText([event?.error, event?.error?.message], null);
+  if (explicitError) return explicitError;
+  if (event?.isError === true || event?.is_error === true) {
+    return pickDshErrorText([event.message, event.text], fallback);
   }
   return null;
 }
 
 function applyDshTerminalEvent(event, state) {
-  const terminalError = extractDshTerminalError(event);
+  const terminalError = extractDshTerminalError(event, state.streamError);
   if (terminalError) {
     state.streamError = terminalError;
     return;

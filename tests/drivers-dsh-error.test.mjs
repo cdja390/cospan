@@ -31,6 +31,7 @@ function runCospanDsh(args, { cwd, env = {} }) {
     env: {
       ...process.env,
       DSH_BIN: FAKE_DSH,
+      COSPAN_HOME: cfgDir,
       COSPAN_CONFIG_DIR: cfgDir,
       ...env,
     },
@@ -93,12 +94,35 @@ test('dsh terminal final errors surface reason instead of empty done', () => {
   );
 });
 
+test('dsh explicit error flags and prior stream error preservation', () => {
+  const cases = [
+    [{ type: 'final', isError: true, message: 'flag camelCase error' }, 'flag camelCase error'],
+    [{ type: 'final', is_error: true, text: 'flag snake_case error' }, 'flag snake_case error'],
+    [{ type: 'final', error: 'top-level string error' }, 'top-level string error'],
+    [{ type: 'final', error: { message: 'top-level object error' } }, 'top-level object error'],
+  ];
+  for (const [ev, expected] of cases) {
+    const sess = dshDriver.createStreamSession();
+    sess.acceptEvent(ev);
+    const fin = sess.finalize(0);
+    assert.equal(fin.payload, null);
+    assert.equal(fin.streamFailure, expected);
+  }
+
+  const prior = dshDriver.createStreamSession();
+  prior.acceptEvent({ type: 'error', message: '401 Unauthorized' });
+  prior.acceptEvent({ type: 'final', reason: { kind: 'error' } });
+  const priorFin = prior.finalize(0);
+  assert.equal(priorFin.payload, null);
+  assert.equal(priorFin.streamFailure, '401 Unauthorized');
+});
+
 test('dsh runtime ask and send->wait fail when CLI exits 0 with final error', () => {
   const repo = makeTempGitRepo();
   const env = { FAKE_DSH_FINAL_ERROR: '1' };
   try {
     const askRes = runCospanDsh(['ask', '--to', 'dsh', '--prompt', 'ping'], { cwd: repo, env });
-    assert.notEqual(askRes.code, 0);
+    assert.equal(askRes.code, 1, askRes.stderr);
     assert.match(askRes.stderr, /Simulated dsh final error/);
 
     const sendRes = runCospanDsh(['send', '--to', 'dsh', '--json', '--prompt', 'check'], {
