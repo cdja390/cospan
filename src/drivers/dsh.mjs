@@ -90,7 +90,42 @@ function finalizeDshStreamState({
   return { payload: null, streamFailure: null, native };
 }
 
+function pickDshErrorText(candidates, fallback = 'DeepSeek Harness turn ended with error.') {
+  for (const raw of candidates) {
+    const text = typeof raw === 'string' ? raw.trim() : '';
+    if (text) return text;
+  }
+  return fallback;
+}
+
+function extractDshTerminalError(event, priorError = null) {
+  const fallback = priorError || 'DeepSeek Harness turn ended with error.';
+  if (event?.reason?.kind === 'error') {
+    return pickDshErrorText(
+      [
+        event.reason.error,
+        event.reason.error?.message,
+        event.reason.message,
+        event.message,
+        event.text,
+      ],
+      fallback
+    );
+  }
+  const explicitError = pickDshErrorText([event?.error, event?.error?.message], null);
+  if (explicitError) return explicitError;
+  if (event?.isError === true || event?.is_error === true) {
+    return pickDshErrorText([event.message, event.text], fallback);
+  }
+  return null;
+}
+
 function applyDshTerminalEvent(event, state) {
+  const terminalError = extractDshTerminalError(event, state.streamError);
+  if (terminalError) {
+    state.streamError = terminalError;
+    return;
+  }
   state.turnCompleted = true;
   state.usage = event.usage || state.usage;
   const text = extractDshTextPayload(event);
@@ -227,8 +262,10 @@ export const dshDriver = {
         captureSession(event);
         const type = event?.type;
         if (type === 'error') {
-          state.streamError =
-            event.message || event.error?.message || 'DeepSeek Harness stream error.';
+          state.streamError = pickDshErrorText(
+            [event.message, event.error, event.error?.message],
+            'DeepSeek Harness stream error.'
+          );
           return true;
         }
         if (TERMINAL_DSH_TYPES.has(type)) {

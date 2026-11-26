@@ -154,6 +154,20 @@ if (process.env.FAKE_DSH_FAIL === '1') {
   process.exit(1);
 }
 
+if (process.env.FAKE_DSH_FINAL_ERROR === '1') {
+  process.stdout.write(
+    JSON.stringify({
+      type: 'final',
+      sessionId,
+      reason: {
+        kind: 'error',
+        error: { message: 'Simulated dsh final error' },
+      },
+    }) + '\n'
+  );
+  process.exit(0);
+}
+
 const summary =
   `Status: DONE\ndsh_provider=${modelCfg.provider} dsh_model=${modelCfg.model} ` +
   `effort=${modelCfg.reasoningEffort || 'default'} patched=${st.patchFiles.length > 0} ` +
